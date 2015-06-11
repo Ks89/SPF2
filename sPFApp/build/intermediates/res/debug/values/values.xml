@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/Ks89/git/SPF/SPFApp/sPFApp/src/main/res/values/array.xml -->
+    <eat-comment/>
+    <string-array name="appmanager_fragments_titles">
+        <item>Permissions</item>
+        <item>Services</item>
+    </string-array>
+    <string-array name="contacts_fragments_titles">
+        <item>People</item>
+        <item>Circles</item>
+    </string-array>
+    <string-array name="content_fragments_titles">
+        <item>Profile</item>
+        <item>Personas</item>
+        <item>Contacts</item>
+        <item>Notifications</item>
+        <item>Advertising</item>
+        <item>Apps</item>
+        <item>Activities</item>
+    </string-array>
+    <string-array name="profileedit_fragments_titles">
+        <item>Personal informations</item>
+        <item>Interests</item>
+        <item>About you</item>
+    </string-array>
+    <!-- From: file:/Users/Ks89/git/SPF/SPFApp/sPFApp/src/main/res/values/colors.xml -->
+    <eat-comment/>
+    <color name="darker_background">#fff2f2f2</color>
+    <color name="drawer_background">#f5f5f5</color>
+    <color name="highlight">#5490cc</color>
+    <color name="outline">#22000000</color>
+    <!-- From: file:/Users/Ks89/git/SPF/SPFApp/sPFApp/src/main/res/values/dimens.xml -->
+    <eat-comment/>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="app_icon_dim">60dp</dimen>
+    <!-- From: file:/Users/Ks89/git/SPF/SPFApp/sPFApp/src/main/res/values/content.xml -->
+    <eat-comment/>
+    <dimen name="content_inner_padding">12dp</dimen>
+    <dimen name="content_outer_padding">14dp</dimen>
+    <dimen name="content_text_size">20sp</dimen>
+    <!-- From: file:/Users/Ks89/git/SPF/SPFApp/sPFApp/src/main/res/values/dimens.xml -->
+    <eat-comment/>
+    <dimen name="navigation_drawer_width">240dp</dimen>
+    <!-- From: file:/Users/Ks89/git/SPF/SPFApp/sPFApp/src/main/res/values/navigation_menu.xml -->
+    <eat-comment/>
+    <dimen name="navigation_entry_height">48dp</dimen>
+    <dimen name="navigation_entry_padding">8dp</dimen>
+    <dimen name="navigation_entry_text_size">16sp</dimen>
+    <dimen name="navigation_menu_width">240dp</dimen>
+    <dimen name="navigation_notification_size">32dp</dimen>
+    <!-- From: file:/Users/Ks89/git/SPF/SPFApp/sPFApp/src/main/res/values/colors.xml -->
+    <eat-comment/>
+    <drawable name="drawer_background">#f5f5f5</drawable>
+    <drawable name="highlight">#5490cc</drawable>
+    <!-- From: file:/Users/Ks89/git/SPF/SPFApp/sPFApp/src/main/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="action_example">Example action</string>
+    <string name="action_settings">Settings</string>
+    <string name="activities_list_empty">No verb supported.</string>
+    <string name="activities_supported_verbs">Supported verbs</string>
+    <string name="advertising_advertise_applications">Advertise installed applications</string>
+    <string name="advertising_list_switch_label">Advertise my profile</string>
+    <string name="advertising_list_title">Fields to advertise</string>
+    <string name="advertising_persona">Persona to advertise:</string>
+    <string name="advertising_settings">Settings</string>
+    <string name="app_card_icon">App icon</string>
+    <string name="app_manager_delete_contentdesc">Delete application</string>
+    <string name="app_manager_intro">This is the list of applications you have authorized to interact with SPF.</string>
+    <string name="app_manager_list_empty">No app installed</string>
+    <string name="app_manager_permission_list_emptyview">This app does not require any permission</string>
+    <string name="app_manager_permissions_intro">This is the list of permissions granted to this app.</string>
+    <string name="app_manager_services_intro">This is the list of services registered by this app.</string>
+    <string name="app_manager_services_list_emptyview">This app has not registered any service</string>
+    <string name="app_name">SPFApp</string>
+    <string name="app_permission_dialog_allow">Allow</string>
+    <string name="app_permission_dialog_deny">Deny</string>
+    <string name="app_permission_intro">The following app wants to interact with SPF</string>
+    <string name="app_permission_required_premission">Required permissions</string>
+    <string name="app_permission_selected_persona">Persona to use</string>
+    <string name="circle_all_circles">All circles</string>
+    <string name="circle_private">Private</string>
+    <string name="circle_public">Public</string>
+    <string name="contacts_circle_add_button_desc">Add circle</string>
+    <string name="contacts_circle_add_hint">Circle name</string>
+    <string name="contacts_circle_add_title">Add new circle</string>
+    <string name="contacts_circle_emptyview_text">No circle available</string>
+    <string name="contacts_circle_list_title">Available circles</string>
+    <string name="contacts_circle_person_add_contentdesc">Add person to circle</string>
+    <string name="contacts_people_confirm_circle">Select circle</string>
+    <string name="contacts_people_confirm_passphrase">Passphrase</string>
+    <string name="contacts_people_emptyview">No contacts available</string>
+    <string name="contacts_people_list_title">Contacts</string>
+    <string name="contacts_people_request_imagedesc">Friend request profile picture</string>
+    <string name="contacts_people_request_list_title">Contact requests</string>
+    <string name="contacts_people_requests_emptyview">No requests</string>
+    <string name="contacts_person_card_contentdesc">Friend profile picture</string>
+    <string name="contacts_person_circle">Circles</string>
+    <string name="contacts_person_circle_add">Add new circle</string>
+    <string name="drawer_close">Close drawer</string>
+    <string name="drawer_opne">Open drawer</string>
+    <!-- From: file:/Users/Ks89/git/SPF/SPFApp/sPFApp/build/intermediates/exploded-aar/SPFApp/sPFWFDMid/unspecified/res/values/values.xml -->
+    <eat-comment/>
+    <string name="hello_world">Hello world!</string>
+    <!-- From: file:/Users/Ks89/git/SPF/SPFApp/sPFApp/src/main/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="notifications_delete_contentdesc">Delete notification message</string>
+    <string name="notifications_emptyview">No notifications available</string>
+    <string name="permission_execute_local_services">Executing local services</string>
+    <string name="permission_execute_remote_services">Executing remote services</string>
+    <string name="permission_notification_services">Access notification services</string>
+    <string name="permission_read_local_profile">Read local profile</string>
+    <string name="permission_read_remote_profiles">Read remote profiles</string>
+    <string name="permission_register_services">Register services</string>
+    <string name="permission_search_service">Search service</string>
+    <string name="permission_write_local_profile">Write local profile</string>
+    <string name="personas_add_new">Add new persona</string>
+    <string name="personas_avaliable_title">Available personas</string>
+    <string name="personas_delete_description">Delete persona</string>
+    <string name="personas_name_hint">Persona name</string>
+    <string name="profile_edit_button_text">Edit</string>
+    <string name="profile_field_about_me">About me</string>
+    <string name="profile_field_birthday">Birthday</string>
+    <string name="profile_field_display_name">Display name</string>
+    <string name="profile_field_emails">Emails</string>
+    <string name="profile_field_gender">Gender</string>
+    <string name="profile_field_identifier">Identifier</string>
+    <string name="profile_field_interests">Interests</string>
+    <string name="profile_field_location">Location</string>
+    <string name="profile_field_photo">Photo</string>
+    <string name="profile_field_status">Status</string>
+    <string name="profileedit_add_interest_description">Add interest</string>
+    <string name="profileedit_confirm_message">"You have unsaved fields. To save them, tap the save button on the actionbar. Do you want to quit anyway?"</string>
+    <string name="profileedit_confirm_no">No</string>
+    <string name="profileedit_confirm_yes">Yes</string>
+    <string name="profileedit_interest_name">Interest name</string>
+    <string name="proximity_toggle_label">Proximity</string>
+    <string name="title_activity_app_detail">Application Details</string>
+    <string name="title_activity_contact_edit">Edit contact</string>
+    <string name="title_activity_edit_profile">Edit Profile</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_profile_view">View Profile</string>
+    <!-- From: file:/Users/Ks89/git/SPF/SPFApp/sPFApp/src/main/res/values/styles.xml -->
+    <eat-comment/>
+    <style name="ActionBarSpinnerItem">
+        <item name="android:textColor">#ffffff</item>
+    </style>
+    <style name="AppBaseTheme" parent="android:Theme.Light"/>
+    <style name="AppTheme" parent="AppBaseTheme"/>
+    <style name="SPFActionBar" parent="@android:style/Widget.Holo.Light.ActionBar.Solid"/>
+    <style name="keyValueListDivider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_marginBottom">@dimen/content_inner_padding</item>
+        <item name="android:layout_marginTop">@dimen/content_inner_padding</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/outline</item>
+    </style>
+    <style name="keyValueListEntry">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/content_text_size</item>
+        <item name="android:layout_marginBottom">@dimen/content_outer_padding</item>
+        <item name="android:padding">@dimen/content_inner_padding</item>
+        <item name="android:background">@drawable/profile_field_background</item>
+    </style>
+    <style name="keyValueListEntryKey">
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">#ff8e8e8e</item>
+        <item name="android:textSize">@dimen/content_text_size</item>
+    </style>
+    <style name="keyValueListEntryValue">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textSize">@dimen/content_text_size</item>
+    </style>
+    <style name="profileFieldVisibility">
+        
+    </style>
+    <style name="title">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/highlight</item>
+        <item name="android:textSize">@dimen/content_text_size</item>
+    </style>
+</resources>

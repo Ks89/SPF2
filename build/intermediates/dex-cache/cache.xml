@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="/Users/Ks89/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.3/5fc52c41ef0239d1093a1eb7c3697036183677ce/gson-2.3.jar"
+        jumboMode="false"
+        revision="23.0.0 rc2"
+        sha1="5fc52c41ef0239d1093a1eb7c3697036183677ce">
+        <dex dex="/Users/Ks89/git/SPF/SPFApp/sPFApp/build/intermediates/pre-dexed/debug/gson-2.3-cb8163c48dc59472777f3c51cb0ee7cdf2f4188c.jar" />
+    </item>
+    <item
+        jar="/Users/Ks89/git/SPF/SPFApp/sPFApp/build/intermediates/exploded-aar/SPFApp/sPFAlljoynMid/unspecified/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.0 rc2"
+        sha1="bb219deb0e63309282bef09fc5293406f7868e3d">
+        <dex dex="/Users/Ks89/git/SPF/SPFApp/sPFApp/build/intermediates/pre-dexed/debug/classes-ba485faef13789c1de9685b1f02fa514c40da35c.jar" />
+    </item>
+    <item
+        jar="/Users/Ks89/git/SPF/SPFApp/sPFApp/libs/android-support-v13.jar"
+        jumboMode="false"
+        revision="23.0.0 rc2"
+        sha1="41c6fb0537e463f685d3235fc50d38dc540d6ece">
+        <dex dex="/Users/Ks89/git/SPF/SPFApp/sPFApp/build/intermediates/pre-dexed/debug/android-support-v13-2eb81dc3082dbb83840942eae89511a7f34f72ec.jar" />
+    </item>
+    <item
+        jar="/Users/Ks89/git/SPF/SPFApp/sPFApp/libs/pagertabslidingstrip.jar"
+        jumboMode="false"
+        revision="23.0.0 rc2"
+        sha1="63c80423ed5879011a308d5fa92ce9d6b088af53">
+        <dex dex="/Users/Ks89/git/SPF/SPFApp/sPFApp/build/intermediates/pre-dexed/debug/pagertabslidingstrip-9222cdf44473e8f146ed373343ddaac05bf883fb.jar" />
+    </item>
+    <item
+        jar="/Users/Ks89/git/SPF/SPFApp/sPFApp/build/intermediates/exploded-aar/SPFApp/sPFAlljoynMid/unspecified/jars/libs/alljoyn.jar"
+        jumboMode="false"
+        revision="23.0.0 rc2"
+        sha1="5c894cb108322466f3bc41002a8c784924cfe0bf">
+        <dex dex="/Users/Ks89/git/SPF/SPFApp/sPFApp/build/intermediates/pre-dexed/debug/alljoyn-0d64a12336d4ad1e4fff7fbc09895bba7b3b9fae.jar" />
+    </item>
+    <item
+        jar="/Users/Ks89/git/SPF/SPFApp/sPFApp/build/intermediates/exploded-aar/SPFApp/sPFWFDMid/unspecified/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.0 rc2"
+        sha1="b6de93d84b4c2de830755186521748e81889db5e">
+        <dex dex="/Users/Ks89/git/SPF/SPFApp/sPFApp/build/intermediates/pre-dexed/debug/classes-1bb3e3903895454dd905a9bd827b27bb8969c3ef.jar" />
+    </item>
+    <item
+        jar="/Users/Ks89/git/SPF/SPFApp/sPFApp/build/intermediates/exploded-aar/SPFApp/sPFAlljoynMid/unspecified/jars/libs/alljoyn_about.jar"
+        jumboMode="false"
+        revision="23.0.0 rc2"
+        sha1="909b44d7ad103752398b438dc1271fa4417d9d88">
+        <dex dex="/Users/Ks89/git/SPF/SPFApp/sPFApp/build/intermediates/pre-dexed/debug/alljoyn_about-758e3b2cf83e0903dab01aa45d559bde79019dc5.jar" />
+    </item>
+    <item
+        jar="/Users/Ks89/git/SPF/SPFApp/sPFApp/build/intermediates/exploded-aar/SPFApp/sPFFramework/unspecified/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.0 rc2"
+        sha1="883fa5cada42561c22c8e99965a33bc95c07ad76">
+        <dex dex="/Users/Ks89/git/SPF/SPFApp/sPFApp/build/intermediates/pre-dexed/debug/classes-ee83d29a582b5bd469734b299a7388c6820c000e.jar" />
+    </item>
+    <item
+        jar="/Users/Ks89/git/SPF/SPFApp/sPFApp/build/intermediates/exploded-aar/SPFApp/sPFShared/unspecified/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.0 rc2"
+        sha1="ede0ad7483712addb86f8a4fd66bd6fcbbb4313a">
+        <dex dex="/Users/Ks89/git/SPF/SPFApp/sPFApp/build/intermediates/pre-dexed/debug/classes-05ef8c3ae985a922e3bc532945acb3613f3c26c8.jar" />
+    </item>
+
+</items>

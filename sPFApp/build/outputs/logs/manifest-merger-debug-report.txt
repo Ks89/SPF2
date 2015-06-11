@@ -1,0 +1,204 @@
+-- Merging decision tree log ---
+manifest
+ADDED from AndroidManifest.xml:2:1
+	package
+		ADDED from AndroidManifest.xml:3:5
+		INJECTED from AndroidManifest.xml:0:0
+		INJECTED from AndroidManifest.xml:0:0
+	android:versionName
+		ADDED from AndroidManifest.xml:5:5
+	android:versionCode
+		ADDED from AndroidManifest.xml:4:5
+		INJECTED from AndroidManifest.xml:0:0
+		INJECTED from AndroidManifest.xml:0:0
+	xmlns:android
+		ADDED from AndroidManifest.xml:2:11
+uses-permission#android.permission.ACCESS_WIFI_STATE
+ADDED from AndroidManifest.xml:8:5
+MERGED from SPFApp:sPFWFDMid:unspecified:11:5
+	android:name
+		ADDED from AndroidManifest.xml:8:22
+uses-permission#android.permission.CHANGE_WIFI_STATE
+ADDED from AndroidManifest.xml:9:5
+MERGED from SPFApp:sPFWFDMid:unspecified:12:5
+	android:name
+		ADDED from AndroidManifest.xml:9:22
+uses-permission#android.permission.CHANGE_WIFI_MULTICAST_STATE
+ADDED from AndroidManifest.xml:10:5
+	android:name
+		ADDED from AndroidManifest.xml:10:22
+uses-permission#android.permission.ACCESS_NETWORK_STATE
+ADDED from AndroidManifest.xml:11:5
+MERGED from SPFApp:sPFWFDMid:unspecified:15:5
+	android:name
+		ADDED from AndroidManifest.xml:11:22
+uses-permission#android.permission.CHANGE_NETWORK_STATE
+ADDED from AndroidManifest.xml:12:5
+MERGED from SPFApp:sPFWFDMid:unspecified:13:5
+	android:name
+		ADDED from AndroidManifest.xml:12:22
+uses-permission#android.permission.INTERNET
+ADDED from AndroidManifest.xml:13:5
+MERGED from SPFApp:sPFWFDMid:unspecified:14:5
+	android:name
+		ADDED from AndroidManifest.xml:13:22
+uses-permission#android.permission.SYSTEM_ALERT_WINDOW
+ADDED from AndroidManifest.xml:16:5
+	android:name
+		ADDED from AndroidManifest.xml:16:22
+uses-sdk
+ADDED from AndroidManifest.xml:18:5
+MERGED from SPFApp:sPFFramework:unspecified:7:5
+MERGED from SPFApp:sPFShared:unspecified:7:5
+MERGED from SPFApp:sPFAlljoynMid:unspecified:7:5
+MERGED from SPFApp:sPFFramework:unspecified:7:5
+MERGED from SPFApp:sPFShared:unspecified:7:5
+MERGED from SPFApp:sPFWFDMid:unspecified:7:5
+MERGED from SPFApp:sPFFramework:unspecified:7:5
+MERGED from SPFApp:sPFShared:unspecified:7:5
+	android:targetSdkVersion
+		ADDED from AndroidManifest.xml:20:9
+		INJECTED from AndroidManifest.xml:0:0
+		INJECTED from AndroidManifest.xml:0:0
+	android:minSdkVersion
+		ADDED from AndroidManifest.xml:19:9
+		INJECTED from AndroidManifest.xml:0:0
+		INJECTED from AndroidManifest.xml:0:0
+application
+ADDED from AndroidManifest.xml:22:5
+MERGED from SPFApp:sPFFramework:unspecified:11:5
+MERGED from SPFApp:sPFShared:unspecified:11:5
+MERGED from SPFApp:sPFAlljoynMid:unspecified:11:5
+MERGED from SPFApp:sPFFramework:unspecified:11:5
+MERGED from SPFApp:sPFShared:unspecified:11:5
+MERGED from SPFApp:sPFWFDMid:unspecified:19:5
+MERGED from SPFApp:sPFFramework:unspecified:11:5
+MERGED from SPFApp:sPFShared:unspecified:11:5
+	android:label
+		ADDED from AndroidManifest.xml:26:9
+	android:allowBackup
+		ADDED from AndroidManifest.xml:24:9
+	android:icon
+		ADDED from AndroidManifest.xml:25:9
+	android:theme
+		ADDED from AndroidManifest.xml:27:9
+	android:name
+		ADDED from AndroidManifest.xml:23:9
+activity#it.polimi.spf.app.MainActivity
+ADDED from AndroidManifest.xml:28:9
+	android:label
+		ADDED from AndroidManifest.xml:30:13
+	android:name
+		ADDED from AndroidManifest.xml:29:13
+intent-filter#android.intent.action.MAIN+android.intent.category.LAUNCHER
+ADDED from AndroidManifest.xml:31:13
+action#android.intent.action.MAIN
+ADDED from AndroidManifest.xml:32:17
+	android:name
+		ADDED from AndroidManifest.xml:32:25
+category#android.intent.category.LAUNCHER
+ADDED from AndroidManifest.xml:34:17
+	android:name
+		ADDED from AndroidManifest.xml:34:27
+activity#it.polimi.spf.app.fragments.appmanager.AppDetailActivity
+ADDED from AndroidManifest.xml:37:9
+	android:label
+		ADDED from AndroidManifest.xml:39:13
+	android:name
+		ADDED from AndroidManifest.xml:38:13
+meta-data#android.support.PARENT_ACTIVITY
+ADDED from AndroidManifest.xml:40:13
+	android:value
+		ADDED from AndroidManifest.xml:42:17
+	android:name
+		ADDED from AndroidManifest.xml:41:17
+activity#it.polimi.spf.app.fragments.profile.ProfileViewActivity
+ADDED from AndroidManifest.xml:44:9
+	android:label
+		ADDED from AndroidManifest.xml:47:13
+	android:exported
+		ADDED from AndroidManifest.xml:46:13
+	android:name
+		ADDED from AndroidManifest.xml:45:13
+intent-filter#android.intent.category.DEFAULT+it.polimi.spf.app.ShowProfile
+ADDED from AndroidManifest.xml:48:13
+action#it.polimi.spf.app.ShowProfile
+ADDED from AndroidManifest.xml:49:17
+	android:name
+		ADDED from AndroidManifest.xml:49:25
+category#android.intent.category.DEFAULT
+ADDED from AndroidManifest.xml:51:17
+	android:name
+		ADDED from AndroidManifest.xml:51:27
+activity#it.polimi.spf.app.fragments.profile.ProfileEditActivity
+ADDED from AndroidManifest.xml:54:9
+	android:label
+		ADDED from AndroidManifest.xml:56:13
+	android:name
+		ADDED from AndroidManifest.xml:55:13
+activity#it.polimi.spf.app.fragments.contacts.ContactEditActivity
+ADDED from AndroidManifest.xml:58:9
+	android:label
+		ADDED from AndroidManifest.xml:60:13
+	android:name
+		ADDED from AndroidManifest.xml:59:13
+activity#it.polimi.spf.app.fragments.personas.PersonasCirclesActivity
+ADDED from AndroidManifest.xml:62:9
+	android:label
+		ADDED from AndroidManifest.xml:64:13
+	android:name
+		ADDED from AndroidManifest.xml:63:13
+service#it.polimi.spf.framework.local.SPFService
+ADDED from AndroidManifest.xml:67:9
+	android:exported
+		ADDED from AndroidManifest.xml:69:13
+	android:name
+		ADDED from AndroidManifest.xml:68:13
+intent-filter#it.polimi.spf.framework.SPFNotificationService+it.polimi.spf.framework.appservice.SPFProfileService+it.polimi.spf.framework.local.SPFServerService+it.polimi.spf.framework.local.SecurityService+it.polimi.spf.services.LocalServiceExecutor
+ADDED from AndroidManifest.xml:70:13
+action#it.polimi.spf.framework.local.SPFServerService
+ADDED from AndroidManifest.xml:71:17
+	android:name
+		ADDED from AndroidManifest.xml:71:25
+action#it.polimi.spf.framework.appservice.SPFProfileService
+ADDED from AndroidManifest.xml:72:17
+	android:name
+		ADDED from AndroidManifest.xml:72:25
+action#it.polimi.spf.services.LocalServiceExecutor
+ADDED from AndroidManifest.xml:73:17
+	android:name
+		ADDED from AndroidManifest.xml:73:25
+action#it.polimi.spf.framework.SPFNotificationService
+ADDED from AndroidManifest.xml:74:17
+	android:name
+		ADDED from AndroidManifest.xml:74:25
+action#it.polimi.spf.framework.local.SecurityService
+ADDED from AndroidManifest.xml:75:17
+	android:name
+		ADDED from AndroidManifest.xml:75:25
+receiver#it.polimi.spf.framework.services.PackageChangeReceiver
+ADDED from AndroidManifest.xml:79:9
+	android:name
+		ADDED from AndroidManifest.xml:79:19
+intent-filter#android.intent.action.PACKAGE_ADDED+android.intent.action.PACKAGE_REMOVED
+ADDED from AndroidManifest.xml:80:13
+action#android.intent.action.PACKAGE_ADDED
+ADDED from AndroidManifest.xml:81:17
+	android:name
+		ADDED from AndroidManifest.xml:81:25
+action#android.intent.action.PACKAGE_REMOVED
+ADDED from AndroidManifest.xml:82:17
+	android:name
+		ADDED from AndroidManifest.xml:82:25
+data
+ADDED from AndroidManifest.xml:84:17
+	android:scheme
+		ADDED from AndroidManifest.xml:84:23
+uses-permission#android.permission.READ_PHONE_STATE
+ADDED from SPFApp:sPFWFDMid:unspecified:16:5
+	android:name
+		ADDED from SPFApp:sPFWFDMid:unspecified:16:22
+uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
+ADDED from SPFApp:sPFWFDMid:unspecified:17:5
+	android:name
+		ADDED from SPFApp:sPFWFDMid:unspecified:17:22

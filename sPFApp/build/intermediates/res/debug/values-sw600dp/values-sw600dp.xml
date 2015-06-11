@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/Ks89/git/SPF/SPFApp/sPFApp/src/main/res/values-sw600dp/content.xml -->
+    <eat-comment/>
+    <dimen name="content_inner_padding">12dp</dimen>
+    <dimen name="content_outer_padding">18dp</dimen>
+    <dimen name="content_text_size">22sp</dimen>
+    <!-- From: file:/Users/Ks89/git/SPF/SPFApp/sPFApp/src/main/res/values-sw600dp/navigation_menu.xml -->
+    <eat-comment/>
+    <dimen name="navigation_entry_height">64dp</dimen>
+    <dimen name="navigation_entry_padding">12dp</dimen>
+    <dimen name="navigation_entry_text_size">22sp</dimen>
+    <dimen name="navigation_menu_width">280dp</dimen>
+    <dimen name="navigation_notification_size">40dp</dimen>
+    <!-- From: file:/Users/Ks89/git/SPF/SPFApp/sPFApp/src/main/res/values-sw600dp/refs.xml -->
+    <eat-comment/>
+    <item name="activity_main" type="layout">@layout/activity_main_twopanes</item>
+</resources>
