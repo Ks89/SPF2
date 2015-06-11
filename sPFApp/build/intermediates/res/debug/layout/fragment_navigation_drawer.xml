@@ -23,4 +23,4 @@
         android:textOff="OFF"
         android:text="@string/proximity_toggle_label" />
 
-</LinearLayout><!-- From: file:/Users/Ks89/git/SPF/SPFApp/sPFApp/src/main/res/layout/fragment_navigation_drawer.xml -->
+</LinearLayout><!-- From: file:/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/src/main/res/layout/fragment_navigation_drawer.xml -->

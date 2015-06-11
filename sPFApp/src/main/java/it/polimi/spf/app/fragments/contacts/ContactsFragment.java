@@ -19,7 +19,7 @@
  */
 package it.polimi.spf.app.fragments.contacts;
 
-import com.astuetz.viewpager.extensions.PagerSlidingTabStrip;
+import com.astuetz.PagerSlidingTabStrip;
 
 import it.polimi.spf.app.R;
 import android.app.Fragment;

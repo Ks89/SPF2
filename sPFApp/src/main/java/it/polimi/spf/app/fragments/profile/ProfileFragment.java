@@ -21,7 +21,7 @@ package it.polimi.spf.app.fragments.profile;
 
 import java.util.List;
 
-import com.astuetz.viewpager.extensions.PagerSlidingTabStrip;
+import com.astuetz.PagerSlidingTabStrip;
 
 import it.polimi.spf.app.R;
 import it.polimi.spf.app.fragments.contacts.ContactConfirmDialogView;

@@ -35,4 +35,4 @@
         android:contentDescription="@string/notifications_delete_contentdesc"
         android:src="@android:drawable/ic_menu_delete" />
 
-</LinearLayout><!-- From: file:/Users/Ks89/git/SPF/SPFApp/sPFApp/src/main/res/layout/notifications_list_element.xml -->
+</LinearLayout><!-- From: file:/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/src/main/res/layout/notifications_list_element.xml -->

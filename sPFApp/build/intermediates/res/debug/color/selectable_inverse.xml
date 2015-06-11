@@ -4,4 +4,4 @@
     <item android:color="@color/highlight" android:state_pressed="true"/>
     <item android:color="@color/drawer_background"/>
 
-</selector><!-- From: file:/Users/Ks89/git/SPF/SPFApp/sPFApp/src/main/res/color/selectable_inverse.xml -->
+</selector><!-- From: file:/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/src/main/res/color/selectable_inverse.xml -->

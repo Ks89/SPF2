@@ -28,4 +28,4 @@
         android:textSize="@dimen/content_text_size"
         android:visibility="gone" />
 
-</LinearLayout><!-- From: file:/Users/Ks89/git/SPF/SPFApp/sPFApp/src/main/res/layout/content_fragment_activities.xml -->
+</LinearLayout><!-- From: file:/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/src/main/res/layout/content_fragment_activities.xml -->

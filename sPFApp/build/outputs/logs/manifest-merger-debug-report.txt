@@ -15,12 +15,12 @@ ADDED from AndroidManifest.xml:2:1
 		ADDED from AndroidManifest.xml:2:11
 uses-permission#android.permission.ACCESS_WIFI_STATE
 ADDED from AndroidManifest.xml:8:5
-MERGED from SPFApp:sPFWFDMid:unspecified:11:5
+MERGED from SPF:sPFWFDMid:unspecified:11:5
 	android:name
 		ADDED from AndroidManifest.xml:8:22
 uses-permission#android.permission.CHANGE_WIFI_STATE
 ADDED from AndroidManifest.xml:9:5
-MERGED from SPFApp:sPFWFDMid:unspecified:12:5
+MERGED from SPF:sPFWFDMid:unspecified:12:5
 	android:name
 		ADDED from AndroidManifest.xml:9:22
 uses-permission#android.permission.CHANGE_WIFI_MULTICAST_STATE
@@ -29,17 +29,17 @@ ADDED from AndroidManifest.xml:10:5
 		ADDED from AndroidManifest.xml:10:22
 uses-permission#android.permission.ACCESS_NETWORK_STATE
 ADDED from AndroidManifest.xml:11:5
-MERGED from SPFApp:sPFWFDMid:unspecified:15:5
+MERGED from SPF:sPFWFDMid:unspecified:15:5
 	android:name
 		ADDED from AndroidManifest.xml:11:22
 uses-permission#android.permission.CHANGE_NETWORK_STATE
 ADDED from AndroidManifest.xml:12:5
-MERGED from SPFApp:sPFWFDMid:unspecified:13:5
+MERGED from SPF:sPFWFDMid:unspecified:13:5
 	android:name
 		ADDED from AndroidManifest.xml:12:22
 uses-permission#android.permission.INTERNET
 ADDED from AndroidManifest.xml:13:5
-MERGED from SPFApp:sPFWFDMid:unspecified:14:5
+MERGED from SPF:sPFWFDMid:unspecified:14:5
 	android:name
 		ADDED from AndroidManifest.xml:13:22
 uses-permission#android.permission.SYSTEM_ALERT_WINDOW
@@ -48,14 +48,24 @@ ADDED from AndroidManifest.xml:16:5
 		ADDED from AndroidManifest.xml:16:22
 uses-sdk
 ADDED from AndroidManifest.xml:18:5
-MERGED from SPFApp:sPFFramework:unspecified:7:5
-MERGED from SPFApp:sPFShared:unspecified:7:5
-MERGED from SPFApp:sPFAlljoynMid:unspecified:7:5
-MERGED from SPFApp:sPFFramework:unspecified:7:5
-MERGED from SPFApp:sPFShared:unspecified:7:5
-MERGED from SPFApp:sPFWFDMid:unspecified:7:5
-MERGED from SPFApp:sPFFramework:unspecified:7:5
-MERGED from SPFApp:sPFShared:unspecified:7:5
+MERGED from SPF:sPFFramework:unspecified:7:5
+MERGED from SPF:sPFShared:unspecified:7:5
+MERGED from SPF:sPFAlljoynMid:unspecified:7:5
+MERGED from SPF:sPFFramework:unspecified:7:5
+MERGED from SPF:sPFShared:unspecified:7:5
+MERGED from SPF:sPFWFDMid:unspecified:7:5
+MERGED from SPF:sPFFramework:unspecified:7:5
+MERGED from SPF:sPFShared:unspecified:7:5
+MERGED from com.astuetz:pagerslidingtabstrip:1.0.1:2:5
+MERGED from com.android.support:support-v4:22.2.0:20:5
+MERGED from com.android.support:appcompat-v7:22.2.0:20:5
+MERGED from com.android.support:support-v4:22.2.0:20:5
+MERGED from com.android.support:support-v13:22.2.0:20:5
+MERGED from com.android.support:support-v4:22.2.0:20:5
+MERGED from com.android.support:support-v4:22.2.0:20:5
+MERGED from com.android.support:recyclerview-v7:22.2.0:20:5
+MERGED from com.android.support:support-v4:22.2.0:20:5
+MERGED from com.android.support:cardview-v7:22.2.0:20:5
 	android:targetSdkVersion
 		ADDED from AndroidManifest.xml:20:9
 		INJECTED from AndroidManifest.xml:0:0
@@ -66,14 +76,23 @@ MERGED from SPFApp:sPFShared:unspecified:7:5
 		INJECTED from AndroidManifest.xml:0:0
 application
 ADDED from AndroidManifest.xml:22:5
-MERGED from SPFApp:sPFFramework:unspecified:11:5
-MERGED from SPFApp:sPFShared:unspecified:11:5
-MERGED from SPFApp:sPFAlljoynMid:unspecified:11:5
-MERGED from SPFApp:sPFFramework:unspecified:11:5
-MERGED from SPFApp:sPFShared:unspecified:11:5
-MERGED from SPFApp:sPFWFDMid:unspecified:19:5
-MERGED from SPFApp:sPFFramework:unspecified:11:5
-MERGED from SPFApp:sPFShared:unspecified:11:5
+MERGED from SPF:sPFFramework:unspecified:11:5
+MERGED from SPF:sPFShared:unspecified:11:5
+MERGED from SPF:sPFAlljoynMid:unspecified:11:5
+MERGED from SPF:sPFFramework:unspecified:11:5
+MERGED from SPF:sPFShared:unspecified:11:5
+MERGED from SPF:sPFWFDMid:unspecified:19:5
+MERGED from SPF:sPFFramework:unspecified:11:5
+MERGED from SPF:sPFShared:unspecified:11:5
+MERGED from com.astuetz:pagerslidingtabstrip:1.0.1:4:5
+MERGED from com.android.support:support-v4:22.2.0:22:5
+MERGED from com.android.support:appcompat-v7:22.2.0:22:5
+MERGED from com.android.support:support-v4:22.2.0:22:5
+MERGED from com.android.support:support-v13:22.2.0:22:5
+MERGED from com.android.support:support-v4:22.2.0:22:5
+MERGED from com.android.support:support-v4:22.2.0:22:5
+MERGED from com.android.support:support-v4:22.2.0:22:5
+MERGED from com.android.support:cardview-v7:22.2.0:22:5
 	android:label
 		ADDED from AndroidManifest.xml:26:9
 	android:allowBackup
@@ -195,10 +214,10 @@ ADDED from AndroidManifest.xml:84:17
 	android:scheme
 		ADDED from AndroidManifest.xml:84:23
 uses-permission#android.permission.READ_PHONE_STATE
-ADDED from SPFApp:sPFWFDMid:unspecified:16:5
+ADDED from SPF:sPFWFDMid:unspecified:16:5
 	android:name
-		ADDED from SPFApp:sPFWFDMid:unspecified:16:22
+		ADDED from SPF:sPFWFDMid:unspecified:16:22
 uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
-ADDED from SPFApp:sPFWFDMid:unspecified:17:5
+ADDED from SPF:sPFWFDMid:unspecified:17:5
 	android:name
-		ADDED from SPFApp:sPFWFDMid:unspecified:17:22
+		ADDED from SPF:sPFWFDMid:unspecified:17:22

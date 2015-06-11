@@ -16,4 +16,4 @@
         android:gravity="center"
         android:text="@string/notifications_emptyview" />
 
-</LinearLayout><!-- From: file:/Users/Ks89/git/SPF/SPFApp/sPFApp/src/main/res/layout/content_fragment_notifications.xml -->
+</LinearLayout><!-- From: file:/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/src/main/res/layout/content_fragment_notifications.xml -->

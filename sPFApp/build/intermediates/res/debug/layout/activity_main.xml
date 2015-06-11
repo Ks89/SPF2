@@ -19,4 +19,4 @@
         android:layout_gravity="start"
         tools:layout="@layout/fragment_navigation_drawer" />
 
-</android.support.v4.widget.DrawerLayout><!-- From: file:/Users/Ks89/git/SPF/SPFApp/sPFApp/src/main/res/layout/activity_main.xml -->
+</android.support.v4.widget.DrawerLayout><!-- From: file:/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/src/main/res/layout/activity_main.xml -->

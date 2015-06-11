@@ -6,7 +6,7 @@
 
     <uses-sdk
         android:minSdkVersion="17"
-        android:targetSdkVersion="21" />
+        android:targetSdkVersion="22" />
 
     <!-- AllJoyn Permission Requirements -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />

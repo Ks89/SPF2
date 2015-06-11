@@ -23,4 +23,4 @@
         android:contentDescription="@string/personas_delete_description"
         android:src="@android:drawable/ic_menu_delete" />
 
-</LinearLayout><!-- From: file:/Users/Ks89/git/SPF/SPFApp/sPFApp/src/main/res/layout/personas_listelement.xml -->
+</LinearLayout><!-- From: file:/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/src/main/res/layout/personas_listelement.xml -->

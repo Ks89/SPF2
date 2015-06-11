@@ -1,6 +1,6 @@
 /*
  * This file is auto-generated.  DO NOT MODIFY.
- * Original file: /Users/Ks89/git/SPF/SPFApp/sPFShared/src/main/aidl/it/polimi/spf/shared/aidl/SPFNotificationService.aidl
+ * Original file: /Users/Ks89/AndroidStudioProjects/SPF/sPFShared/src/main/aidl/it/polimi/spf/shared/aidl/SPFNotificationService.aidl
  */
 package it.polimi.spf.shared.aidl;
 /**

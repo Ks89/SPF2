@@ -37,4 +37,4 @@
         android:layout_height="match_parent"
         android:inputType="textPassword" />
 
-</LinearLayout><!-- From: file:/Users/Ks89/git/SPF/SPFApp/sPFApp/src/main/res/layout/contacts_people_confirm_alert.xml -->
+</LinearLayout><!-- From: file:/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/src/main/res/layout/contacts_people_confirm_alert.xml -->

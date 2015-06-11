@@ -5,8 +5,8 @@ android {
     buildToolsVersion "23.0.0 rc2"
 
     defaultConfig {
-        minSdkVersion 8
-        targetSdkVersion 21
+        minSdkVersion 17
+        targetSdkVersion 22
     }
 
     buildTypes {
@@ -19,6 +19,9 @@ android {
 
 dependencies {
     compile project(':sPFFramework')
+
     compile files('libs/alljoyn.jar')
     compile files('libs/alljoyn_about.jar')
+
+    provided 'org.projectlombok:lombok:1.16.4'
 }

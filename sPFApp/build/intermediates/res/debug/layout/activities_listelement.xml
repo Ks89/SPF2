@@ -17,4 +17,4 @@
         android:layout_height="wrap_content"
         android:textSize="@dimen/content_text_size" />
 
-</LinearLayout><!-- From: file:/Users/Ks89/git/SPF/SPFApp/sPFApp/src/main/res/layout/activities_listelement.xml -->
+</LinearLayout><!-- From: file:/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/src/main/res/layout/activities_listelement.xml -->

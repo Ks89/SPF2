@@ -55,4 +55,4 @@
         android:text="@string/contacts_people_emptyview" >
     </TextView>
 
-</LinearLayout><!-- From: file:/Users/Ks89/git/SPF/SPFApp/sPFApp/src/main/res/layout/contacts_people_page.xml -->
+</LinearLayout><!-- From: file:/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/src/main/res/layout/contacts_people_page.xml -->

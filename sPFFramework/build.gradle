@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         minSdkVersion 17
-        targetSdkVersion 21
+        targetSdkVersion 22
     }
 
     buildTypes {
@@ -19,5 +19,8 @@ android {
 
 dependencies {
     compile project(':sPFShared')
+
     compile 'com.google.code.gson:gson:2.3'
+
+    provided 'org.projectlombok:lombok:1.16.4'
 }

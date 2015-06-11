@@ -4,4 +4,4 @@
     <item android:drawable="@drawable/highlight" android:state_pressed="true"/>
     <item android:drawable="@drawable/drawer_background"/>
 
-</selector><!-- From: file:/Users/Ks89/git/SPF/SPFApp/sPFApp/src/main/res/drawable/selectable_background.xml -->
+</selector><!-- From: file:/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/src/main/res/drawable/selectable_background.xml -->

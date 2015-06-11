@@ -91,6 +91,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="alljoyn_about" level="project" />
     <orderEntry type="library" exported="" name="alljoyn" level="project" />
+    <orderEntry type="library" exported="" name="lombok-1.16.4" level="project" />
     <orderEntry type="library" exported="" name="gson-2.3" level="project" />
     <orderEntry type="module" module-name="sPFFramework" exported="" />
   </component>
