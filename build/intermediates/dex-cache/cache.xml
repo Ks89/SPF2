@@ -2,32 +2,11 @@
 <items version="2" >
 
     <item
-        jar="/Users/Ks89/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.3/5fc52c41ef0239d1093a1eb7c3697036183677ce/gson-2.3.jar"
+        jar="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/exploded-aar/SPF/sPFAlljoynMid/unspecified/jars/libs/alljoyn_about.jar"
         jumboMode="false"
         revision="23.0.0 rc2"
-        sha1="5fc52c41ef0239d1093a1eb7c3697036183677ce">
-        <dex dex="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/pre-dexed/debug/gson-2.3-cb8163c48dc59472777f3c51cb0ee7cdf2f4188c.jar" />
-    </item>
-    <item
-        jar="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/exploded-aar/com.android.support/support-v13/22.2.0/jars/libs/internal_impl-22.2.0.jar"
-        jumboMode="false"
-        revision="23.0.0 rc2"
-        sha1="79a5b6d9fbab3b5fb4c6f86a1ed7a17722fd937b">
-        <dex dex="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/pre-dexed/debug/internal_impl-22.2.0-a61307f8d3b00d9b22decb130c4e533383b2ad3d.jar" />
-    </item>
-    <item
-        jar="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/jars/classes.jar"
-        jumboMode="false"
-        revision="23.0.0 rc2"
-        sha1="73753982da6bde518f3a4c6b372749981d14d1a0">
-        <dex dex="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/pre-dexed/debug/classes-02470cc65bb7bf501dc7a6ecb46480e660cd38da.jar" />
-    </item>
-    <item
-        jar="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/exploded-aar/SPF/sPFShared/unspecified/jars/classes.jar"
-        jumboMode="false"
-        revision="23.0.0 rc2"
-        sha1="e49b35c787982894a30a25f240c10fd455e2afa2">
-        <dex dex="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/pre-dexed/debug/classes-8603d013f88abdae11108f8ae540c67ae8e2e6c9.jar" />
+        sha1="909b44d7ad103752398b438dc1271fa4417d9d88">
+        <dex dex="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/pre-dexed/debug/alljoyn_about-02ac87cf9d407bf0d3664dd3ba46bb25fbefb19a.jar" />
     </item>
     <item
         jar="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/exploded-aar/SPF/sPFAlljoynMid/unspecified/jars/libs/alljoyn.jar"
@@ -37,32 +16,18 @@
         <dex dex="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/pre-dexed/debug/alljoyn-7f52cacfc39917c7722b25ef0e622a33cd999cf7.jar" />
     </item>
     <item
-        jar="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/exploded-aar/SPF/sPFWFDMid/unspecified/jars/classes.jar"
+        jar="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/exploded-aar/it.polimi.spf/spfshared/1.0.0/jars/classes.jar"
         jumboMode="false"
         revision="23.0.0 rc2"
-        sha1="1dec3e1fd2b4566610ab3a92faee0d3dd5e3abec">
-        <dex dex="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/pre-dexed/debug/classes-0111c3ca6f0df7423126058c389d0bbebfc0527c.jar" />
+        sha1="747308b31a96318e20e724c825bbe84e0d9e182a">
+        <dex dex="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/pre-dexed/debug/classes-df17ded8bd10609064b388e02d38aa9bbbd6bdfb.jar" />
     </item>
     <item
-        jar="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/exploded-aar/SPF/sPFAlljoynMid/unspecified/jars/libs/alljoyn_about.jar"
+        jar="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/jars/classes.jar"
         jumboMode="false"
         revision="23.0.0 rc2"
-        sha1="909b44d7ad103752398b438dc1271fa4417d9d88">
-        <dex dex="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/pre-dexed/debug/alljoyn_about-02ac87cf9d407bf0d3664dd3ba46bb25fbefb19a.jar" />
-    </item>
-    <item
-        jar="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.0/jars/libs/internal_impl-22.2.0.jar"
-        jumboMode="false"
-        revision="23.0.0 rc2"
-        sha1="57f2ab85c164ff1676ec64dee787981c046fab79">
-        <dex dex="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/pre-dexed/debug/internal_impl-22.2.0-5e215cca6e2cd055e4dbdb33fb0d41cac213430d.jar" />
-    </item>
-    <item
-        jar="/Users/Ks89/android-sdk-macosx/extras/android/m2repository/com/android/support/support-annotations/22.2.0/support-annotations-22.2.0.jar"
-        jumboMode="false"
-        revision="23.0.0 rc2"
-        sha1="66b42a1f3eb7676070b7ef7f14b603483aecbee1">
-        <dex dex="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/pre-dexed/debug/support-annotations-22.2.0-dc36173f50cf4dc49822adb757881320a94ce2c1.jar" />
+        sha1="73753982da6bde518f3a4c6b372749981d14d1a0">
+        <dex dex="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/pre-dexed/debug/classes-02470cc65bb7bf501dc7a6ecb46480e660cd38da.jar" />
     </item>
     <item
         jar="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/exploded-aar/com.astuetz/pagerslidingtabstrip/1.0.1/jars/classes.jar"
@@ -72,11 +37,11 @@
         <dex dex="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/pre-dexed/debug/classes-608a3341408f026309f706c25d5968b0c62d4761.jar" />
     </item>
     <item
-        jar="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/exploded-aar/SPF/sPFFramework/unspecified/jars/classes.jar"
+        jar="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/exploded-aar/SPF/sPFWFDMid/unspecified/jars/classes.jar"
         jumboMode="false"
         revision="23.0.0 rc2"
-        sha1="3331432cc8a2edbedd33e642b88b802f0695bf44">
-        <dex dex="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/pre-dexed/debug/classes-c005f32236da343d305f11c4a673b6ec66ff0c63.jar" />
+        sha1="c1fc0c158c2408a0b18c129f7c6eee15923a4e07">
+        <dex dex="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/pre-dexed/debug/classes-0111c3ca6f0df7423126058c389d0bbebfc0527c.jar" />
     </item>
     <item
         jar="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.0/jars/classes.jar"
@@ -86,17 +51,31 @@
         <dex dex="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/pre-dexed/debug/classes-d42ce350b95eb005b5d5dd6c81e31d266784878d.jar" />
     </item>
     <item
-        jar="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/22.2.0/jars/classes.jar"
+        jar="/Users/Ks89/android-sdk-macosx/extras/android/m2repository/com/android/support/support-annotations/22.2.0/support-annotations-22.2.0.jar"
         jumboMode="false"
         revision="23.0.0 rc2"
-        sha1="5b37cf49773f7f17aca9830efd3053b0cac56728">
-        <dex dex="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/pre-dexed/debug/classes-8683164806bc6efae9bb10a9c1284cdd6174898f.jar" />
+        sha1="66b42a1f3eb7676070b7ef7f14b603483aecbee1">
+        <dex dex="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/pre-dexed/debug/support-annotations-22.2.0-dc36173f50cf4dc49822adb757881320a94ce2c1.jar" />
+    </item>
+    <item
+        jar="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/exploded-aar/com.android.support/support-v13/22.2.0/jars/libs/internal_impl-22.2.0.jar"
+        jumboMode="false"
+        revision="23.0.0 rc2"
+        sha1="79a5b6d9fbab3b5fb4c6f86a1ed7a17722fd937b">
+        <dex dex="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/pre-dexed/debug/internal_impl-22.2.0-a61307f8d3b00d9b22decb130c4e533383b2ad3d.jar" />
+    </item>
+    <item
+        jar="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.0/jars/libs/internal_impl-22.2.0.jar"
+        jumboMode="false"
+        revision="23.0.0 rc2"
+        sha1="57f2ab85c164ff1676ec64dee787981c046fab79">
+        <dex dex="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/pre-dexed/debug/internal_impl-22.2.0-5e215cca6e2cd055e4dbdb33fb0d41cac213430d.jar" />
     </item>
     <item
         jar="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/exploded-aar/SPF/sPFAlljoynMid/unspecified/jars/classes.jar"
         jumboMode="false"
         revision="23.0.0 rc2"
-        sha1="8d74448208503f4352025718f54b4a31d3047dd5">
+        sha1="1b46e1ee2d98c8ddaa9071ed6d8bee17d2846526">
         <dex dex="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/pre-dexed/debug/classes-aa0eb4b699d0913740eb89a111f5bcd46e748315.jar" />
     </item>
     <item
@@ -112,6 +91,27 @@
         revision="23.0.0 rc2"
         sha1="9aa93835393824b436f366120c9ba8a0260ce75d">
         <dex dex="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/pre-dexed/debug/classes-155cf771ac627b7a11d77bca5bb2ef75d65c7985.jar" />
+    </item>
+    <item
+        jar="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/22.2.0/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.0 rc2"
+        sha1="5b37cf49773f7f17aca9830efd3053b0cac56728">
+        <dex dex="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/pre-dexed/debug/classes-8683164806bc6efae9bb10a9c1284cdd6174898f.jar" />
+    </item>
+    <item
+        jar="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/exploded-aar/SPF/sPFFramework/unspecified/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.0 rc2"
+        sha1="126f971b1c774bb31a06fb5b1e9104050f64f36e">
+        <dex dex="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/pre-dexed/debug/classes-c005f32236da343d305f11c4a673b6ec66ff0c63.jar" />
+    </item>
+    <item
+        jar="/Users/Ks89/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.3/5fc52c41ef0239d1093a1eb7c3697036183677ce/gson-2.3.jar"
+        jumboMode="false"
+        revision="23.0.0 rc2"
+        sha1="5fc52c41ef0239d1093a1eb7c3697036183677ce">
+        <dex dex="/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/build/intermediates/pre-dexed/debug/gson-2.3-cb8163c48dc59472777f3c51cb0ee7cdf2f4188c.jar" />
     </item>
 
 </items>
