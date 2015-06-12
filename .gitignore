@@ -4,6 +4,8 @@
 *.apk
 *.ap_
 
+gradle/
+
 # Files for the Dalvik VM
 *.dex
 
