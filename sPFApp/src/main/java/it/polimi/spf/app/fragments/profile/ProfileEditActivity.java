@@ -40,6 +40,7 @@ public class ProfileEditActivity extends Activity {
 		setContentView(R.layout.activity_profile_edit);
 
 		if (savedInstanceState == null) {
+			//received from ProfileFragment - onOptionsItemSelected - case R.id.profileview_edit
 			SPFPersona persona = getIntent().getExtras().getParcelable(EXTRA_PERSONA);
 			mFragment = ProfileFragment.createEditSelfProfileFragment(persona);
 			getFragmentManager().beginTransaction().replace(R.id.container, mFragment).commit();

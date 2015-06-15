@@ -19,7 +19,9 @@
  */
 package it.polimi.spf.wfd;
 
+import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -32,29 +34,31 @@ import java.util.concurrent.Semaphore;
 
 import android.util.Log;
 
-public class GroupOwnerActor extends GroupActor {
+public class GroupOwnerActor extends GroupActor implements Runnable {
 
 	private static final String TAG = "GroupOwnerActor";
 	private ServerSocket serverSocket;
-	private ServerSocketAcceptor acceptor;
 	private Map<String, GOInternalClient> gOInternalClients = new Hashtable<String, GOInternalClient>();
+	private Thread thread;
 
 	private ExecutorService threadPool = Executors.newCachedThreadPool();
+
+	private boolean closedServerSocketAcceptor;
 
 	public GroupOwnerActor(ServerSocket serverSocket, String myIdentifier,
 			GroupActorListener listener) {
 		super(listener, myIdentifier);
 		this.serverSocket = serverSocket;
+		this.thread = new Thread(this);
 	}
 
 	@Override
 	public void connect() {
-		acceptor = new ServerSocketAcceptor(this, serverSocket);
-		acceptor.start();
+		this.thread.start();
 	}
 
 	public void disconnect() {
-		acceptor.recycle();
+		this.recycle();
 		for (String id : gOInternalClients.keySet()) {
 			gOInternalClients.get(id).recycle();
 		}
@@ -85,7 +89,7 @@ public class GroupOwnerActor extends GroupActor {
 	}
 
 	public void onClientDisconnected(String identifier)
-			throws InterruptedException {
+			throws InterruptedException, NullPointerException {
 		connectionSemaphore.acquire();
 		WfdLog.d(TAG, "Client lost id : " + identifier);
 		GOInternalClient c = gOInternalClients.remove(identifier);
@@ -192,4 +196,28 @@ public class GroupOwnerActor extends GroupActor {
 		}
 	}
 
+	@Override
+	public void run() {
+		Socket s;
+		try {
+			while (!Thread.currentThread().isInterrupted()) {
+				WfdLog.d(TAG, "accept(): waiting for a new client");
+				s = serverSocket.accept();
+				WfdLog.d(TAG, "incoming connection");
+				new GOInternalClient(s,this).start();
+			}
+		} catch (IOException e) {
+			WfdLog.e(TAG, "Error while accepting serverSocket", e);
+		}
+		WfdLog.d(TAG, "exiting while loop");
+		if (!this.closedServerSocketAcceptor) {
+			WfdLog.d(TAG, "signalling error to groupOwnerActor");
+			this.onServerSocketError();
+		}
+	}
+
+	public void recycle() {
+		this.closedServerSocketAcceptor = true;
+		this.thread.interrupt();
+	}
 }

@@ -19,6 +19,8 @@
  */
 package it.polimi.spf.app.fragments.profile;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.List;
 
 import com.astuetz.PagerSlidingTabStrip;
@@ -40,6 +42,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -56,7 +60,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-public class ProfileFragment extends Fragment implements LoaderManager.LoaderCallbacks<ProfileFieldContainer>, OnItemSelectedListener, OnClickListener {
+public class ProfileFragment extends Fragment implements LoaderManager.LoaderCallbacks<ProfileFieldContainer>,
+		OnItemSelectedListener, OnClickListener {
 
 	/**
 	 * Possible visualization modes of fields values.
@@ -99,12 +104,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 	}
 
 	/**
-	 * Creates a new instance of ProfileFragment to show the local profile. The
-	 * fragment may also allow to modify the values depending on the given
-	 * {@link Mode}.
-	 * 
-	 * @param mode
-	 *            - the visualization {@link Mode}.
+	 * Creates a new instance of ProfileFragment to show the local profile.
 	 * @return an instance of ProfileFragment
 	 */
 	public static ProfileFragment createViewSelfProfileFragment() {
@@ -143,8 +143,6 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 	private Mode mMode;
 	private ProfileFieldContainer mContainer;
 
-	private ProfilePagerAdapter mPagerAdapter;
-	private ViewPager mViewPager;
 	private ProfileFieldViewFactory mFactory;
 	private boolean mModifiedAtLeastOnce = false;
 
@@ -269,8 +267,8 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 		mFactory = new ProfileFieldViewFactory(getActivity(), mMode, mCurrentPersona, mContainer);
 
 		// Populate field list
-		mPagerAdapter = new ProfilePagerAdapter(getActivity(), getChildFragmentManager(), mMode);
-		mViewPager = (ViewPager) getView().findViewById(R.id.profileedit_pager);
+		ProfilePagerAdapter mPagerAdapter = new ProfilePagerAdapter(getActivity(), getChildFragmentManager(), mMode);
+		ViewPager mViewPager = (ViewPager) getView().findViewById(R.id.profileedit_pager);
 
 		mViewPager.setAdapter(mPagerAdapter);
 		mViewPager.setOffscreenPageLimit(2);
@@ -349,30 +347,42 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		switch (requestCode) {
-		case ACTIVITY_EDIT_PROFILE_CODE:
-			// Profile may have changed, reload it
-			if (resultCode == Activity.RESULT_CANCELED) {
-				Log.d(TAG, "Edit finished but no data was modified");
-			}
-			
-			onProfileDataSaved();
-			startLoader(LOAD_PROFILE_LOADER_ID);
-			break;
-		case ACTIVITY_EDIT_PROFILE_PICTURE_CODE:
-			if (resultCode != Activity.RESULT_OK) {
-				return;
-			}
-
-			if (data != null && data.getExtras() != null) {
-				Bitmap photo = data.getExtras().getParcelable("data");
-				mContainer.setFieldValue(ProfileField.PHOTO, photo);
-				showPicture(photo);
-			}
-		}
-
 		super.onActivityResult(requestCode, resultCode, data);
+		switch (requestCode) {
+			case ACTIVITY_EDIT_PROFILE_CODE:
+				// Profile may have changed, reload it
+				if (resultCode == Activity.RESULT_CANCELED) {
+					Log.d(TAG, "Edit finished but no data was modified");
+				}
+
+				onProfileDataSaved();
+				startLoader(LOAD_PROFILE_LOADER_ID);
+				break;
+			case ACTIVITY_EDIT_PROFILE_PICTURE_CODE:
+				Log.d(TAG, "ACTIVITY_EDIT_PROFILE_PICTURE_CODE " + ACTIVITY_EDIT_PROFILE_PICTURE_CODE);
+				if (resultCode != Activity.RESULT_OK) {
+					return;
+				}
+
+				Uri selectedImageUri = data == null ? null : data.getData();
+				Log.d("ImageURI", selectedImageUri.getLastPathSegment());
+				// /Bitmap factory
+				BitmapFactory.Options options = new BitmapFactory.Options();
+				// downsizing image as it throws OutOfMemory Exception for larger
+				// images
+				options.inSampleSize = 8;
+				try {//Using Input Stream to get uri did the trick
+					InputStream input = this.getActivity().getContentResolver().openInputStream(selectedImageUri);
+					Bitmap photo = BitmapFactory.decodeStream(input);
+					mContainer.setFieldValue(ProfileField.PHOTO, photo);
+					showPicture(photo);
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
+				break;
+		}
 	}
+
 
 	/*
 	 * MENU
@@ -461,6 +471,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 	 */
 	@Override
 	public void onClick(View v) {
+
 		Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 		intent.setType("image/*");
 		intent.putExtra("crop", "true");
