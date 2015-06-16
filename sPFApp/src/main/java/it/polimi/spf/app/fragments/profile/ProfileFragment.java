@@ -24,7 +24,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.astuetz.PagerSlidingTabStrip;
@@ -35,7 +34,6 @@ import it.polimi.spf.app.fragments.contacts.ContactConfirmDialogView;
 import it.polimi.spf.framework.SPF;
 import it.polimi.spf.framework.profile.SPFPersona;
 import it.polimi.spf.framework.proximity.SPFRemoteInstance;
-import it.polimi.spf.app.view.CircleImageView;
 import it.polimi.spf.shared.model.ProfileField;
 import it.polimi.spf.shared.model.ProfileFieldContainer;
 import android.app.Activity;
@@ -43,18 +41,13 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.AsyncTaskLoader;
-import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.provider.MediaStore;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -67,7 +60,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -144,7 +136,6 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 	private static final int SAVE_PROFILE_LOADER_ID = 1;
 
 	private static final int ACTIVITY_EDIT_PROFILE_CODE = 0;
-	private static final int ACTIVITY_EDIT_PROFILE_PICTURE_CODE = 1;
 	private static final String PHOTO_WIDTH = "50dp";
 	private static final String PHOTO_HEIGHT = "50dp";
 	private static final String TAG = "ProfileFragment";
@@ -154,7 +145,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 	private Mode mMode;
 	private ProfileFieldContainer mContainer;
 
-	private ImageView resultView;
+	private de.hdodenhof.circleimageview.CircleImageView resultView;
 
 	private ProfileFieldViewFactory mFactory;
 	private boolean mModifiedAtLeastOnce = false;
@@ -289,10 +280,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 		PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) getView().findViewById(R.id.profileedit_tabs);
 		tabs.setViewPager(mViewPager);
 
-		ProfileFieldContainer profileFieldContainer  = mContainer;
-		Bitmap bitmap = profileFieldContainer.getFieldValue(ProfileField.PHOTO);
-
-		showPicture(bitmap);
+		showPicture(mContainer.getFieldValue(ProfileField.PHOTO));
 
 		// Refresh field fragments
 		mPagerAdapter.onRefresh();
@@ -300,7 +288,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 
 	private void showPicture(Bitmap photo) {
 		// Show picture
-		this.resultView = (ImageView) getView().findViewById(R.id.profile_picture);
+		this.resultView = (de.hdodenhof.circleimageview.CircleImageView) getView().findViewById(R.id.profile_picture);
 		if (mMode == Mode.EDIT) {
 			this.resultView.setOnClickListener(this);
 		}
@@ -379,33 +367,42 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 	}
 
 
-
+	/**
+	 * Method to start the activity to crop an image.
+	 * @param source
+	 */
 	public void beginCrop(Uri source) {
 		Uri destination = Uri.fromFile(new File(this.getActivity().getCacheDir(), "cropped"));
 		Crop.of(source, destination).asSquare().start(this.getActivity());
 	}
 
+	/**
+	 * Method to set an show a cropped imaged.
+	 * @param resultCode
+	 * @param result
+	 */
 	public void handleCrop(int resultCode, Intent result) {
 		if (resultCode == Activity.RESULT_OK) {
 			Uri uri = Crop.getOutput(result);
 			resultView.setImageURI(uri);
+
 			InputStream inputStream = null;
 			try {
 				inputStream = new FileInputStream(uri.getPath());
 				Bitmap myBitmap = BitmapFactory.decodeStream(inputStream);
-				myBitmap = Bitmap.createScaledBitmap(myBitmap, 130, 130, false);
+				myBitmap = Bitmap.createScaledBitmap(myBitmap,130,130,false);
 
 				mContainer.setFieldValue(ProfileField.PHOTO, myBitmap);
 				showPicture(myBitmap);
 
 			} catch (FileNotFoundException e) {
-				e.printStackTrace();
+				Log.e(TAG, "handleCrop FileInputStream-file not found from uri.getpath", e);
 			} finally {
 				if(inputStream!=null) {
 					try {
 						inputStream.close();
 					} catch (IOException e) {
-						e.printStackTrace();
+						Log.e(TAG, "handleCrop closing input stream error", e);
 					}
 				}
 			}
@@ -417,7 +414,6 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 	/*
 	 * MENU
 	 */
-
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		switch (mMode) {
@@ -449,7 +445,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 		}
 
 		List<SPFPersona> personas = SPF.get().getProfileManager().getAvailablePersonas();
-		spinner.setAdapter(new ArrayAdapter<SPFPersona>(getActivity().getActionBar().getThemedContext(), android.R.layout.simple_list_item_1, personas));
+		spinner.setAdapter(new ArrayAdapter<>(getActivity().getActionBar().getThemedContext(), android.R.layout.simple_list_item_1, personas));
 		spinner.setSelection(personas.indexOf(mCurrentPersona), false);
 		spinner.setOnItemSelectedListener(this);
 
@@ -495,116 +491,15 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 		}
 	}
 
-
-
-	/**
-	 * Create a chooser intent to select the source to get image from.<br/>
-	 * The source can be camera's (ACTION_IMAGE_CAPTURE) or gallery's (ACTION_GET_CONTENT).<br/>
-	 * All possible sources are added to the intent chooser.
-	 */
-	public Intent getPickImageChooserIntent() {
-
-		// Determine Uri of camera image to save.
-//    Uri outputFileUri = getCaptureImageOutputUri();
-
-		List<Intent> allIntents = new ArrayList<>();
-		PackageManager packageManager = this.getActivity().getPackageManager();
-
-//    // collect all camera intents
-//    Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-//    List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
-//    for (ResolveInfo res : listCam) {
-//       Intent intent = new Intent(captureIntent);
-//       intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
-//       intent.setPackage(res.activityInfo.packageName);
-//       if (outputFileUri != null) {
-//          intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
-//       }
-//       allIntents.add(intent);
-//    }
-
-		// collect all gallery intents
-		Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
-		galleryIntent.setType("image/*");
-//		galleryIntent.putExtra("crop", true);
-		galleryIntent.putExtra("scale", true);
-		galleryIntent.putExtra("outputX", PHOTO_WIDTH);
-		galleryIntent.putExtra("outputY", PHOTO_HEIGHT);
-		galleryIntent.putExtra("aspectX", 1);
-		galleryIntent.putExtra("aspectY", 1);
-		galleryIntent.putExtra("return-data", true);
-		List<ResolveInfo> listGallery = packageManager.queryIntentActivities(galleryIntent, 0);
-		for (ResolveInfo res : listGallery) {
-			Intent intent = new Intent(galleryIntent);
-			intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
-			intent.setPackage(res.activityInfo.packageName);
-			allIntents.add(intent);
-		}
-
-		// the main intent is the last in the list (fucking android) so pickup the useless one
-		Intent mainIntent = allIntents.get(allIntents.size() - 1);
-		for (Intent intent : allIntents) {
-			if (intent.getComponent().getClassName().equals("com.android.documentsui.DocumentsActivity")) {
-				mainIntent = intent;
-				break;
-			}
-		}
-		allIntents.remove(mainIntent);
-
-		// Create a chooser from the main intent
-		Intent chooserIntent = Intent.createChooser(mainIntent, "Select source");
-
-		// Add all other intents
-		chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, allIntents.toArray(new Parcelable[allIntents.size()]));
-
-
-		return chooserIntent;
-	}
-
-
-
 	/*
         * Click on the profile picture in edit mode starts an activity to change
         * the profile picture
         */
 	@Override
 	public void onClick(View v) {
-
-		//resultView.setImageDrawable(null);
 		Crop.pickImage(this.getActivity());
-
-//    Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//    intent.setType("image/*");
-//    intent.putExtra("crop", "true");
-//    intent.putExtra("scale", true);
-//    intent.putExtra("outputX", PHOTO_WIDTH);
-//    intent.putExtra("outputY", PHOTO_HEIGHT);
-//    intent.putExtra("aspectX", 1);
-//    intent.putExtra("aspectY", 1);
-//    intent.putExtra("return-data", true);
-//		startActivityForResult(this.getPickImageChooserIntent(), ACTIVITY_EDIT_PROFILE_PICTURE_CODE);
 	}
 
-
-
-	/*
-	 * Click on the profile picture in edit mode starts an activity to change
-	 * the profile picture
-	 */
-//	@Override
-//	public void onClick(View v) {
-//
-//		Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//		intent.setType("image/*");
-//		intent.putExtra("crop", "true");
-//		intent.putExtra("scale", true);
-//		intent.putExtra("outputX", PHOTO_WIDTH);
-//		intent.putExtra("outputY", PHOTO_HEIGHT);
-//		intent.putExtra("aspectX", 1);
-//		intent.putExtra("aspectY", 1);
-//		intent.putExtra("return-data", true);
-//		startActivityForResult(intent, ACTIVITY_EDIT_PROFILE_PICTURE_CODE);
-//	}
 
 	/*
 	 * ItemSelectListener for Persona spinner in actionbar
