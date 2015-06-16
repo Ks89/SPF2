@@ -5,7 +5,7 @@
     android:background="@color/darker_background"
     android:orientation="vertical" >
 
-    <!-- this lib CircleImageView has a limitation: never change/declare android:scaleType="centerInside" -->
+    <!-- this lib hdodenhofCircleImageView has a limitation: never change/declare android:scaleType="centerInside" -->
     <de.hdodenhof.circleimageview.CircleImageView
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/profile_picture"
