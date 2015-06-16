@@ -1,7 +1,0 @@
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <item android:drawable="@drawable/highlight" android:state_activated="true"/>
-    <item android:drawable="@drawable/highlight" android:state_pressed="true"/>
-    <item android:drawable="@drawable/drawer_background"/>
-
-</selector><!-- From: file:/Users/Ks89/AndroidStudioProjects/SPF/sPFApp/src/main/res/drawable/selectable_background.xml -->
