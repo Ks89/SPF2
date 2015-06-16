@@ -19,9 +19,7 @@
  */
 package it.polimi.spf.wfd;
 
-import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -34,31 +32,29 @@ import java.util.concurrent.Semaphore;
 
 import android.util.Log;
 
-public class GroupOwnerActor extends GroupActor implements Runnable {
+public class GroupOwnerActor extends GroupActor {
 
 	private static final String TAG = "GroupOwnerActor";
 	private ServerSocket serverSocket;
+	private ServerSocketAcceptor acceptor;
 	private Map<String, GOInternalClient> gOInternalClients = new Hashtable<String, GOInternalClient>();
-	private Thread thread;
 
 	private ExecutorService threadPool = Executors.newCachedThreadPool();
 
-	private boolean closedServerSocketAcceptor;
-
 	public GroupOwnerActor(ServerSocket serverSocket, String myIdentifier,
-			GroupActorListener listener) {
+						   GroupActorListener listener) {
 		super(listener, myIdentifier);
 		this.serverSocket = serverSocket;
-		this.thread = new Thread(this);
 	}
 
 	@Override
 	public void connect() {
-		this.thread.start();
+		acceptor = new ServerSocketAcceptor(this, serverSocket);
+		acceptor.start();
 	}
 
 	public void disconnect() {
-		this.recycle();
+		acceptor.recycle();
 		for (String id : gOInternalClients.keySet()) {
 			gOInternalClients.get(id).recycle();
 		}
@@ -73,7 +69,7 @@ public class GroupOwnerActor extends GroupActor implements Runnable {
 	private Semaphore connectionSemaphore = new Semaphore(1);
 
 	public void onClientConnected(String identifier,
-			GOInternalClient gOInternalClient) throws InterruptedException {
+								  GOInternalClient gOInternalClient) throws InterruptedException {
 		WfdLog.d(TAG, "New client connected id : " + identifier);
 		connectionSemaphore.acquire();
 		Set<String> clients = new HashSet<String>(gOInternalClients.keySet());
@@ -89,7 +85,7 @@ public class GroupOwnerActor extends GroupActor implements Runnable {
 	}
 
 	public void onClientDisconnected(String identifier)
-			throws InterruptedException, NullPointerException {
+			throws InterruptedException {
 		connectionSemaphore.acquire();
 		WfdLog.d(TAG, "Client lost id : " + identifier);
 		GOInternalClient c = gOInternalClients.remove(identifier);
@@ -102,7 +98,7 @@ public class GroupOwnerActor extends GroupActor implements Runnable {
 	}
 
 	private void signalGroupToNewClient(GOInternalClient gOInternalClient,
-			Collection<String> clients) {
+										Collection<String> clients) {
 		for (String id : clients) {
 			WfdMessage msg = new WfdMessage();
 			msg.senderId = getIdentifier();
@@ -170,7 +166,7 @@ public class GroupOwnerActor extends GroupActor implements Runnable {
 
 	private void sendBroadcastSignal(String senderId, WfdMessage msg) {
 		if (!msg.getReceiverId()
-						.equals(WfdMessage.BROADCAST_RECEIVER_ID)) {
+				.equals(WfdMessage.BROADCAST_RECEIVER_ID)) {
 			Log.e(TAG, "Illegal message in sendBroadcastSignal");
 			return;
 		}
@@ -196,28 +192,4 @@ public class GroupOwnerActor extends GroupActor implements Runnable {
 		}
 	}
 
-	@Override
-	public void run() {
-		Socket s;
-		try {
-			while (!Thread.currentThread().isInterrupted()) {
-				WfdLog.d(TAG, "accept(): waiting for a new client");
-				s = serverSocket.accept();
-				WfdLog.d(TAG, "incoming connection");
-				new GOInternalClient(s,this).start();
-			}
-		} catch (IOException e) {
-			WfdLog.e(TAG, "Error while accepting serverSocket", e);
-		}
-		WfdLog.d(TAG, "exiting while loop");
-		if (!this.closedServerSocketAcceptor) {
-			WfdLog.d(TAG, "signalling error to groupOwnerActor");
-			this.onServerSocketError();
-		}
-	}
-
-	public void recycle() {
-		this.closedServerSocketAcceptor = true;
-		this.thread.interrupt();
-	}
 }

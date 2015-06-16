@@ -56,8 +56,9 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 	protected static final String PORT = "port";
 
 	private final Context mContext;
+	private final Map<String, String> mRecordMap;
 	private final WfdMiddlewareListener mListener;
-	private final WfdBroadcastReceiver mReceiver;
+	private final WfdBroadcastReceiver mReceiver = new WfdBroadcastReceiver(this);
 
 	private WifiP2pManager mManager;
 	private Channel mChannel;
@@ -66,10 +67,10 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
 	private boolean connected = false;
 	private boolean isGroupCreated = false;
-	private Set<String> mPeerAddresses;
-	private Map<String, Integer> mPorts;
-	private Map<String, String> mIdentifiers;
-	private Map<String,WifiP2pDevice> mDeviceInfos;
+	private Set<String> mPeerAddresses = new HashSet<String>();
+	private Map<String, Integer> mPorts = new HashMap<String, Integer>();
+	private Map<String, String> mIdentifiers = new HashMap<String, String>();
+	private Map<String,WifiP2pDevice> mDeviceInfos = new HashMap<String, WifiP2pDevice>();
 	private String myIdentifier;
 	private final String instanceNamePrefix;
 
@@ -80,50 +81,30 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 	public WifiDirectMiddleware(Context context, String identifier, String instanceNamePrefix, WfdMiddlewareListener listener) {
 		this.mContext = context;
 		this.mListener = listener;
+		this.mRecordMap = new HashMap<String, String>();
 		this.instanceNamePrefix = instanceNamePrefix;
-		this.myIdentifier = identifier;
-		
-		this.mReceiver = new WfdBroadcastReceiver(this);
-		
-		this.mPeerAddresses = new HashSet<String>();
-		this.mPorts = new HashMap<String, Integer>();
-		this.mIdentifiers = new HashMap<String, String>();
-		this.mDeviceInfos = new HashMap<String, WifiP2pDevice>();
+		myIdentifier = identifier;
 	}
 
 	public void connect() {
 		try {
-			//If port == 0, a port will be assigned by the OS
 			mServerSocket = new ServerSocket(0);
 		} catch (IOException e) {
 			mListener.onError();
 			return;
 		}
-		//get the port assigned by the OS
 		mPort = mServerSocket.getLocalPort();
-		
 		mReceiver.register(mContext);
 		mManager = (WifiP2pManager) mContext.getSystemService(Context.WIFI_P2P_SERVICE);
 		mChannel = mManager.initialize(mContext, Looper.getMainLooper(), null);
-		
 		setDiscovery();
 		setAdvertisement();
-		
 		connected = true;
 	}
 
 	private void setDiscovery() {
-		/*
-         * Register listeners for DNS-SD services. These are callbacks invoked
-         * by the system when a service is actually discovered.
-         */
 		mManager.setDnsSdResponseListeners(mChannel, mServListener, mRecordListener);
-		
-		// After attaching listeners, create a service request and initiate
-        // discovery.
 		mServiceRequest = WifiP2pDnsSdServiceRequest.newInstance();
-		
-		//initiates discovery
 		mManager.addServiceRequest(mChannel, mServiceRequest, new ActionListener() {
 
 			@Override
@@ -136,8 +117,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 				Log.e(TAG, "addServiceRequest failure: " + reason);
 			}
 		});
-		
-        //starts services discovery
+
 		mManager.discoverServices(mChannel, new ActionListener() {
 
 			@Override
@@ -157,10 +137,8 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 	}
 
 	public void setAdvertisement() {
-		Map<String, String> mRecordMap = new HashMap<String, String>();
 		mRecordMap.put(PORT, Integer.toString(mPort));
 		mRecordMap.put(IDENTIFIER, myIdentifier);
-		
 		mInfo = WifiP2pDnsSdServiceInfo.newInstance(instanceNamePrefix + myIdentifier, SERVICE_TYPE, mRecordMap);
 
 		mManager.addLocalService(mChannel, mInfo, new ActionListener() {
@@ -246,29 +224,66 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
 	}
 
-	
+	private DnsSdServiceResponseListener mServListener = new DnsSdServiceResponseListener() {
+
+		@Override
+		public void onDnsSdServiceAvailable(String instanceName, String registrationType, WifiP2pDevice srcDevice) {
+			WfdLog.d(TAG, "ServiceResponseAvailable: " + instanceName + ", regType: " + registrationType + ", device: " + srcDevice);
+
+			if (!instanceName.equalsIgnoreCase(instanceName)) {
+				WfdLog.d(TAG, "Dropped external instance " + instanceName);
+			}
+		}
+	};
+
+	private DnsSdTxtRecordListener mRecordListener = new DnsSdTxtRecordListener() {
+
+		@Override
+		public void onDnsSdTxtRecordAvailable(String fullDomainName, Map<String, String> txtRecordMap, WifiP2pDevice srcDevice) {
+			WfdLog.d(TAG, "DnsSdTxtRecord available:\n\n" + fullDomainName + "\n\n" + txtRecordMap + "\n\n" + srcDevice);
+			if (!fullDomainName.startsWith(instanceNamePrefix)) {
+				return;
+			}
+			mDeviceInfos.put(srcDevice.deviceAddress, srcDevice);
+			mPeerAddresses.add(srcDevice.deviceAddress);
+
+			String identifier = txtRecordMap.get(IDENTIFIER);
+			String portString = txtRecordMap.get(PORT);
+			int port;
+			try {
+				port = Integer.parseInt(portString);
+			} catch (Throwable t) {
+				mPeerAddresses.remove(srcDevice.deviceAddress);
+				return;
+			}
+			if (!mIdentifiers.containsKey(srcDevice.deviceAddress)) {
+				WfdLog.d(TAG, "peer found: " + identifier);
+				mIdentifiers.put(srcDevice.deviceAddress, identifier);
+			}
+			mPorts.put(srcDevice.deviceAddress, port);
+			if (!isGroupCreated) {
+				createGroup();
+			}
+
+		}
+
+	};
 	private void createGroup() {
-		
 		WfdLog.d(TAG, "createGroup()");
-		if (isGroupCreated || !connected) {
+		if (isGroupCreated||!connected) {
 			WfdLog.d(TAG, "group already created or middleware not started");
 			return;
 		}
 		WfdLog.d(TAG, "attempt to create group");
-		
+		WifiP2pConfig config = new WifiP2pConfig();
 		String deviceAddress = selectDeviceAddess();
 		if (deviceAddress == null) {
 			WfdLog.d(TAG, "no device address eligible for connection");
 			return;
 		}
 		WfdLog.d(TAG, "connect target device found, device address: " + deviceAddress);
-		
-		WifiP2pConfig config = new WifiP2pConfig();
 		config.deviceAddress = deviceAddress;
 		config.wps.setup = WpsInfo.PBC;
-		//because i want that this device is the client. Attention, sometimes can be a GO, also if i used 0 here.
-        //config.groupOwnerIntent = 0; 
-
 		isGroupCreated = true;
 		mManager.connect(mChannel, config, new ActionListener() {
 
@@ -489,58 +504,5 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 			return null;
 		}
 	}
-	
-	
-	
-	private DnsSdServiceResponseListener mServListener = new DnsSdServiceResponseListener() {
-
-		@Override
-		public void onDnsSdServiceAvailable(String instanceName, String registrationType, WifiP2pDevice srcDevice) {
-			WfdLog.d(TAG, "ServiceResponseAvailable: " + instanceName + ", regType: " + registrationType + ", device: " + srcDevice);
-			
-			// A service has been discovered. Is this our app?
-			if (!instanceName.equalsIgnoreCase(instanceName)) {
-				WfdLog.d(TAG, "Dropped external instance " + instanceName);
-			}
-		}
-	};
-
-	private DnsSdTxtRecordListener mRecordListener = new DnsSdTxtRecordListener() {
-
-		@Override
-		public void onDnsSdTxtRecordAvailable(String fullDomainName, Map<String, String> txtRecordMap, WifiP2pDevice srcDevice) {
-			WfdLog.d(TAG, "DnsSdTxtRecord available:\n\n" + fullDomainName + "\n\n" + txtRecordMap + "\n\n" + srcDevice);
-			
-			if (!fullDomainName.startsWith(instanceNamePrefix)) {
-				return;
-			}
-
-			mDeviceInfos.put(srcDevice.deviceAddress, srcDevice);
-			mPeerAddresses.add(srcDevice.deviceAddress);
-			
-			String identifier = txtRecordMap.get(IDENTIFIER);
-			String portString = txtRecordMap.get(PORT);
-			int port;
-			try {
-				port = Integer.parseInt(portString);
-			} catch (Throwable t) {
-				mPeerAddresses.remove(srcDevice.deviceAddress);
-				return;
-			}
-			
-			if (!mIdentifiers.containsKey(srcDevice.deviceAddress)) {
-				WfdLog.d(TAG, "peer found: " + identifier);
-				mIdentifiers.put(srcDevice.deviceAddress, identifier);
-			}
-			
-			mPorts.put(srcDevice.deviceAddress, port);
-			
-			if (!isGroupCreated) {
-				createGroup();
-			}
-
-		}
-
-	};
 
 }

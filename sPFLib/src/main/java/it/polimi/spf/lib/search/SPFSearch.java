@@ -23,6 +23,7 @@ import java.util.Hashtable;
 import java.util.Map;
 import android.content.Context;
 import android.os.RemoteException;
+import android.util.Log;
 import android.util.SparseArray;
 import it.polimi.spf.lib.LooperUtils;
 import it.polimi.spf.lib.SPF;
@@ -66,12 +67,20 @@ public final class SPFSearch {
 			SPFSearchDescriptor searchDescriptor, final SearchCallback callback) {
 		// replace equivalent query ( equivalent == same tag )
 		if (mTagToId.get(tag) != null) {
+			Log.d("start search", "mTagToId.get(tag) != null");
 			String queryId = mTagToId.get(tag);
+			Log.d("start search", "mTagToId.get(tag)= " + mTagToId.get(tag));
 			mTagToId.delete(tag);
-			if (queryId != null && mCallbacks.remove(queryId) != null) {
+			SearchCallback state = mCallbacks.remove(queryId);
+			if (queryId != null && state != null) {
+				Log.d("start search", "queryId: " + queryId + ", state: " + state );
 				mSearchInterface.stopSearch(queryId);
+				Log.d("start search", "stopSearch");
+
 			}
 		}
+
+		Log.d("start search", "startSearch");
 		mSearchInterface.startSearch(searchDescriptor,
 				new SPFSearchCallbackImpl(callback, tag));
 	}

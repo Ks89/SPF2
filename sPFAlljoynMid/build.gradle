@@ -3,7 +3,7 @@ apply plugin: 'maven'
 
 android {
     compileSdkVersion 22
-    buildToolsVersion "23.0.0 rc2"
+    buildToolsVersion "22.0.1"
 
     defaultConfig {
         minSdkVersion 17
@@ -41,7 +41,7 @@ uploadArchives {
                 authentication(userName: nexusUsername, password: nexusPassword)
             }
 
-            pom.version = "1.0.0"
+            pom.version = "1.0.0.1"
             pom.artifactId = "alljoynmid"
             pom.groupId = "it.polimi.spf"
         }

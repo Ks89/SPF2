@@ -315,7 +315,7 @@ import android.util.Log;
 	 *            - the {@link ProfileField} to modify
 	 * @param circle
 	 *            - the circle to add
-	 * @param persona
+	 * @param p
 	 *            - the {@link SPFPersona} to modify
 	 * @return true if the operation was successful
 	 */
@@ -345,7 +345,7 @@ import android.util.Log;
 	 *            the {@link ProfileField} to modify
 	 * @param circle
 	 *            - the circle to add
-	 * @param persona
+	 * @param p
 	 *            - the {@link SPFPersona} to modify
 	 * @return true if the operation was successful
 	 */

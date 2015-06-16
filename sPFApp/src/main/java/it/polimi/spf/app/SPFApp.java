@@ -19,7 +19,7 @@
  */
 package it.polimi.spf.app;
 
-import it.polimi.spf.alljoyn.AlljoynProximityMiddleware;
+//import it.polimi.spf.alljoyn.AlljoynProximityMiddleware;
 import it.polimi.spf.framework.ExceptionLogger;
 import it.polimi.spf.framework.R;
 import it.polimi.spf.framework.SPFContext;

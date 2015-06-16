@@ -69,11 +69,12 @@ public class SPF {
 	}
 	
 	private static void loadAlljoynLibrary(){
-		if (SPFConfig.IS_X86 && SPFConfig.DEBUG) {
-			Log.w(TAG, "Alljoyn library not loaded");
-		} else {
-			System.loadLibrary("alljoyn_java");
-		}
+		// TODO FIXME AND SO ON: ALLJOYN DEACTIVATED FOR TESTING PURPOSES!!!!
+//		if (SPFConfig.IS_X86 && SPFConfig.DEBUG) {
+//			Log.w(TAG, "Alljoyn library not loaded");
+//		} else {
+//			System.loadLibrary("alljoyn_java");
+//		}
 	}
 
 	/**

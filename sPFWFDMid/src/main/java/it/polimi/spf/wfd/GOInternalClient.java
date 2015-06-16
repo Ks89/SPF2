@@ -38,7 +38,7 @@ class GOInternalClient extends Thread {
 		try {
 			socket.close();
 		} catch (IOException e) {
-			WfdLog.e(TAG, "Error while closing socket", e);
+
 		}
 		if (isAlive()) {
 			closed = true;
@@ -65,13 +65,13 @@ class GOInternalClient extends Thread {
 			try {
 				groupOwnerActor.onClientDisconnected(identifier);
 			} catch (InterruptedException e) {
-				WfdLog.e(TAG, "Error while onClientDisconnected", e);
+
 			}
 		}
 		try {
 			socket.close();
 		} catch (IOException e) {
-			WfdLog.e(TAG, "Error while closing socket", e);
+
 		}
 	}
 
@@ -84,9 +84,9 @@ class GOInternalClient extends Thread {
 				groupOwnerActor.onMessageReceived(identifier, msg);
 			}
 		} catch (Exception e) {
-			WfdLog.e(TAG, "Error while onClientDisconnected", e);
-		} 
-		WfdLog.d(TAG, "Exiting while loop: " + identifier);	
+
+		}
+		WfdLog.d(TAG, "Exiting while loop: " + identifier);
 	}
 
 	private boolean attachToGroupOwner(WfdMessage connmsg) {

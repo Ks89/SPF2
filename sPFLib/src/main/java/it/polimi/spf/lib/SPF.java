@@ -191,6 +191,7 @@ public class SPF extends Component<SPF, SPFProximityService> {
 			}
 		} catch (RemoteException e) {
 			// TODO Error management
+			e.printStackTrace();
 		}
 	}
 

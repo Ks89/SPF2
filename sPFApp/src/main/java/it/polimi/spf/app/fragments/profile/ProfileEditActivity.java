@@ -24,9 +24,13 @@ import it.polimi.spf.framework.profile.SPFPersona;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.soundcloud.android.crop.Crop;
 
 public class ProfileEditActivity extends Activity {
 
@@ -89,6 +93,16 @@ public class ProfileEditActivity extends Activity {
 			}).show();
 		} else {
 			super.finish();
+		}
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent result) {
+		Log.d("ProfileEditActivity", "Crop image calle by ProfileEditActivity");
+		if (requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
+			mFragment.beginCrop(result.getData());
+		} else if (requestCode == Crop.REQUEST_CROP) {
+			mFragment.handleCrop(resultCode, result);
 		}
 	}
 }

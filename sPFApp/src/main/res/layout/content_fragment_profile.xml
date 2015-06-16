@@ -5,12 +5,22 @@
     android:background="@color/darker_background"
     android:orientation="vertical" >
 
-    <it.polimi.spf.app.view.CircleImageView
+    <!--<it.polimi.spf.app.view.CircleImageView-->
+        <!--android:id="@+id/profile_picture"-->
+        <!--android:layout_width="130dp"-->
+        <!--android:layout_height="130dp"-->
+        <!--android:layout_gravity="center_horizontal"-->
+        <!--android:layout_marginTop="@dimen/activity_margin" />-->
+
+    <ImageView
         android:id="@+id/profile_picture"
         android:layout_width="130dp"
         android:layout_height="130dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="@dimen/activity_margin" />
+        android:scaleType="centerInside"
+        android:layout_marginTop="@dimen/activity_margin"/>
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
 
     <com.astuetz.PagerSlidingTabStrip
         android:id="@+id/profileedit_tabs"

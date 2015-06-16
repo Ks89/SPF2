@@ -34,3 +34,9 @@ proguard/
 
 .idea
 .gradle
+sPFWFDMid/build
+sPFShared/build
+sPFLib/build
+sPFFramework/build
+sPFApp/build
+sPFAlljoynMid/build
