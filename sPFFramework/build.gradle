@@ -45,7 +45,7 @@ uploadArchives {
                 authentication(userName: nexusUsername, password: nexusPassword)
             }
 
-            pom.version = "1.0.0.1"
+            pom.version = "1.0.0.2"
             pom.artifactId = "spfframework"
             pom.groupId = "it.polimi.spf"
         }

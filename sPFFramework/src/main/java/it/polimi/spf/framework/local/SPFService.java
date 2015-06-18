@@ -51,7 +51,7 @@ public class SPFService extends Service {
 	//associated to the button in the notification to catch clicks
 	private static final String STOPSPF = "it.polimi.spf.app.stop";
 
-	private static String ACTION_STOP_FOREGROUND_SWITCH = "it.polimi.spf.framework.SPFService.STOP_AND_UPDATE_SWITCH";
+	private static String ACTION_STOP_FOREGROUND_SWITCH = "it.polimi.spf.framework.SPFService.UPDATE_SWITCH";
 	private static String CALL_NAVIGATION_FRAGMENT_BROADCAST_INTENT = "it.polimi.spf.SPFService.spfservice-navigationfragment";
 	private static final int UPDATESWITCH = 1;
 
@@ -193,10 +193,14 @@ public class SPFService extends Service {
 		public void onReceive(Context context, Intent intent) {
 			Log.d(TAG, "Button 'Stop' pressed in Notification");
 
-			//now i want to call a LocalBroadcast to ask to the NavigationFragment:
-			// "Please can you stop this service and update the switch?" :)
+			//Stop the service
+			SPFService.stopForeground(service.getBaseContext());
+
+			//Now i want to call a LocalBroadcast to ask to the NavigationFragment:
+			// "Please can you update the switch status?" :)
 			Intent intent_call_navigationFragment = new Intent(ACTION_STOP_FOREGROUND_SWITCH);
 			intent_call_navigationFragment.putExtra(CALL_NAVIGATION_FRAGMENT_BROADCAST_INTENT, UPDATESWITCH);
+
 			LocalBroadcastManager.getInstance(service).sendBroadcast(intent_call_navigationFragment);
 		}
 	};

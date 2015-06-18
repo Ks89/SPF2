@@ -65,7 +65,7 @@ public class NavigationFragment extends Fragment {
 	 * Remember the position of the selected item.
 	 */
 	private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
-	private static String ACTION_STOP_FOREGROUND_SWITCH = "it.polimi.spf.framework.SPFService.STOP_AND_UPDATE_SWITCH";
+	private static String ACTION_STOP_FOREGROUND_SWITCH = "it.polimi.spf.framework.SPFService.UPDATE_SWITCH";
 	private static String CALL_NAVIGATION_FRAGMENT_BROADCAST_INTENT = "it.polimi.spf.SPFService.spfservice-navigationfragment";
 	private static final int UPDATESWITCH = 1;
 
@@ -143,8 +143,6 @@ public class NavigationFragment extends Fragment {
 		selectItem(mCurrentSelectedPosition, savedInstanceState == null);
 		mNavigation = new Navigation(getActivity());
 		SPFContext.get().registerEventListener(mNavigation);
-//		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
-//				new IntentFilter(BROADCASTFILTER));
 	}
 
 	@Override
@@ -204,15 +202,12 @@ public class NavigationFragment extends Fragment {
 	private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			Log.d(TAG, "Received message from SPFService, to stop the foreground service and to update the switch");
-
+			Log.d(TAG, "Received message from SPFService, to update the switch");
 
 			if(intent!=null && intent.getIntExtra(CALL_NAVIGATION_FRAGMENT_BROADCAST_INTENT,0) == UPDATESWITCH) {
 				//force disable switch
 				connectSwitch.setChecked(false);
 			}
-
-			SPFService.stopForeground(getActivity());
 		}
 	};
 }

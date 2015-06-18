@@ -89,7 +89,10 @@
 
     <!-- Notifications -->
     <string name="notifications_emptyview">No notifications available</string>
-    
+    <string name="notification_title">SPF</string>
+    <string name="notification_text">SPF is active.</string>
+    <string name="notification_ticker">SPF is active.</string>
+
     <!-- old fields, delete -->
     <string name="app_card_icon">App icon</string>
     <string name="action_settings">Settings</string>
