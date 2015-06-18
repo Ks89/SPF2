@@ -25,15 +25,19 @@ import it.polimi.spf.shared.SPFInfo;
 
 import android.app.Notification;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 /**
  *
  */
 public class SPFService extends Service {
+
 	// ## WARNING ##
 	// Any modification to the package name or class name of this component
 	// should be reflected in SPFInfo.
@@ -44,6 +48,14 @@ public class SPFService extends Service {
 	private static String ACTION_START_FOREGROUND = "it.polimi.spf.framework.SPFService.START_FOREGROUND";
 	private static String ACTION_STOP_FOREGROUND = "it.polimi.spf.framework.SPFService.STOP_FOREGROUND";
 
+	//associated to the button in the notification to catch clicks
+	private static final String STOPSPF = "it.polimi.spf.app.stop";
+
+	private static String ACTION_STOP_FOREGROUND_SWITCH = "it.polimi.spf.framework.SPFService.STOP_AND_UPDATE_SWITCH";
+	private static String CALL_NAVIGATION_FRAGMENT_BROADCAST_INTENT = "it.polimi.spf.SPFService.spfservice-navigationfragment";
+	private static final int UPDATESWITCH = 1;
+
+	private final Service service = this;
 	/**
 	 * Sends an intent to SPFService, using the {@link Context} provided, that
 	 * makes it start in foreground.
@@ -176,6 +188,20 @@ public class SPFService extends Service {
 		mIsStartedForeground = true;
 	}
 
+	private BroadcastReceiver receivefromServiceNotificationStop = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			Log.d(TAG, "Button 'Stop' pressed in Notification");
+
+			//now i want to call a LocalBroadcast to ask to the NavigationFragment:
+			// "Please can you stop this service and update the switch?" :)
+			Intent intent_call_navigationFragment = new Intent(ACTION_STOP_FOREGROUND_SWITCH);
+			intent_call_navigationFragment.putExtra(CALL_NAVIGATION_FRAGMENT_BROADCAST_INTENT, UPDATESWITCH);
+			LocalBroadcastManager.getInstance(service).sendBroadcast(intent_call_navigationFragment);
+		}
+	};
+
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -184,12 +210,14 @@ public class SPFService extends Service {
 		// notification for this app.
 		mDefaultNotification = new Notification.Builder(this).build();
 		Log.d(TAG, "Service created");
+		this.registerReceiver(receivefromServiceNotificationStop, new IntentFilter(STOPSPF));
 	}
 
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
 		Log.d(TAG, "Service destroyed");
+		this.unregisterReceiver(receivefromServiceNotificationStop);
 		SPF.get().onServerDestroy();
 		SPF.get().disconnect();
 	}

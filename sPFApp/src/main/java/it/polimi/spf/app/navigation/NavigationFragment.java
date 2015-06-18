@@ -24,11 +24,17 @@ import it.polimi.spf.app.navigation.Navigation.Entry;
 import it.polimi.spf.framework.SPFContext;
 import it.polimi.spf.framework.SPF;
 import it.polimi.spf.framework.local.SPFService;
+
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,32 +48,36 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 /**
  * Base navigation fragment without drawer functionalities to be used in two
  * panes version of main activity
- * 
- * @author darioarchetti
- * 
+ *
  */
 public class NavigationFragment extends Fragment {
 
 	/**
 	 * Interface for components (main activity) called when user an item is
 	 * selected
-	 * 
-	 * @author darioarchetti
-	 * 
+	 *
 	 */
-	public static interface ItemSelectedListener {
-		public void onItemSelect(int position, boolean replace);
+	public interface ItemSelectedListener {
+		void onItemSelect(int position, boolean replace);
 	}
 
 	/**
 	 * Remember the position of the selected item.
 	 */
 	private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
+	private static String ACTION_STOP_FOREGROUND_SWITCH = "it.polimi.spf.framework.SPFService.STOP_AND_UPDATE_SWITCH";
+	private static String CALL_NAVIGATION_FRAGMENT_BROADCAST_INTENT = "it.polimi.spf.SPFService.spfservice-navigationfragment";
+	private static final int UPDATESWITCH = 1;
+
+	private static final String TAG = "NotificationFragment";
 
 	private ListView mNavigationListView;
 	private int mCurrentSelectedPosition = 0;
 	private ItemSelectedListener mCallback;
 	private Navigation mNavigation;
+
+	public Switch connectSwitch;
+
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -108,7 +118,8 @@ public class NavigationFragment extends Fragment {
 		mNavigationListView.setItemChecked(mCurrentSelectedPosition, true);
 
 		// Set up connect switch
-		Switch connectSwitch = (Switch) root.findViewById(R.id.connect_switch);
+		connectSwitch = (Switch) root.findViewById(R.id.connect_switch);
+		//update switch status.
 		connectSwitch.setChecked(SPF.get().isConnected());
 
 		connectSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -132,12 +143,22 @@ public class NavigationFragment extends Fragment {
 		selectItem(mCurrentSelectedPosition, savedInstanceState == null);
 		mNavigation = new Navigation(getActivity());
 		SPFContext.get().registerEventListener(mNavigation);
+//		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
+//				new IntentFilter(BROADCASTFILTER));
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		LocalBroadcastManager.getInstance(this.getActivity()).registerReceiver((mMessageReceiver),
+				new IntentFilter(ACTION_STOP_FOREGROUND_SWITCH));
 	}
 
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
 		SPFContext.get().unregisterEventListener(mNavigation);
+		LocalBroadcastManager.getInstance(this.getActivity()).unregisterReceiver(mMessageReceiver);
 	}
 
 	@Override
@@ -177,4 +198,21 @@ public class NavigationFragment extends Fragment {
 			return mNavigation.createEntryView(Entry.values()[position]);
 		}
 	}
+
+
+
+	private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			Log.d(TAG, "Received message from SPFService, to stop the foreground service and to update the switch");
+
+
+			if(intent!=null && intent.getIntExtra(CALL_NAVIGATION_FRAGMENT_BROADCAST_INTENT,0) == UPDATESWITCH) {
+				//force disable switch
+				connectSwitch.setChecked(false);
+			}
+
+			SPFService.stopForeground(getActivity());
+		}
+	};
 }

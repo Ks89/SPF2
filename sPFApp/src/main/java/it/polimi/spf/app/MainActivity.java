@@ -28,6 +28,8 @@ import it.polimi.spf.app.fragments.personas.PersonasFragment;
 import it.polimi.spf.app.fragments.profile.ProfileFragment;
 import it.polimi.spf.app.navigation.NavigationDrawerFragment;
 import it.polimi.spf.app.navigation.NavigationFragment;
+import lombok.Getter;
+
 import android.app.Activity;
 import android.app.ActionBar;
 import android.app.Fragment;
@@ -43,6 +45,7 @@ public class MainActivity extends Activity implements NavigationFragment.ItemSel
 	 * Fragment managing the behaviors, interactions and presentation of the
 	 * navigation drawer.
 	 */
+	@Getter
 	private NavigationFragment mNavigationDrawerFragment;
 
 	/**
@@ -160,5 +163,10 @@ public class MainActivity extends Activity implements NavigationFragment.ItemSel
 		}
 
 		return getCurrentFragment().onOptionsItemSelected(item);
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
 	}
 }

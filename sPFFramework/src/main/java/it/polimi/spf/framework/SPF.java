@@ -25,7 +25,6 @@ import java.util.Random;
 import com.google.gson.Gson;
 
 import android.content.Context;
-import android.util.Log;
 
 import it.polimi.spf.framework.local.SPFService;
 import it.polimi.spf.framework.notification.SPFAdvertisingManager;
@@ -37,7 +36,6 @@ import it.polimi.spf.framework.proximity.InboundProximityInterface;
 import it.polimi.spf.framework.proximity.InboundProximityInterfaceImpl;
 import it.polimi.spf.framework.proximity.ProximityMiddleware;
 import it.polimi.spf.framework.search.SPFSearchManager;
-import it.polimi.spf.framework.security.AppRegistrationHandler;
 import it.polimi.spf.framework.security.SPFSecurityMonitor;
 import it.polimi.spf.framework.services.SPFServiceRegistry;
 import it.polimi.spf.shared.model.BaseInfo;

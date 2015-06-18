@@ -26,6 +26,10 @@ dependencies {
     compile project(':sPFShared')
 //    compile 'it.polimi.spf:spfshared:1.0.0@aar'
     compile 'com.google.code.gson:gson:2.3'
+    compile 'com.android.support:support-v4:22.2.0'
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.5.4'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.5.4'
+    compile 'com.fasterxml.jackson.core:jackson-core:2.5.4'
     provided 'org.projectlombok:lombok:1.16.4'
 }
 

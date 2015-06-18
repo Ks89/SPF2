@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginBottom="12dp"/>
+
+    <TextView
+        android:id="@+id/filaname_notification"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:layout_marginLeft="4dp"
+        android:layout_marginStart="4dp"
+        android:layout_alignTop="@+id/imageView"
+        android:layout_toRightOf="@+id/imageView"
+        android:layout_toEndOf="@+id/imageView"
+        android:textColor="@color/black"/>
+
+    <TextView
+        android:id="@+id/message_notification"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:textColor="@color/gray"
+        android:layout_below="@+id/filaname_notification"
+        android:layout_alignLeft="@+id/filaname_notification"
+        android:layout_alignStart="@+id/filaname_notification" />
+
+    <TextView
+        android:id="@+id/time_notification"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:layout_marginRight="10dp"
+        android:layout_alignBottom="@+id/filaname_notification"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:textColor="@color/gray"
+        android:visibility="invisible" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="X"
+        style="?android:attr/buttonStyleSmall"
+        android:id="@+id/stopSpfButton"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true" />
+
+</RelativeLayout>
