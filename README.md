@@ -8,7 +8,12 @@ Attention to build you must start Sonatype Nexus with all libs published. I'll p
 
 
 
-# Changelog
+# Changelog (in ita. In the future i'll translate everything)
+1. Android studio, progetti spezzati, uno con librerie tutte assieme e la sua app spfapp. Le altre sono in progetti completamente separati.
+2. Android studio + dipendenze online in un server maven in locale (per ora), cioè sonatype nexus. Questo mi permette di scrivere già i file build.gradle con le dipendenze come se fossero online, anche se in realtà sono sul pc.
+3. Per passare alla versione da rilasciare, basta uplodare i file di dipendenze .aar su JFrog Bintray con un account gratuito, insieme ai sorgenti e una sorta di documentazione (rispettando le loro regole degli account gratuiti che devono avere solo cose open source), in modo da essere disponibile direttamente in Maven Central ed importabile in Gradle con una riga sola di codice, rendendo la creazione di app basate su SPF molto più facile e rapido.
+4. Risolto bug odioso e grave che creava crash random (anche all’avvio dell’app, richiedendo la disinstallazione dell’app stessa per svuotare la propria cache), soprattutto su Lollipop. Era legato alla gestione immagine profilo. Ora ho riscritto tutto usando la combinazione di due librerie, una di soundcloud e una creata da uno su github.
+5. Fatto pulsante per attivare prossimità nella notifica in un layout personalizzato nel Notification Drawer
 
 
 # External libraries
