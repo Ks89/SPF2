@@ -45,22 +45,22 @@ import java.util.List;
  */
 public class ProfileField<E> {
 
-	private static List<ProfileField<?>> sFields = new ArrayList<ProfileField<?>>();
+	private static List<ProfileField<?>> sFields = new ArrayList<>();
 
 	// Available fields
-	public static ProfileField<String> IDENTIFIER = new ProfileField<String>("identifier", String.class);
-	public static ProfileField<String> DISPLAY_NAME = new ProfileField<String>("display_name", String.class);
-	public static ProfileField<Bitmap> PHOTO = new ProfileField<Bitmap>("photo", Bitmap.class);
+	public static ProfileField<String> IDENTIFIER = new ProfileField<>("identifier", String.class);
+	public static ProfileField<String> DISPLAY_NAME = new ProfileField<>("display_name", String.class);
+	public static ProfileField<Bitmap> PHOTO = new ProfileField<>("photo", Bitmap.class);
 	public static ProfileField<Date> BIRTHDAY = new DateProfileField("birthday");
-	public static ProfileField<String> ABOUT_ME = new ProfileField<String>("about_me", String.class);
-	public static ProfileField<String[]> EMAILS = new ProfileField<String[]>("emails", String[].class);
-	public static ProfileField<String> LOCATION = new ProfileField<String>("location", String.class);
-	public static ProfileField<String> STATUS = new ProfileField<String>("status", String.class);
-	public static ProfileField<String> GENDER = new MultipleChoicheProfileField<String>("gender", String.class, new String[] { "male", "female", "other" });
+	public static ProfileField<String> ABOUT_ME = new ProfileField<>("about_me", String.class);
+	public static ProfileField<String[]> EMAILS = new ProfileField<>("emails", String[].class);
+	public static ProfileField<String> LOCATION = new ProfileField<>("location", String.class);
+	public static ProfileField<String> STATUS = new ProfileField<>("status", String.class);
+	public static ProfileField<String> GENDER = new MultipleChoicheProfileField<>("gender", String.class, new String[] { "male", "female", "other" });
 	public static ProfileField<String[]> INTERESTS = new TagProfileField("interests");
 
 	public static List<ProfileField<?>> getDefaultFields() {
-		return new ArrayList<ProfileField<?>>(sFields);
+		return new ArrayList<>(sFields);
 	}
 
 	/**

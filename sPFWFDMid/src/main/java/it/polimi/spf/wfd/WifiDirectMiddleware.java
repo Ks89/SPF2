@@ -355,6 +355,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 						Log.e(TAG, "null destPort for group owner");
 						mManager.removeGroup(mChannel, null);
 					}
+					//TODO NULLPointerException perche' info==null (se ricordo bene)
 					instantiateGroupClient(info.groupOwnerAddress, destPort);
 				}
 			});

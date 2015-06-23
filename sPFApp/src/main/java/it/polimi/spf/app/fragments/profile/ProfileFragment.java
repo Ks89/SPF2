@@ -29,6 +29,7 @@ import java.util.List;
 import com.astuetz.PagerSlidingTabStrip;
 import com.soundcloud.android.crop.Crop;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import it.polimi.spf.app.R;
 import it.polimi.spf.app.fragments.contacts.ContactConfirmDialogView;
 import it.polimi.spf.framework.SPF;
@@ -71,7 +72,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 	 * 
 	 * @author darioarchetti
 	 */
-	public static enum Mode {
+	public enum Mode {
 		/**
 		 * Shows the profile of the local user
 		 */
@@ -136,8 +137,6 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 	private static final int SAVE_PROFILE_LOADER_ID = 1;
 
 	private static final int ACTIVITY_EDIT_PROFILE_CODE = 0;
-	private static final String PHOTO_WIDTH = "50dp";
-	private static final String PHOTO_HEIGHT = "50dp";
 	private static final String TAG = "ProfileFragment";
 
 	private String mPersonIdentifier;
@@ -145,7 +144,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 	private Mode mMode;
 	private ProfileFieldContainer mContainer;
 
-	private de.hdodenhof.circleimageview.CircleImageView resultView;
+	private CircleImageView resultView;
 
 	private ProfileFieldViewFactory mFactory;
 	private boolean mModifiedAtLeastOnce = false;
@@ -288,7 +287,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 
 	private void showPicture(Bitmap photo) {
 		// Show picture
-		this.resultView = (de.hdodenhof.circleimageview.CircleImageView) getView().findViewById(R.id.profile_picture);
+		this.resultView = (CircleImageView) getView().findViewById(R.id.profile_picture);
 		if (mMode == Mode.EDIT) {
 			this.resultView.setOnClickListener(this);
 		}

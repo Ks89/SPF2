@@ -49,23 +49,23 @@ public @interface ServiceInterface {
 	 * only for services to be executed. In service registration, this
 	 * information is ignored.
 	 */
-	public String app();
+	String app();
 
 	/**
 	 * The name of the service. If not available, it is retrieved from the name
 	 * of the annotated interface.
 	 */
-	public String name() default "";
+	String name() default "";
 
 	/**
 	 * The description of the service
 	 */
-	public String description() default "";
+	String description() default "";
 
 	/**
 	 * The version of the service. It is always mandatory.
 	 */
-	public String version();
+	String version();
 
 	/**
 	 * The component that implements the service. It will be used by SPF to bind
@@ -74,14 +74,14 @@ public @interface ServiceInterface {
 	 * registered.
 	 */
 	@Deprecated
-	public String componentName() default "";
+	String componentName() default "";
 
 	/**
 	 * The list of {@link SPFActivity} verbs supported by the service.
 	 * 
 	 * @return
 	 */
-	public String[] consumedVerbs() default {};
+	String[] consumedVerbs() default {};
 
 	/**
 	 * Utility class to convert the an instance of {@link ServiceInterface} into
@@ -90,7 +90,7 @@ public @interface ServiceInterface {
 	 * @author darioarchetti
 	 * 
 	 */
-	public final static class Convert {
+	final class Convert {
 		private Convert() {
 		}
 

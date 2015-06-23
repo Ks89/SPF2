@@ -19,8 +19,6 @@
  */
 package it.polimi.spf.wfd;
 
-import it.polimi.spf.wfd.GOInternalClient;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;

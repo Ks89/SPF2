@@ -51,7 +51,7 @@ public class PersonasCirclesFragment extends Fragment {
 
 	public static ProfileField<?>[] TAG_FIELDS = { ProfileField.INTERESTS };
 
-	private PersonasCirclesFragment() {
+	public PersonasCirclesFragment() {
 		// use new instance to generate a new object
 	}
 
