@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/Ks89/SPF2.svg?branch=master)](https://travis-ci.org/Ks89/SPF2)
+
+
 # SPF2
 
 Based on https://github.com/deib-polimi/SPF
