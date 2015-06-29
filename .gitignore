@@ -33,3 +33,5 @@ proguard/
 # IntelliJ IDEA
 /*/*.iml
 .idea
+
+SPF.iml
