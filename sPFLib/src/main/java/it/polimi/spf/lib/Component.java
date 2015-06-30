@@ -149,7 +149,7 @@ public abstract class Component<C extends Component<C, I>, I extends IInterface>
 			}
 		};
 
-		if (context.bindService(intent, connection, Context.BIND_AUTO_CREATE) == false) {
+		if (!context.bindService(intent, connection, Context.BIND_AUTO_CREATE)) {
 			callback.onError(new SPFError(SPFError.SPF_NOT_INSTALLED_ERROR_CODE));
 		}
 	}

@@ -41,6 +41,9 @@ import it.polimi.spf.shared.model.ProfileFieldContainer;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.content.Context;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -251,7 +254,8 @@ public final class ProfileFieldViewFactory {
 		((TextView) result.findViewById(R.id.profileedit_field_identifier)).setText(friendlyName);
 
 		EditText editText = (EditText) result.findViewById(R.id.profileedit_field_value);
-		editText.setOnEditorActionListener(new OnEditorActionAdapter<E>(listener, field));
+		editText.addTextChangedListener(new OnEditorActionAdapter<>(listener, field));
+
 		if (currentValue != null) {
 			editText.setText(mHelper.convertToFriendlyString(field, currentValue));
 		}
@@ -386,24 +390,35 @@ public final class ProfileFieldViewFactory {
 		}
 	}
 
-	private class OnEditorActionAdapter<T> extends BaseAdapter<T> implements OnEditorActionListener {
+
+	private class OnEditorActionAdapter<T> extends BaseAdapter<T> implements TextWatcher {
 
 		public OnEditorActionAdapter(FieldValueListener<T> listener, ProfileField<T> field) {
 			super(listener, field);
 		}
 
 		@Override
-		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+		public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			//nothing
+		}
+
+		@Override
+		public void onTextChanged(CharSequence s, int start, int before, int count) {
+			//nothing
+		}
+
+		@Override
+		public void afterTextChanged(Editable s) {
 			T value;
 			try {
-				value = mHelper.convertFromFriendlyString(getField(), v.getText().toString());
+				value = mHelper.convertFromFriendlyString(getField(), s.toString());
 				getOriginalListener().onFieldValueChanged(getField(), value);
 			} catch (InvalidValueException e) {
 				getOriginalListener().onInvalidFieldValue(getField(), mHelper.getFriendlyNameOfField(getField()));
 			}
-			return false;
 		}
 	}
+
 
 	private class OnItemSelectedAdapter<T> extends BaseAdapter<T> implements OnItemSelectedListener {
 
