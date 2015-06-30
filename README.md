@@ -17,6 +17,9 @@ Attention to build you must start Sonatype Nexus with all libs published. I'll p
 3. Per passare alla versione da rilasciare, basta uplodare i file di dipendenze .aar su JFrog Bintray con un account gratuito, insieme ai sorgenti e una sorta di documentazione (rispettando le loro regole degli account gratuiti che devono avere solo cose open source), in modo da essere disponibile direttamente in Maven Central ed importabile in Gradle con una riga sola di codice, rendendo la creazione di app basate su SPF molto più facile e rapido.
 4. Risolto bug odioso e grave che creava crash random (anche all’avvio dell’app, richiedendo la disinstallazione dell’app stessa per svuotare la propria cache), soprattutto su Lollipop. Era legato alla gestione immagine profilo. Ora ho riscritto tutto usando la combinazione di due librerie, una di soundcloud e una creata da uno su github.
 5. Fatto pulsante per attivare prossimità nella notifica in un layout personalizzato nel Notification Drawer
+6. App Coupon Client e anche la Provider ora sono tutte in appcompatv7 in material design, con ancora qualche problema sulla selezione multipla per quanto riguardano i dettagli grafici.
+7. Bug3 RISOLTO: Messo fix upload foto anche nelle altre app, come quella dei coupon perché su lollipop non si potevano utilizzare
+8. Bug4 RISOLTO: I codici coupon vengono ricevuti in continuazione e replicati all’infinito nelle liste
 
 
 # External libraries
