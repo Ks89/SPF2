@@ -19,29 +19,28 @@
  */
 package it.polimi.spf.wfdadapter;
 
-public interface WFDMessageContract {
+interface WFDMessageContract {
 
-	public static final String KEY_METHOD_ID = "methodName";
-	public static final String KEY_REQUEST = "request";
-	public static final String KEY_RESPONSE = "request";
-	public static final String KEY_TOKEN = "token";
-	public static final String KEY_ADV_PROFILE = "advProfile";
-	public static final String KEY_FIELD_IDENTIFIERS = "fieldIdentifiers";
-	public static final String KEY_APP_IDENTIFIER = "appIdentifier";
-	public static final String KEY_SENDER_IDENTIFIER = "senderIdentifier";
-	public static final String KEY_ACTION = "action";
-	public static final String KEY_QUERY_ID = "queryId";
-	public static final String KEY_QUERY = "query";
-	public static final String KEY_BASE_INFO = "baseInfo";
-	public static final String KEY_ACTIVITY = "activity";
+	String KEY_METHOD_ID = "methodName";
+	String KEY_REQUEST = "request";
+	String KEY_RESPONSE = "request";
+	String KEY_TOKEN = "token";
+	String KEY_ADV_PROFILE = "advProfile";
+	String KEY_FIELD_IDENTIFIERS = "fieldIdentifiers";
+	String KEY_APP_IDENTIFIER = "appIdentifier";
+	String KEY_SENDER_IDENTIFIER = "senderIdentifier";
+	String KEY_ACTION = "action";
+	String KEY_QUERY_ID = "queryId";
+	String KEY_QUERY = "query";
+	String KEY_BASE_INFO = "baseInfo";
+	String KEY_ACTIVITY = "activity";
 
-	public static final int ID_EXECUTE_SERVICE = 0;
-	public static final int ID_GET_PROFILE_BULK = 1;
-	public static final int ID_SEND_CONTACT_REQUEST = 2;
-	public static final int ID_SEND_NOTIFICATION = 3;
-	public static final int ID_SEND_SEARCH_SIGNAL = 4;
-	public static final int ID_SEND_SEARCH_RESULT = 5;
-	public static final int ID_SEND_SPF_ADVERTISING = 6;
-	public static final int ID_SEND_ACTIVITY = 7;
-
+	int ID_EXECUTE_SERVICE = 0;
+	int ID_GET_PROFILE_BULK = 1;
+	int ID_SEND_CONTACT_REQUEST = 2;
+	int ID_SEND_NOTIFICATION = 3;
+	int ID_SEND_SEARCH_SIGNAL = 4;
+	int ID_SEND_SEARCH_RESULT = 5;
+	int ID_SEND_SPF_ADVERTISING = 6;
+	int ID_SEND_ACTIVITY = 7;
 }

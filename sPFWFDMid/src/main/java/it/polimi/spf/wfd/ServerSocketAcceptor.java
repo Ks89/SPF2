@@ -23,11 +23,11 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class ServerSocketAcceptor extends Thread {
-	public static final String TAG  = "ServerSocketAcceptor";
-	private GroupOwnerActor groupOwner;
-	private ServerSocket serverSocket;
-	boolean closed;
+class ServerSocketAcceptor extends Thread {
+	private static final String TAG  = "ServerSocketAcceptor";
+	private final GroupOwnerActor groupOwner;
+	private final ServerSocket serverSocket;
+	private boolean closed;
 
 	public ServerSocketAcceptor(GroupOwnerActor groupOwner,
 			ServerSocket serverSocket) {

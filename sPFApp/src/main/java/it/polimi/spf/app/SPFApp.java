@@ -40,14 +40,12 @@ import android.widget.RemoteViews;
  */
 public class SPFApp extends Application {
 
-
 	private static final String STOPSPF = "it.polimi.spf.app.stop";
 
-	private RemoteViews contentView;
+	//this is useful only for testing purposes during development
+	private static final String TESTBUTTONSPF = "it.polimi.spf.app.test";
 
-	private NotificationCompat.Builder builder;
-	private Notification notification;
-	private PendingIntent pendingIntentStop;
+	private RemoteViews contentView;
 
 
 	@Override
@@ -61,7 +59,11 @@ public class SPFApp extends Application {
 		
 		//Intent for the stop button in the notification layout
 		Intent stopSpf = new Intent(STOPSPF);
-    	this.pendingIntentStop = PendingIntent.getBroadcast(this, 0, stopSpf, 0);
+		PendingIntent pendingIntentStop = PendingIntent.getBroadcast(this, 0, stopSpf, 0);
+
+		//only for testing purposes
+		Intent testDevSpf = new Intent(TESTBUTTONSPF);
+		PendingIntent pendingIntentTest = PendingIntent.getBroadcast(this, 0, testDevSpf, 0);
 
 		//intent for the click inside the notification area
 		Intent notificationIntent = new Intent(this, MainActivity.class);
@@ -69,17 +71,28 @@ public class SPFApp extends Application {
 
 		//set my custom contentView with a layout
 		this.contentView = new RemoteViews(this.getApplicationContext().getPackageName(), R.layout.notification_layout);
-			builder = new NotificationCompat.Builder(this);
-			builder.setContentIntent(pIntent);
-			builder.setTicker(getResources().getString(R.string.notification_ticker));
-			builder.setSmallIcon(R.drawable.ic_launcher);
-			builder.setAutoCancel(true);
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+		builder.setContentIntent(pIntent);
+		builder.setTicker(getResources().getString(R.string.notification_ticker));
+		builder.setSmallIcon(R.drawable.ic_launcher);
+		builder.setAutoCancel(true);
+
+
+		//------------------------------------------------------------------------------------
+		//------------------------------------------------------------------------------------
+		// when you click on buttons in a notification, the actions will be implemented in
+		// SPSService in the Framework's module.
 
 		//add the onclickpendingintent to the button
-		this.contentView.setOnClickPendingIntent(R.id.stopSpfButton, this.pendingIntentStop);
+		this.contentView.setOnClickPendingIntent(R.id.stopSpfButton,pendingIntentStop);
+
+		//only for testing purposes during development
+		this.contentView.setOnClickPendingIntent(R.id.testButton,pendingIntentTest);
+		//------------------------------------------------------------------------------------
+		//------------------------------------------------------------------------------------
 
 		//build the notification
-		this.notification = builder.build();
+		Notification notification = builder.build();
 
 		// Set data in the RemoteViews programmatically
 		this.setContentViewWithMinimalElements();
@@ -107,7 +120,7 @@ public class SPFApp extends Application {
 	private void setContentViewWithMinimalElements() {
 		// Set data in the RemoteViews programmatically
 		contentView.setImageViewResource(R.id.imageView, R.drawable.ic_launcher);
-		contentView.setTextViewText(R.id.filaname_notification, getResources().getString(R.string.notification_title));
+		contentView.setTextViewText(R.id.title_text_notification, getResources().getString(R.string.notification_title));
 		contentView.setTextViewText(R.id.message_notification, getResources().getString(R.string.notification_text));
 	}
 }

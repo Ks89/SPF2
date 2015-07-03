@@ -32,14 +32,14 @@ import java.util.concurrent.Semaphore;
 
 import android.util.Log;
 
-public class GroupOwnerActor extends GroupActor {
+class GroupOwnerActor extends GroupActor {
 
 	private static final String TAG = "GroupOwnerActor";
-	private ServerSocket serverSocket;
+	private final ServerSocket serverSocket;
 	private ServerSocketAcceptor acceptor;
-	private Map<String, GOInternalClient> gOInternalClients = new Hashtable<String, GOInternalClient>();
+	private final Map<String, GOInternalClient> gOInternalClients = new Hashtable<>();
 
-	private ExecutorService threadPool = Executors.newCachedThreadPool();
+	private final ExecutorService threadPool = Executors.newCachedThreadPool();
 
 	public GroupOwnerActor(ServerSocket serverSocket, String myIdentifier,
 						   GroupActorListener listener) {
@@ -53,7 +53,7 @@ public class GroupOwnerActor extends GroupActor {
 		acceptor.start();
 	}
 
-	public void disconnect() {
+	void disconnect() {
 		acceptor.recycle();
 		for (String id : gOInternalClients.keySet()) {
 			gOInternalClients.get(id).recycle();
@@ -66,13 +66,13 @@ public class GroupOwnerActor extends GroupActor {
 	 * aim is to serialize these operation in order to achieve total order and
 	 * consistency between instance discovery messages.
 	 */
-	private Semaphore connectionSemaphore = new Semaphore(1);
+	private final Semaphore connectionSemaphore = new Semaphore(1);
 
 	public void onClientConnected(String identifier,
 								  GOInternalClient gOInternalClient) throws InterruptedException {
 		WfdLog.d(TAG, "New client connected id : " + identifier);
 		connectionSemaphore.acquire();
-		Set<String> clients = new HashSet<String>(gOInternalClients.keySet());
+		Set<String> clients = new HashSet<>(gOInternalClients.keySet());
 		clients.add(getIdentifier());
 		GOInternalClient c = gOInternalClients
 				.put(identifier, gOInternalClient);
@@ -116,7 +116,7 @@ public class GroupOwnerActor extends GroupActor {
 		msg.type = WfdMessage.TYPE_INSTANCE_DISCOVERY;
 		msg.put(WfdMessage.ARG_IDENTIFIER, identifier);
 		msg.put(WfdMessage.ARG_STATUS, WfdMessage.INSTANCE_FOUND);
-		sendBroadcastSignal(identifier, msg);
+		sendBroadcastSignal(msg);
 	}
 
 	private void signalInstanceLossToGroup(String lostIdentifier) {
@@ -126,7 +126,7 @@ public class GroupOwnerActor extends GroupActor {
 		msg.type = WfdMessage.TYPE_INSTANCE_DISCOVERY;
 		msg.put(WfdMessage.ARG_IDENTIFIER, lostIdentifier);
 		msg.put(WfdMessage.ARG_STATUS, WfdMessage.INSTANCE_LOST);
-		sendBroadcastSignal(lostIdentifier, msg);
+		sendBroadcastSignal(msg);
 	}
 
 	public void onServerSocketError() {
@@ -134,7 +134,7 @@ public class GroupOwnerActor extends GroupActor {
 		super.onError();
 	}
 
-	public void onMessageReceived(String identifier, final WfdMessage msg) {
+	public void onMessageReceived(final WfdMessage msg) {
 		threadPool.execute(new Runnable() {
 
 			@Override
@@ -151,7 +151,7 @@ public class GroupOwnerActor extends GroupActor {
 	private void route(WfdMessage msg) {
 		final String receiverId = msg.receiverId;
 		if (receiverId.equals(WfdMessage.BROADCAST_RECEIVER_ID)) {
-			sendBroadcastSignal(msg.getSenderId(), msg);
+			sendBroadcastSignal(msg);
 		} else {
 			sendUnicastMsg(msg, receiverId);
 		}
@@ -164,13 +164,13 @@ public class GroupOwnerActor extends GroupActor {
 		}
 	}
 
-	private void sendBroadcastSignal(String senderId, WfdMessage msg) {
+	private void sendBroadcastSignal(WfdMessage msg) {
 		if (!msg.getReceiverId()
 				.equals(WfdMessage.BROADCAST_RECEIVER_ID)) {
 			Log.e(TAG, "Illegal message in sendBroadcastSignal");
 			return;
 		}
-		ArrayList<String> idSet = new ArrayList<String>(
+		ArrayList<String> idSet = new ArrayList<>(
 				gOInternalClients.keySet());
 		idSet.remove(msg.getSenderId());
 		if (!msg.getSenderId().equals(getIdentifier())) {
@@ -186,7 +186,7 @@ public class GroupOwnerActor extends GroupActor {
 		msg.setSenderId(getIdentifier());
 		String receiverId = msg.getReceiverId();
 		if (receiverId.equals(WfdMessage.BROADCAST_RECEIVER_ID)) {
-			sendBroadcastSignal(getIdentifier(), msg);
+			sendBroadcastSignal(msg);
 		} else {
 			sendUnicastMsg(msg, receiverId);
 		}

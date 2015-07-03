@@ -41,7 +41,7 @@ public class WfdMessage {
 	 * Used when no target is needed: e.g. connection does not need receiver and
 	 * instance discovery does not need sender.
 	 */
-	static final String UNKNOWN_RECEIVER_ID = "UNKNOWN_RECEIVER_ID";
+	private static final String UNKNOWN_RECEIVER_ID = "UNKNOWN_RECEIVER_ID";
 
 	/*
 	 * Message types
@@ -270,11 +270,11 @@ public class WfdMessage {
 	 * Return the integer mapped to the specified name. If the mappings does not
 	 * exists returns the provided defaultValue.
 	 * 
-	 * @param name
 	 * @param defaultValue
+	 * @param name
 	 * @return
 	 */
-	public int getInt(String name, int defaultValue) {
+	public int getInt(String name) {
 
 		return msgContent.get(name).getAsInt();
 

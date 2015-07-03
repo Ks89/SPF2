@@ -27,70 +27,38 @@ import java.net.SocketAddress;
 import android.os.Handler;
 import android.os.Looper;
 
-public class GroupClientActor extends GroupActor {
+class GroupClientActor extends GroupActor implements Runnable {
 
 	private static final String TAG = "GroupClientActor";
-	private InetAddress groupOwnerAddress;
-	private int destPort;
+	private final InetAddress groupOwnerAddress;
+	private final int destPort;
 	private Socket socket;
-	private boolean closed = false;
+	private final Thread thread;
 
 	public GroupClientActor(InetAddress groupOwnerAddress, int destPort,
 							GroupActorListener listener, String myIdentifier) {
 		super(listener,myIdentifier);
 		this.groupOwnerAddress = groupOwnerAddress;
 		this.destPort = destPort;
+
+		thread = new Thread(this);
 	}
 
 	public void connect() {
 
-		t.start();
+		thread.start();
 	}
 
 	public void disconnect() {
 		try {
 			WfdLog.d(TAG, "Disconnect called");
-			t.interrupt();
+			thread.interrupt();
 			socket.close();
 		} catch (IOException e) {
 			WfdLog.d(TAG, "error on closing socket", e);
 		}
 	}
 
-	Thread t = new Thread() {
-		@Override
-		public void run() {
-			WfdInputStream inStream;
-			try {
-				WfdLog.d(TAG, "Opening socket connection");
-				socket = new Socket();
-				SocketAddress remoteAddr = new InetSocketAddress(
-						groupOwnerAddress, destPort);
-				socket.connect(remoteAddr, 1000);
-				inStream = new WfdInputStream(socket.getInputStream());
-				establishConnection();
-				WfdLog.d(TAG, "Entering read loop");
-				while (!isInterrupted()) {
-					WfdMessage msg = inStream.readMessage();
-					WfdLog.d(TAG, "message received");
-					GroupClientActor.super.handle(msg);
-				}
-			} catch (Throwable e) {
-				WfdLog.d(TAG, "error in the run loop", e);
-			} finally {
-				closeSocket();
-			}
-			if (!closed) {
-				new Handler(Looper.getMainLooper()).post(new Runnable() {
-
-					@Override
-					public void run() {
-						GroupClientActor.super.onError();
-					}
-				});
-			}
-		}
-	};
 
 	private void closeSocket() {
 		try {
@@ -108,7 +76,7 @@ public class GroupClientActor extends GroupActor {
 	}
 
 	@Override
-	public void sendMessage(WfdMessage msg) throws IOException {
+	void sendMessage(WfdMessage msg) throws IOException {
 		WfdLog.d(TAG, "Sending message");
 		WfdOutputStream outstream = new WfdOutputStream(
 				socket.getOutputStream());
@@ -116,5 +84,37 @@ public class GroupClientActor extends GroupActor {
 	}
 
 
+	@Override
+	public void run() {
+		WfdInputStream inStream;
+		try {
+			WfdLog.d(TAG, "Opening socket connection");
+			socket = new Socket();
+			SocketAddress remoteAddr = new InetSocketAddress(
+					groupOwnerAddress, destPort);
+			socket.connect(remoteAddr, 1000);
+			inStream = new WfdInputStream(socket.getInputStream());
+			establishConnection();
+			WfdLog.d(TAG, "Entering read loop");
+			while (!thread.isInterrupted()) {
+				WfdMessage msg = inStream.readMessage();
+				WfdLog.d(TAG, "message received");
+				GroupClientActor.super.handle(msg);
+			}
+		} catch (Throwable e) {
+			WfdLog.d(TAG, "error in the run loop", e);
+		} finally {
+			closeSocket();
+		}
+		boolean closed = false;
+		if (!closed) {
+			new Handler(Looper.getMainLooper()).post(new Runnable() {
 
+				@Override
+				public void run() {
+					GroupClientActor.super.onError();
+				}
+			});
+		}
+	}
 }

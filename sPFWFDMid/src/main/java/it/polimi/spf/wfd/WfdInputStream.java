@@ -24,8 +24,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class WfdInputStream {
-	BufferedReader reader;
+class WfdInputStream {
+	private final BufferedReader reader;
 
 	public WfdInputStream(InputStream inputStream) {
 		this.reader = new BufferedReader(new InputStreamReader(inputStream));

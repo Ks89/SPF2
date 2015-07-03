@@ -346,7 +346,7 @@ public final class ProfileFieldViewFactory {
 		 * 
 		 * @param field
 		 *            - the field whose value is invalid
-		 * @param fieldFriendlyName
+		 * @param friendlyFieldName
 		 *            - the friendly name of the field
 		 */
 		public void onInvalidFieldValue(ProfileField<E> field, String friendlyFieldName);
@@ -356,7 +356,7 @@ public final class ProfileFieldViewFactory {
 		 * 
 		 * @param field
 		 *            - the field to which the circle was added
-		 * @param newCircles
+		 * @param circle
 		 *            - the circle that was added to the field
 		 */
 		public void onCircleAdded(ProfileField<E> field, String circle);

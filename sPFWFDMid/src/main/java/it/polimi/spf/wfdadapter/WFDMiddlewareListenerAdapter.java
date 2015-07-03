@@ -60,7 +60,7 @@ public class WFDMiddlewareListenerAdapter implements WfdMiddlewareListener {
 	@Override
 	public void onMessageReceived(WfdMessage request) {
 		Log.d(TAG, "Handling message");
-		switch (request.getInt(WFDMessageContract.KEY_METHOD_ID, -1)) {
+		switch (request.getInt(WFDMessageContract.KEY_METHOD_ID)) {
 		case WFDMessageContract.ID_SEND_CONTACT_REQUEST: {
 			String contactRequest = request.getString(WFDMessageContract.KEY_REQUEST);
 			mProximityInterface.sendContactRequest(ContactRequest.fromJSON(contactRequest));
@@ -103,7 +103,7 @@ public class WFDMiddlewareListenerAdapter implements WfdMiddlewareListener {
 		Log.d(TAG, "Handling request message");
 		WfdMessage response = new WfdMessage();
 
-		switch (message.getInt(WFDMessageContract.KEY_METHOD_ID, -1)) {
+		switch (message.getInt(WFDMessageContract.KEY_METHOD_ID)) {
 		case WFDMessageContract.ID_EXECUTE_SERVICE: {
 			JsonObject requestjson = message.getJsonObject(WFDMessageContract.KEY_REQUEST);
 			final InvocationRequest request = InvocationMarshaller.requestfromJsonElement(requestjson);

@@ -14,7 +14,7 @@
         android:layout_marginBottom="12dp"/>
 
     <TextView
-        android:id="@+id/filaname_notification"
+        android:id="@+id/title_text_notification"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="New Text"
@@ -31,21 +31,10 @@
         android:layout_height="wrap_content"
         android:text="New Text"
         android:textColor="@color/gray"
-        android:layout_below="@+id/filaname_notification"
-        android:layout_alignLeft="@+id/filaname_notification"
-        android:layout_alignStart="@+id/filaname_notification" />
+        android:layout_below="@+id/title_text_notification"
+        android:layout_alignLeft="@+id/title_text_notification"
+        android:layout_alignStart="@+id/title_text_notification" />
 
-    <TextView
-        android:id="@+id/time_notification"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New Text"
-        android:layout_marginRight="10dp"
-        android:layout_alignBottom="@+id/filaname_notification"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:textColor="@color/gray"
-        android:visibility="invisible" />
 
     <Button
         android:layout_width="wrap_content"
@@ -55,5 +44,14 @@
         android:id="@+id/stopSpfButton"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TEST"
+        android:id="@+id/testButton"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/stopSpfButton"/>
 
 </RelativeLayout>

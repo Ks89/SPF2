@@ -19,7 +19,7 @@
  */
 package it.polimi.spf.wfd;
 
-public interface GroupActorListener extends WfdMiddlewareListener {
+interface GroupActorListener extends WfdMiddlewareListener {
 
 	
 

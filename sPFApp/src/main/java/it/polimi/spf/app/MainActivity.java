@@ -158,11 +158,8 @@ public class MainActivity extends Activity implements NavigationFragment.ItemSel
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if (mNavigationDrawerFragment.onOptionsItemSelected(item)) {
-			return true;
-		}
-
-		return getCurrentFragment().onOptionsItemSelected(item);
+		return mNavigationDrawerFragment.onOptionsItemSelected(item) ||
+				getCurrentFragment().onOptionsItemSelected(item);
 	}
 
 	@Override

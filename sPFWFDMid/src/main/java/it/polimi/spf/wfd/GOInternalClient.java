@@ -24,8 +24,8 @@ import java.net.Socket;
 
 class GOInternalClient extends Thread {
 	private static final String TAG = "GOInternalClient";
-	private GroupOwnerActor groupOwnerActor;
-	private Socket socket;
+	private final GroupOwnerActor groupOwnerActor;
+	private final Socket socket;
 	private String identifier;
 	private volatile boolean closed = false;
 
@@ -81,7 +81,7 @@ class GOInternalClient extends Thread {
 			while (!interrupted()) {
 				WfdMessage msg = inStream.readMessage();
 				WfdLog.d(TAG, "message read: " + msg);
-				groupOwnerActor.onMessageReceived(identifier, msg);
+				groupOwnerActor.onMessageReceived(msg);
 			}
 		} catch (Exception e) {
 
@@ -91,7 +91,7 @@ class GOInternalClient extends Thread {
 
 	private boolean attachToGroupOwner(WfdMessage connmsg) {
 		if (connmsg != null && connmsg.getType().equals(WfdMessage.TYPE_CONNECT)) {
-			this.identifier = (String) connmsg.getSenderId();
+			this.identifier = connmsg.getSenderId();
 			WfdLog.d(TAG, "Attaching to groupOwner id: " + identifier);
 			try {
 				groupOwnerActor.onClientConnected(identifier, this);

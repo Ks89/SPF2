@@ -36,7 +36,7 @@ import it.polimi.spf.framework.proximity.SPFRemoteInstance;
 
 public class WFDMiddlewareAdapter implements ProximityMiddleware, WFDRemoteInstance.Factory {
 
-	private WifiDirectMiddleware mMiddleware;
+	private final WifiDirectMiddleware mMiddleware;
 	private final static String TAG = "WFDMiddleware";
 
 	public static final ProximityMiddleware.Factory FACTORY = new Factory() {
@@ -143,10 +143,7 @@ public class WFDMiddlewareAdapter implements ProximityMiddleware, WFDRemoteInsta
 
 	@Override
 	public boolean isAdvertising() {
-		if (handler == null) {
-			return false;
-		}
-		return handler.hasMessages(WfdHandler.SEND_ADVERTISING);
+		return handler != null && handler.hasMessages(WfdHandler.SEND_ADVERTISING);
 	}
 
 	private HandlerThread handlerThread;
@@ -155,7 +152,7 @@ public class WFDMiddlewareAdapter implements ProximityMiddleware, WFDRemoteInsta
 	private static class WfdHandler extends Handler {
 
 		static final int SEND_ADVERTISING = 1;
-		private WifiDirectMiddleware mMiddlewareRef;
+		private final WifiDirectMiddleware mMiddlewareRef;
 
 		public WfdHandler(Looper looper, WifiDirectMiddleware mMiddleware) {
 			super(looper);

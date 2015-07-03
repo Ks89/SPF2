@@ -52,8 +52,8 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
 	private final static String TAG = "WFDMiddleware";
 	private static final String SERVICE_TYPE = "_presence._tcp";
-	protected static final String IDENTIFIER = "identifier";
-	protected static final String PORT = "port";
+	private static final String IDENTIFIER = "identifier";
+	private static final String PORT = "port";
 
 	private final Context mContext;
 	private final Map<String, String> mRecordMap;
@@ -67,11 +67,11 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
 	private boolean connected = false;
 	private boolean isGroupCreated = false;
-	private Set<String> mPeerAddresses = new HashSet<String>();
-	private Map<String, Integer> mPorts = new HashMap<String, Integer>();
-	private Map<String, String> mIdentifiers = new HashMap<String, String>();
-	private Map<String,WifiP2pDevice> mDeviceInfos = new HashMap<String, WifiP2pDevice>();
-	private String myIdentifier;
+	private final Set<String> mPeerAddresses = new HashSet<>();
+	private final Map<String, Integer> mPorts = new HashMap<>();
+	private final Map<String, String> mIdentifiers = new HashMap<>();
+	private final Map<String,WifiP2pDevice> mDeviceInfos = new HashMap<>();
+	private final String myIdentifier;
 	private final String instanceNamePrefix;
 
 	private GroupActor mGroupActor;
@@ -81,7 +81,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 	public WifiDirectMiddleware(Context context, String identifier, String instanceNamePrefix, WfdMiddlewareListener listener) {
 		this.mContext = context;
 		this.mListener = listener;
-		this.mRecordMap = new HashMap<String, String>();
+		this.mRecordMap = new HashMap<>();
 		this.instanceNamePrefix = instanceNamePrefix;
 		myIdentifier = identifier;
 	}
@@ -136,7 +136,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 		return connected;
 	}
 
-	public void setAdvertisement() {
+	private void setAdvertisement() {
 		mRecordMap.put(PORT, Integer.toString(mPort));
 		mRecordMap.put(IDENTIFIER, myIdentifier);
 		mInfo = WifiP2pDnsSdServiceInfo.newInstance(instanceNamePrefix + myIdentifier, SERVICE_TYPE, mRecordMap);
@@ -224,7 +224,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
 	}
 
-	private DnsSdServiceResponseListener mServListener = new DnsSdServiceResponseListener() {
+	private final DnsSdServiceResponseListener mServListener = new DnsSdServiceResponseListener() {
 
 		@Override
 		public void onDnsSdServiceAvailable(String instanceName, String registrationType, WifiP2pDevice srcDevice) {
@@ -236,7 +236,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 		}
 	};
 
-	private DnsSdTxtRecordListener mRecordListener = new DnsSdTxtRecordListener() {
+	private final DnsSdTxtRecordListener mRecordListener = new DnsSdTxtRecordListener() {
 
 		@Override
 		public void onDnsSdTxtRecordAvailable(String fullDomainName, Map<String, String> txtRecordMap, WifiP2pDevice srcDevice) {
@@ -364,16 +364,14 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
 	private void instantiateGroupClient(InetAddress groupOwnerAddress, int destPort) {
 		WfdLog.d(TAG, "Instantiating group client's logic");
-		GroupClientActor gc = new GroupClientActor(groupOwnerAddress, destPort, actorListener, myIdentifier);
-		mGroupActor = gc;
+		mGroupActor = new GroupClientActor(groupOwnerAddress, destPort, actorListener, myIdentifier);
 		mGroupActor.connect();
 
 	}
 
 	private void instantiateGroupOwner() {
 		WfdLog.d(TAG, "Instantiating group owner's logic");
-		GroupOwnerActor go = new GroupOwnerActor(mServerSocket, myIdentifier, actorListener);
-		mGroupActor = go;
+		mGroupActor = new GroupOwnerActor(mServerSocket, myIdentifier, actorListener);
 		mGroupActor.connect();
 	}
 
@@ -394,9 +392,9 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 		mManager.requestConnectionInfo(mChannel, this);
 	}
 
-	public void updatePeerList(Collection<WifiP2pDevice> list) {
-		Set<String> oldList = new HashSet<String>(mPeerAddresses);
-		Set<String> newList = new HashSet<String>();
+	private void updatePeerList(Collection<WifiP2pDevice> list) {
+		Set<String> oldList = new HashSet<>(mPeerAddresses);
+		Set<String> newList = new HashSet<>();
 		for (WifiP2pDevice device : list) {
 			//update device info
 			if(mDeviceInfos.containsKey(device.deviceAddress)){
@@ -423,7 +421,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 		}
 	}
 
-	private GroupActorListener actorListener = new GroupActorListener() {
+	private final GroupActorListener actorListener = new GroupActorListener() {
 
 		@Override
 		public void onMessageReceived(WfdMessage msg) {

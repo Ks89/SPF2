@@ -19,7 +19,7 @@
  */
 package it.polimi.spf.wfd;
 
-public class ResponseHolder {
+class ResponseHolder {
 
 	private final long REQ_TIMEOUT;
 	private WfdMessage msg;

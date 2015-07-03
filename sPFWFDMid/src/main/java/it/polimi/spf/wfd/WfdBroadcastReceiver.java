@@ -28,7 +28,7 @@ import android.net.wifi.p2p.WifiP2pManager;
 
 public class WfdBroadcastReceiver extends BroadcastReceiver {
 	
-	private WifiDirectMiddleware mMid;
+	private final WifiDirectMiddleware mMid;
 	private Context mContext;
 
 	public WfdBroadcastReceiver(WifiDirectMiddleware wifiDirectMiddleware) {
@@ -51,7 +51,7 @@ public class WfdBroadcastReceiver extends BroadcastReceiver {
 				mMid.onNetworkDisconnected();
 			}
 			
-		} else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)){
+		} else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
 			
 			mMid.onPeerListChanged();
 		}
@@ -79,5 +79,4 @@ public class WfdBroadcastReceiver extends BroadcastReceiver {
 	public void unregister(){
 		mContext.unregisterReceiver(this);
 	}
-
 }

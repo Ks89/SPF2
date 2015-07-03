@@ -22,14 +22,14 @@ package it.polimi.spf.wfd;
 import java.io.IOException;
 import java.util.concurrent.Semaphore;
 
-public abstract class GroupActor {
+abstract class GroupActor {
 
 	private static final long REQUEST_TIMEOUT = 60000;
 	private static final String TAG = "GroupActor";
-	private String myIdentifier;
-	private GroupActorListener listener;
+	private final String myIdentifier;
+	private final GroupActorListener listener;
 
-	public GroupActor(GroupActorListener listener,String identifier) {
+	GroupActor(GroupActorListener listener, String identifier) {
 		this.myIdentifier=identifier;
 		this.listener = listener;
 	}
@@ -40,9 +40,9 @@ public abstract class GroupActor {
 
 	abstract void connect();
 
-	private Semaphore requestSemaphore = new Semaphore(1, true);
+	private final Semaphore requestSemaphore = new Semaphore(1, true);
 	
-	private ResponseHolder respHolder = new ResponseHolder(REQUEST_TIMEOUT);
+	private final ResponseHolder respHolder = new ResponseHolder(REQUEST_TIMEOUT);
 	
 	public WfdMessage sendRequestMessage(WfdMessage msg) throws IOException {
 		WfdLog.d(TAG, "Sending request message");
@@ -64,28 +64,34 @@ public abstract class GroupActor {
 		respHolder.set(msg);
 	}
 	
-	protected void handle(WfdMessage msg) {
+	void handle(WfdMessage msg) {
 		String type = msg.getType();
-		if (type.equals(WfdMessage.TYPE_INSTANCE_DISCOVERY)){
-			onInstanceDiscovery(msg);
-		}else if (type.equals(WfdMessage.TYPE_SIGNAL)) {
-			deliverToApplication(msg);
-		} else if (type.equals(WfdMessage.TYPE_REQUEST)) {
-			onRequestReceived(msg);
-		} else if (type.equals(WfdMessage.TYPE_RESPONSE)) {
-			onResponseReceived(msg);
-		}else if (type.equals(WfdMessage.TYPE_RESPONSE_ERROR)){
-			onResponseReceived(msg);
+		switch (type) {
+			case WfdMessage.TYPE_INSTANCE_DISCOVERY:
+				onInstanceDiscovery(msg);
+				break;
+			case WfdMessage.TYPE_SIGNAL:
+				deliverToApplication(msg);
+				break;
+			case WfdMessage.TYPE_REQUEST:
+				onRequestReceived(msg);
+				break;
+			case WfdMessage.TYPE_RESPONSE:
+				onResponseReceived(msg);
+				break;
+			case WfdMessage.TYPE_RESPONSE_ERROR:
+				onResponseReceived(msg);
+				break;
 		}
 	}
 	
 	private void onInstanceDiscovery(WfdMessage msg) {
 		String identifier = msg.getString(WfdMessage.ARG_IDENTIFIER);
 		boolean status = msg.getBoolean(WfdMessage.ARG_STATUS);
-		if(status == WfdMessage.INSTANCE_FOUND){
+		if(status) { //is equivalent to "status==WfdMessage.INSTANCE_FOUND"
 			WfdLog.d(TAG, "Instance found: "+ identifier);
 			listener.onInstanceFound(identifier);
-		}else{
+		} else {
 			WfdLog.d(TAG, "Instance lost: "+ identifier);
 			listener.onInstanceLost(identifier);
 		}
@@ -125,11 +131,11 @@ public abstract class GroupActor {
 		}
 	}
 	
-	protected String getIdentifier(){
+	String getIdentifier(){
 		return myIdentifier;
 	}
 
-	protected void onError() {
+	void onError() {
 		WfdLog.d(TAG, "onError()");
 		listener.onError();
 	}

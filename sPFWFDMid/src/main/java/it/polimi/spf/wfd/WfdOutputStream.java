@@ -23,9 +23,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
-public class WfdOutputStream {
+class WfdOutputStream {
 	
-	private PrintWriter writer;
+	private final PrintWriter writer;
 	
 	public WfdOutputStream(OutputStream outputStream) {
 		this.writer = new PrintWriter(outputStream);

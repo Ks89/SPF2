@@ -119,7 +119,7 @@ public class TagsViewer extends FlowLayout {
 		}
 	}
 	
-	private List<String> tags = new LinkedList<String>();
+	private List<String> tags = new LinkedList<>();
 
 	/**
 	 * returns the list of displayed tags.
@@ -127,7 +127,7 @@ public class TagsViewer extends FlowLayout {
 	 * @return
 	 */
 	public List<String> getTags() {
-		return new ArrayList<String>(tags);
+		return new ArrayList<>(tags);
 	}
 
 	/**

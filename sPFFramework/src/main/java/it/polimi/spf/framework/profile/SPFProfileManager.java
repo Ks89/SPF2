@@ -180,7 +180,7 @@ public class SPFProfileManager {
 	 * 
 	 * @param field
 	 *            - the {@link ProfileField} to modify
-	 * @param circle
+	 * @param group
 	 *            - the circle to add
 	 * @param persona
 	 *            - the {@link SPFPersona} to modify
@@ -195,7 +195,7 @@ public class SPFProfileManager {
 	 * 
 	 * @param field
 	 *            the {@link ProfileField} to modify
-	 * @param circle
+	 * @param group
 	 *            - the circle to add
 	 * @param persona
 	 *            - the {@link SPFPersona} to modify

@@ -34,13 +34,13 @@ import it.polimi.spf.shared.model.InvocationRequest;
 import it.polimi.spf.shared.model.InvocationResponse;
 import it.polimi.spf.shared.model.SPFActivity;
 
-public class WFDRemoteInstance extends SPFRemoteInstance {
+class WFDRemoteInstance extends SPFRemoteInstance {
 
 	private final WifiDirectMiddleware mMiddleware;
 	private final String mIdentifier;
 
-	public static interface Factory {
-		public SPFRemoteInstance createRemoteInstance(String identifier);
+	public interface Factory {
+		SPFRemoteInstance createRemoteInstance(String identifier);
 	}
 
 	public WFDRemoteInstance(WifiDirectMiddleware middleware, String identifier) {

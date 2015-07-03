@@ -21,9 +21,9 @@ package it.polimi.spf.wfd;
 
 import android.util.Log;
 
-public class WfdLog {
+class WfdLog {
 
-	public static boolean ENABLED = false;
+	private static final boolean ENABLED = false;
 
 	public static void d(String tag, String msg) {
 		if (ENABLED) {
