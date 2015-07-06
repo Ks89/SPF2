@@ -1,7 +1,7 @@
-[![License LGPL 3][badge-license]](http://www.gnu.org/licenses/lgpl-3.0.txt)
+[![License LGPL 3](https://img.shields.io/badge/license-LGPLv3-blue.svg)](http://www.gnu.org/licenses/lgpl-3.0.txt)
 [![Build Status](https://travis-ci.org/Ks89/SPF2.svg?branch=master)](https://travis-ci.org/Ks89/SPF2)
-[![Issue Stats](http://issuestats.com/github/Ks89/SPF2/badge/issue)](http://issuestats.com/github/Ks89/SPF2)
-[![Issue Stats](http://issuestats.com/github/Ks89/SPF2/badge/pr)](http://issuestats.com/github/Ks89/SPF2)
+[![Issue Stats](http://issuestats.com/github/Ks89/SPF2/badge/issue?style=flat)](http://issuestats.com/github/Ks89/SPF2)
+[![Issue Stats](http://issuestats.com/github/Ks89/SPF2/badge/pr?style=flat)](http://issuestats.com/github/Ks89/SPF2)
 
 # SPF2
 
@@ -35,5 +35,3 @@ org.projectlombok:lombok:1.16.4
 # License
 
 
-
-[bardge-license]: https://img.shields.io/badge/license-LGPLv3-blue.svg
