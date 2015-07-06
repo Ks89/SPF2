@@ -24,6 +24,11 @@ package it.polimi.spf.wfd;
 import java.io.IOException;
 import java.util.concurrent.Semaphore;
 
+/**
+ * GroupActor is the abstract class that defines the interface in common to a group owners
+ * and standard group members. It holds the logic that allows the middleware to deliver
+ * messages to the application.
+ */
 abstract class GroupActor {
 
 	private static final long REQUEST_TIMEOUT = 60000;

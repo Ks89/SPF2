@@ -50,6 +50,12 @@ import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
 import android.os.Looper;
 import android.util.Log;
 
+/**
+ * WifiDirectMiddleware class provides a coordination layer that handles the discovery of peer,
+ * the creation of the P2P Group and mediates the communication to the upper layer of the system.
+ * In particular, this last function is made with a series of adapters whose aim is to adapt the
+ * Wi-Fi Direct middleware interface to the ones required by SPF.
+ */
 public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListener {
 
 	private final static String TAG = "WFDMiddleware";

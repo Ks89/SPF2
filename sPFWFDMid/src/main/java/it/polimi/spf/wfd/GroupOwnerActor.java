@@ -34,6 +34,12 @@ import java.util.concurrent.Semaphore;
 
 import android.util.Log;
 
+/**
+ * GroupOwnerActor class adds an additional layer over the socket
+ * connection for handling the specific functions of a group owner, that include the group
+ * management as well as the routing of messages within the group.
+
+ */
 class GroupOwnerActor extends GroupActor {
 
 	private static final String TAG = "GroupOwnerActor";

@@ -30,6 +30,11 @@ import java.net.SocketAddress;
 import android.os.Handler;
 import android.os.Looper;
 
+/**
+ * GroupClientActor is the class that implements the role of a standard group member,
+ * as such its solely duty is to connect to the group owner and offer functions for sending
+ * and receiving messages through its socket connections.
+ */
 class GroupClientActor extends GroupActor implements Runnable {
 
 	private static final String TAG = "GroupClientActor";

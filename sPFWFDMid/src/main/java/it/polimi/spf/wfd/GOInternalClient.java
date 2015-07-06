@@ -25,6 +25,12 @@ package it.polimi.spf.wfd;
 import java.io.IOException;
 import java.net.Socket;
 
+/**
+ * A GOInternalClient represents the server side connection of a GroupClientActor.
+ * They are created by the GroupOwnerActor that accepts the incoming connections and uses
+ * them to send messages and to be notified of received ones. A GOInternalClient has to monitor
+ * the connections and notify the group owner when a peer leaves the network.
+ */
 class GOInternalClient extends Thread {
 	private static final String TAG = "GOInternalClient";
 	private final GroupOwnerActor groupOwnerActor;
