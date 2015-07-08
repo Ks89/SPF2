@@ -15,6 +15,8 @@ limitations under the License.
  */
 package it.polimi.spf.wfd;
 
+import android.net.wifi.p2p.WifiP2pDevice;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,5 +48,33 @@ public class ServiceList {
      */
     private ServiceList() {
         serviceList = new ArrayList<>();
+    }
+
+
+    public boolean containsService(WifiP2pDevice device) {
+        for(WiFiP2pService serv : serviceList) {
+            if(serv.getDevice().equals(device)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public WiFiP2pService getServiceByDevice(WifiP2pDevice device) {
+        for(WiFiP2pService serv : serviceList) {
+            if(serv.getDevice().equals(device)) {
+                return serv;
+            }
+        }
+        return null;
+    }
+
+    public WiFiP2pService getServiceByAddress(String address) {
+        for(WiFiP2pService serv : serviceList) {
+            if(serv.getPeerAddress().equals(address)) {
+                return serv;
+            }
+        }
+        return null;
     }
 }

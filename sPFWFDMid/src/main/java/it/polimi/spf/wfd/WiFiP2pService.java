@@ -11,6 +11,9 @@ import lombok.Setter;
  * A structure to hold service information.
  */
 public class WiFiP2pService {
+
+    public static final int INVALID = -999;
+
     @Getter
     @Setter
     private WifiP2pDevice device;
@@ -19,7 +22,7 @@ public class WiFiP2pService {
     private String identifier = null;
     @Getter
     @Setter
-    private String port = null;
+    private int port = -999;
     @Getter
     @Setter
     private String peerAddress = null;
