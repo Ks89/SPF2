@@ -26,13 +26,9 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import android.app.Service;
 import android.content.Context;
 import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
@@ -78,10 +74,6 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
 	private boolean connected = false;
 	private boolean isGroupCreated = false;
-//	private final Set<String> mPeerAddresses = new HashSet<>();
-//	private final Map<String, Integer> mPorts = new HashMap<>();
-//	private final Map<String, String> mIdentifiers = new HashMap<>();
-//	private final Map<String, WifiP2pDevice> mDeviceInfos = new HashMap<>();
 	private final String myIdentifier;
 	private final String instanceNamePrefix;
 
@@ -231,9 +223,6 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 		}
 
 		ServiceList.getInstance().getServiceList().clear();
-//		this.mIdentifiers.clear();
-//		this.mPeerAddresses.clear();
-//		this.mPorts.clear();
 
 	}
 
@@ -241,23 +230,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
 		@Override
 		public void onDnsSdServiceAvailable(String instanceName, String registrationType, WifiP2pDevice srcDevice) {
-			WfdLog.d(TAG, "ServiceResponseAvailable: " + instanceName + ", regType: " + registrationType + ", device: " + srcDevice);
-
-			//FIXME what?????
-			if (!instanceName.equalsIgnoreCase(instanceName)) {
-				WfdLog.d(TAG, "Dropped external instance " + instanceName);
-			}
-
-//			if(instanceName.equalsIgnoreCase(SERVICE_INSTANCE)) {
-//				WiFiP2pService service = new WiFiP2pService();
-//				service.setDevice(srcDevice);
-//				service.setInstanceName(instanceName);
-//				service.setServiceRegistrationType(registrationType);
-//
-//				ServiceList.getInstance().getServiceList().add(service);
-//			}
-
-			Log.d(TAG, "onDnsSdServiceAvailable " + instanceName);
+			WfdLog.d(TAG, "onDnsSdServiceAvailable ServiceResponseAvailable: " + instanceName + ", regType: " + registrationType + ", device: " + srcDevice);
 		}
 	};
 
@@ -275,9 +248,6 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 				return;
 			}
 
-//			mDeviceInfos.put(srcDevice.deviceAddress, srcDevice);
-//			mPeerAddresses.add(srcDevice.deviceAddress);
-
 			String identifier = txtRecordMap.get(IDENTIFIER);
 			String portString = txtRecordMap.get(PORT);
 
@@ -289,24 +259,17 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 			try {
 				port = Integer.parseInt(portString);
 			} catch (Throwable t) {
-//				mPeerAddresses.remove(srcDevice.deviceAddress);
 				return;
 			}
 
 			service.setIdentifier(identifier);
 
-//			if (!mIdentifiers.containsKey(srcDevice.deviceAddress)) {
-//				WfdLog.d(TAG, "peer found: " + identifier);
-//				mIdentifiers.put(srcDevice.deviceAddress, identifier);
-//			}
-
 			service.setPort(port);
-//			mPorts.put(srcDevice.deviceAddress, port);
 
 			ServiceList.getInstance().getServiceList().add(service);
 
 			if (!isGroupCreated) {
-				Log.d(TAG,"createGroup: onDnsSdTxtRecordAvailable");
+				WfdLog.d(TAG,"createGroup: onDnsSdTxtRecordAvailable");
 				createGroup();
 			}
 
@@ -371,25 +334,6 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 				}
 			}
 		}
-//
-//		//elect a device to connect:
-//		for (String deviceAddress : mPeerAddresses) {
-//			if (mPorts.containsKey(deviceAddress) && mIdentifiers.containsKey(deviceAddress)) {
-//				if(mDeviceInfos.get(deviceAddress).isGroupOwner()){
-//					return deviceAddress;
-//				}
-//				String _eligibleId = mIdentifiers.get(deviceAddress);
-//				if (_eligibleId.compareTo(myIdentifier) < 0) {
-//					if (eligibleIdentifier != null && _eligibleId.compareTo(eligibleIdentifier) < 0) {
-//						eligibleAddress = deviceAddress;
-//						eligibleIdentifier = _eligibleId;
-//					} else if (eligibleIdentifier == null) {
-//						eligibleAddress = deviceAddress;
-//						eligibleIdentifier = _eligibleId;
-//					}
-//				}
-//			}
-//		}
 		return eligibleAddress;
 	}
 
@@ -431,22 +375,12 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
 					if (service == null) {
 						Log.e(TAG, "service is null");
-//						Log.e(TAG, "null destPort for group owner");
 						mManager.removeGroup(mChannel, null);
 					} else {
 						int destPort = service.getPort();
 						//TODO NULLPointerException perche' info==null (se ricordo bene)
 						instantiateGroupClient(info.groupOwnerAddress, destPort);
 					}
-
-
-//					Integer destPort = mPorts.get(groupOwnerDevice.deviceAddress);
-//					if (destPort == null) {
-//						Log.e(TAG, "null destPort for group owner");
-//						mManager.removeGroup(mChannel, null);
-//					}
-//					//TODO NULLPointerException perche' info==null (se ricordo bene)
-//					instantiateGroupClient(info.groupOwnerAddress, destPort);
 				}
 			});
 		}
@@ -497,39 +431,10 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 			}
 		}
 
-//
-//
-//		Set<String> oldList = new HashSet<>(mPeerAddresses);
-//		Set<String> newList = new HashSet<>();
-//		for (WifiP2pDevice device : list) {
-//			//update device info
-//			if(mDeviceInfos.containsKey(device.deviceAddress)){
-//				mDeviceInfos.put(device.deviceAddress, device);
-//			}
-//			String deviceAddress = device.deviceAddress;
-//			newList.add(deviceAddress);
-//		}
-//		//remove lost device
-//		Iterator<String> iterator = oldList.iterator();
-//		while (iterator.hasNext()) {
-//			String deviceAddress = iterator.next();
-//			if (!newList.contains(deviceAddress) && mIdentifiers.containsKey(deviceAddress)) {
-//				mPeerAddresses.remove(deviceAddress);
-//				mDeviceInfos.remove(deviceAddress);
-//				String lostId = mIdentifiers.remove(deviceAddress);
-//				mPorts.remove(deviceAddress);
-//				iterator.remove();
-//				WfdLog.d(TAG, "peer removed lost id: " + lostId);
-//			}
-//		}
 		if(!ServiceList.getInstance().getServiceList().isEmpty() && !isGroupCreated) {
 			Log.d(TAG,"createGroup: updatePeerList");
 			createGroup();
 		}
-//		if(!mPeerAddresses.isEmpty()&&!isGroupCreated){
-//			Log.d(TAG,"createGroup: updatePeerList");
-//			createGroup();
-//		}
 	}
 
 	private final GroupActorListener actorListener = new GroupActorListener() {

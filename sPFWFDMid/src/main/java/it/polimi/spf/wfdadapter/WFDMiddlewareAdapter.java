@@ -51,7 +51,7 @@ public class WFDMiddlewareAdapter implements ProximityMiddleware, WFDRemoteInsta
 
 	private WFDMiddlewareAdapter(Context context, InboundProximityInterface proximityInterface, String identifier) {
 		WfdMiddlewareListener listener = new WFDMiddlewareListenerAdapter(proximityInterface, this);
-		mMiddleware = new WifiDirectMiddleware(context, identifier, "spf_", listener);
+		mMiddleware = new WifiDirectMiddleware(context, identifier, WifiDirectMiddleware.SERVICE_INSTANCE, listener);
 	}
 
 	@Override
