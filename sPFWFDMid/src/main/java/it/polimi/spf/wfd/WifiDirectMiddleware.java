@@ -60,6 +60,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
 	private final static String TAG = "WFDMiddleware";
 	private static final String SERVICE_TYPE = "_presence._tcp";
+	public static final String SERVICE_INSTANCE = "spf_";
 	private static final String IDENTIFIER = "identifier";
 	private static final String PORT = "port";
 
@@ -78,7 +79,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 	private final Set<String> mPeerAddresses = new HashSet<>();
 	private final Map<String, Integer> mPorts = new HashMap<>();
 	private final Map<String, String> mIdentifiers = new HashMap<>();
-	private final Map<String,WifiP2pDevice> mDeviceInfos = new HashMap<>();
+	private final Map<String, WifiP2pDevice> mDeviceInfos = new HashMap<>();
 	private final String myIdentifier;
 	private final String instanceNamePrefix;
 
@@ -238,9 +239,21 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 		public void onDnsSdServiceAvailable(String instanceName, String registrationType, WifiP2pDevice srcDevice) {
 			WfdLog.d(TAG, "ServiceResponseAvailable: " + instanceName + ", regType: " + registrationType + ", device: " + srcDevice);
 
+			//FIXME what?????
 			if (!instanceName.equalsIgnoreCase(instanceName)) {
 				WfdLog.d(TAG, "Dropped external instance " + instanceName);
 			}
+
+//			if(instanceName.equalsIgnoreCase(SERVICE_INSTANCE)) {
+//				WiFiP2pService service = new WiFiP2pService();
+//				service.setDevice(srcDevice);
+//				service.setInstanceName(instanceName);
+//				service.setServiceRegistrationType(registrationType);
+//
+//				ServiceList.getInstance().getServiceList().add(service);
+//			}
+
+			Log.d(TAG, "onDnsSdServiceAvailable " + instanceName);
 		}
 	};
 
@@ -270,6 +283,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 			}
 			mPorts.put(srcDevice.deviceAddress, port);
 			if (!isGroupCreated) {
+				Log.d(TAG,"createGroup: onDnsSdTxtRecordAvailable");
 				createGroup();
 			}
 
@@ -341,6 +355,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 		}
 		WfdLog.d(TAG, "connection info available");
 		if (!info.groupFormed) {
+			Log.d(TAG,"createGroup: onConnectionInfoAvailable");
 			createGroup();
 			return;
 		}
@@ -425,6 +440,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 			}
 		}
 		if(!mPeerAddresses.isEmpty()&&!isGroupCreated){
+			Log.d(TAG,"createGroup: updatePeerList");
 			createGroup();
 		}
 	}
