@@ -101,8 +101,9 @@ class GroupOwnerActor extends GroupActor {
 			signalInstanceLossToGroup(identifier);
 		}
 		connectionSemaphore.release();
-		c.recycle();
-
+		if (c != null) {
+			c.recycle();
+		}
 	}
 
 	private void signalGroupToNewClient(GOInternalClient gOInternalClient,
