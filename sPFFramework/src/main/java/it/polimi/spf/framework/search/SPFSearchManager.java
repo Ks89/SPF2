@@ -69,4 +69,9 @@ public class SPFSearchManager {
 		mSearchScheduler.onSearchResultReceived(searchResult);
 	}
 
+
+	public void setGoIntent(int goIntent) {
+		mSearchScheduler.setGoIntent(goIntent);
+	}
+
 }

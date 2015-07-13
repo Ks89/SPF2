@@ -133,6 +133,7 @@ import android.util.Log;
 		handler.sendMessage(msg);
 	}
 
+
 	/**
 	 * Registers and starts the search operation as specified in queryInfo.
 	 * @param callback 
@@ -317,6 +318,10 @@ import android.util.Log;
 			}
 		}
 	
+	}
+
+	void setGoIntent(int goIntent) {
+
 	}
 
 	private void log(String tag, String msg) {

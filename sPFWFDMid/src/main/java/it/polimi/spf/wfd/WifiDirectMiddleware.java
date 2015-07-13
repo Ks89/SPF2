@@ -86,7 +86,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 		this.mListener = listener;
 		this.mRecordMap = new HashMap<>();
 		this.instanceNamePrefix = instanceNamePrefix;
-		myIdentifier = identifier;
+		this.myIdentifier = identifier;
 	}
 
 	public void connect() {
@@ -371,7 +371,11 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 					}
 					WifiP2pDevice groupOwnerDevice = group.getOwner();
 
+					Log.d(TAG,"requestGroupInfo - groupOwnerDevice: " + groupOwnerDevice);
+
 					WiFiP2pService service = ServiceList.getInstance().getServiceByDevice(groupOwnerDevice);
+
+					Log.d(TAG,"requestGroupInfo - service: " + service);
 
 					if (service == null) {
 						Log.e(TAG, "service is null");

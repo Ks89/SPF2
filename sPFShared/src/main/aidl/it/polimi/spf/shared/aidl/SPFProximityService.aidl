@@ -1,6 +1,7 @@
 /* 
  * Copyright 2014 Jacopo Aliprandi, Dario Archetti
- * 
+ * Copyright 2015 Stefano Cappa
+ *
  * This file is part of SPF.
  * 
  * SPF is free software: you can redistribute it and/or modify it under the
@@ -167,4 +168,12 @@ interface SPFProximityService {
 	 * @return true if the person is still available, false otherwise
 	 */
     boolean lookup(in String accessToken, String personIdentifier, out SPFError err);
+
+
+    /**
+     *
+     * @param accessToken
+     * @param accessToken
+     */
+    void setGoIntent(int goIntent, out SPFError err);
 }

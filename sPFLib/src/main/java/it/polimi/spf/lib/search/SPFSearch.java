@@ -39,14 +39,16 @@ import it.polimi.spf.shared.model.SPFSearchDescriptor;
  */
 public final class SPFSearch {
 
+	private static final String TAG = "SPFSearch";
+
 	private SparseArray<String> mTagToId;
 	private SPF mSearchInterface;
 	private Map<String, SearchCallback> mCallbacks;
 
 	// TODO @hide
 	public SPFSearch(Context context, SPF searchInterface) {
-		mTagToId = new SparseArray<String>();
-		mCallbacks = new Hashtable<String, SearchCallback>();
+		mTagToId = new SparseArray<>();
+		mCallbacks = new Hashtable<>();
 		mSearchInterface = searchInterface;
 	}
 
@@ -114,6 +116,15 @@ public final class SPFSearch {
 		for (String queryId : queryIds) {
 			mSearchInterface.stopSearch(queryId);
 		}
+	}
+
+	/**
+	 * Method to set the GO Intent
+	 * @param goIntent
+	 */
+	public void setGoIntent(int goIntent) {
+		Log.d(TAG, "setGoIntent: " + goIntent);
+		mSearchInterface.setGoIntent(goIntent);
 	}
 
 	/**

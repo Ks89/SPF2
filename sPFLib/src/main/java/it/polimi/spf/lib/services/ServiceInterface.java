@@ -84,7 +84,7 @@ public @interface ServiceInterface {
 	String[] consumedVerbs() default {};
 
 	/**
-	 * Utility class to convert the an instance of {@link ServiceInterface} into
+	 * Utility class to convert an instance of {@link ServiceInterface} into
 	 * one of {@link ServiceDescriptor} containing the same information.
 	 * 
 	 * @author darioarchetti

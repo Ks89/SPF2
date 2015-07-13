@@ -207,4 +207,10 @@ import it.polimi.spf.shared.model.SPFSearchDescriptor;
 
 		ActivityInjector.injectDataInActivity(activity, target);
 	}
+
+	@Override
+	public void setGoIntent(int goIntent, SPFError err) {
+		Log.d(TAG, "setgointent " + goIntent + ", error: " + err);
+		SPF.get().getSearchManager().setGoIntent(goIntent);
+	}
 }

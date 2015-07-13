@@ -325,6 +325,16 @@ public class SPF extends Component<SPF, SPFProximityService> {
 		return resp;
 	}
 
+	public void setGoIntent(int goIntent) {
+		Log.d(TAG,"called setGoIntent in SPF.java with :" + goIntent);
+		try {
+			getService().setGoIntent(goIntent, new SPFError());
+		} catch (RemoteException e) {
+			Log.e(TAG,"Error SPF.java setGoIntent",e);
+		}
+	}
+
+
 	/**
 	 * Interface for components that wants to be notified of the status of the
 	 * connection with SPF.

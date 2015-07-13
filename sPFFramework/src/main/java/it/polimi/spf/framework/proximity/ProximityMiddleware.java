@@ -1,5 +1,6 @@
 /* 
  * Copyright 2014 Jacopo Aliprandi, Dario Archetti
+ * Copyright 2015 Stefano Cappa
  * 
  * This file is part of SPF.
  * 
@@ -23,41 +24,37 @@ import android.content.Context;
 
 /**
  * Interface for components that provides proximity capabilities to SPF.
- * 
- * @author darioarchetti
- * 
  */
 public interface ProximityMiddleware {
 
 	/**
 	 * Factory to create instances of {@link ProximityMiddleware}
-	 * 
-	 * @author darioarchetti
-	 * 
-	 * @param context - the application context
-	 * @param iface - the interface to use for incoming requests
-	 * @param identifier - the spf instance identifier to be used while advertising the service
 	 */
-	public interface Factory {
+	interface Factory {
 
-		public ProximityMiddleware createMiddleware(Context context, InboundProximityInterface iface, String identifier);
+		/**
+		 * @param context - the application context
+		 * @param iface - the interface to use for incoming requests
+		 * @param identifier - the spf instance identifier to be used while advertising the service
+		 * @return ProximityMiddleware
+		 */
+		ProximityMiddleware createMiddleware(Context context, InboundProximityInterface iface, String identifier);
 
 	}
 
-	public void connect();
+	void connect();
 
-	public void disconnect();
+	void disconnect();
 
-	public boolean isConnected();
+	boolean isConnected();
 
-	public void sendSearchResult(String queryId, String uniqueIdentifier, String baseInfo);
+	void sendSearchResult(String queryId, String uniqueIdentifier, String baseInfo);
 
-	public void sendSearchSignal(String sender, String queryId, String query);
+	void sendSearchSignal(String sender, String queryId, String query);
 
-	public void registerAdvertisement(String advertisedProfile, long sendPeriod);
+	void registerAdvertisement(String advertisedProfile, long sendPeriod);
 
-	public void unregisterAdvertisement();
+	void unregisterAdvertisement();
 
-	public boolean isAdvertising();
-
+	boolean isAdvertising();
 }
