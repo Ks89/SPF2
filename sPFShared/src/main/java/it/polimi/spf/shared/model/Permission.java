@@ -1,6 +1,7 @@
 /* 
  * Copyright 2014 Jacopo Aliprandi, Dario Archetti
- * 
+ * Copyright 2015 Stefano Cappa
+ *
  * This file is part of SPF.
  * 
  * SPF is free software: you can redistribute it and/or modify it under the
@@ -23,7 +24,7 @@ package it.polimi.spf.shared.model;
  * Describes a capability of an external application to make use of a service of
  * SPF.
  * 
- * @author darioarchetti
+ * @author darioarchetti and Stefano Cappa
  * 
  */
 public enum Permission {
@@ -73,11 +74,16 @@ public enum Permission {
 	 * Allows an application to dispatch {@link SPFActivity} to other
 	 * applications
 	 */
-	ACTIVITY_SERVICE(0x100);
+	ACTIVITY_SERVICE(0x100),
+
+	/**
+	 * Allows an application to become a Group Owner during Wi-FI Direct's Group Formation.
+	 */
+	BECOME_GROUPOWNER(0x200);
 
 	private int mCode;
 
-	private Permission(int code) {
+	Permission(int code) {
 		this.mCode = code;
 	}
 

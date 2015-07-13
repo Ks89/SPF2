@@ -83,6 +83,13 @@ public class SPF extends Component<SPF, SPFProximityService> {
 	 *            ready, when the connection is closed or when an error occurs.
 	 */
 	public static void connect(final Context context, final ConnectionListener listener) {
+		Log.d(TAG,SPFPermissionManager.get().getRequiredPermission()+"");
+		Log.d(TAG, Integer.toHexString(SPFPermissionManager.get().getRequiredPermission()) + "");
+		Log.d(TAG, Integer.toBinaryString(SPFPermissionManager.get().getRequiredPermission()) + "");
+
+		if(SPFPermissionManager.get().getRequiredPermission()>256) {
+			Log.d(TAG,"I have the powaaaaa");
+		}
 		Component.load(context, DESCRIPTOR, asBase(listener));
 	}
 
