@@ -215,19 +215,19 @@ import it.polimi.spf.shared.model.SPFSearchDescriptor;
 	public InvocationResponse setGoIntent(int goIntent, String accessToken, String targetId, SPFError err) throws RemoteException {
 		Log.d("SPFProximityServiceImpl", "setgointent " + goIntent + ", accessToken: " + accessToken + ", targetId: " + targetId);
 
-//		try {
-//			Log.d("SPFProximityServiceImpl", "mSecurityMonitor.validateAccess REQUEST");
-//			mSecurityMonitor.validateAccess(accessToken, Permission.BECOME_GROUPOWNER);
-//			Log.d("SPFProximityServiceImpl", "mSecurityMonitor.validateAccess OK");
-//		} catch (TokenNotValidException e) {
-//			Log.d("SPFProximityServiceImpl", "mSecurityMonitor.validateAccess ERROR TOKEN_NOT_VALID_ERROR_CODE");
-//			err.setCode(SPFError.TOKEN_NOT_VALID_ERROR_CODE);
-//			return null;
-//		} catch (PermissionDeniedException e) {
-//			Log.d("SPFProximityServiceImpl", "mSecurityMonitor.validateAccess ERROR PERMISSION_DENIED_ERROR_CODE");
-//			err.setCode(SPFError.PERMISSION_DENIED_ERROR_CODE);
-//			return null;
-//		}
+		try {
+			Log.d("SPFProximityServiceImpl", "mSecurityMonitor.validateAccess REQUEST");
+			mSecurityMonitor.validateAccess(accessToken, Permission.BECOME_GROUPOWNER);
+			Log.d("SPFProximityServiceImpl", "mSecurityMonitor.validateAccess OK");
+		} catch (TokenNotValidException e) {
+			Log.d("SPFProximityServiceImpl", "mSecurityMonitor.validateAccess ERROR TOKEN_NOT_VALID_ERROR_CODE");
+			err.setCode(SPFError.TOKEN_NOT_VALID_ERROR_CODE);
+			return null;
+		} catch (PermissionDeniedException e) {
+			Log.d("SPFProximityServiceImpl", "mSecurityMonitor.validateAccess ERROR PERMISSION_DENIED_ERROR_CODE");
+			err.setCode(SPFError.PERMISSION_DENIED_ERROR_CODE);
+			return null;
+		}
 
 		Log.d("SPFProximityServiceImpl","requesting SPFRemoteInstance");
 
