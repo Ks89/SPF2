@@ -88,6 +88,14 @@ class WFDRemoteInstance extends SPFRemoteInstance {
 		}
 	}
 
+	@Override
+	public boolean setGoIntent(int goIntent) {
+
+		Log.d("WFDRemoteInstance", "gointent: " + goIntent);
+
+		return true;
+	}
+
 	private void logException(String methodName, IOException e) {
 		Log.e("WFDRemoteInstance", "Exception @ " + methodName, e);
 	}

@@ -130,7 +130,7 @@ public class SPFServiceExecutor {
 		}
 	}
 
-	protected void recycle() {
+		protected void recycle() {
 		// TODO Auto-generated method stub
 	}
 }

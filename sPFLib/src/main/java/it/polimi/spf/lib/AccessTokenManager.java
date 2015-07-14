@@ -1,6 +1,7 @@
 /* 
  * Copyright 2014 Jacopo Aliprandi, Dario Archetti
- * 
+ * Copyright 2015 Stefano Cappa
+ *
  * This file is part of SPF.
  * 
  * SPF is free software: you can redistribute it and/or modify it under the
@@ -53,7 +54,7 @@ class AccessTokenManager {
 	private String mToken;
 
 	private volatile boolean isWaitingForResponse = false;
-	private List<RegistrationCallback> mPendingRequests = new ArrayList<RegistrationCallback>();
+	private final List<RegistrationCallback> mPendingRequests = new ArrayList<>();
 	private Context mContext;
 
 	public synchronized static AccessTokenManager get(Context context) {
@@ -189,10 +190,10 @@ class AccessTokenManager {
 		}
 	}
 
-	public static interface RegistrationCallback {
-		public void onRegistrationSuccessful();
+	public interface RegistrationCallback {
+		void onRegistrationSuccessful();
 
-		public void onRegistrationError(SPFError errorMsg);
+		void onRegistrationError(SPFError errorMsg);
 	}
 
 	private SPFAppRegistrationCallback.Stub mServiceCallback = new SPFAppRegistrationCallback.Stub() {

@@ -28,7 +28,7 @@ import it.polimi.spf.shared.model.SPFActivity;
 public class ActivityInjector {
 
 	public static void injectDataInActivity(SPFActivity activity, String targetId) {
-		ProfileFieldContainer pfc = it.polimi.spf.framework.SPF.get().getProfileManager().getProfileFieldBulk(SPFPersona.DEFAULT, ProfileField.IDENTIFIER, ProfileField.DISPLAY_NAME);
+		ProfileFieldContainer pfc = SPF.get().getProfileManager().getProfileFieldBulk(SPFPersona.DEFAULT, ProfileField.IDENTIFIER, ProfileField.DISPLAY_NAME);
 
 		activity.put(SPFActivity.SENDER_DISPLAY_NAME, pfc.getFieldValue(ProfileField.DISPLAY_NAME));
 		activity.put(SPFActivity.SENDER_IDENTIFIER, pfc.getFieldValue(ProfileField.IDENTIFIER));

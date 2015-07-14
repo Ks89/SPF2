@@ -1,6 +1,7 @@
 /* 
  * Copyright 2014 Jacopo Aliprandi, Dario Archetti
- * 
+ * Copyright 2015 Stefano Cappa
+ *
  * This file is part of SPF.
  * 
  * SPF is free software: you can redistribute it and/or modify it under the
@@ -112,6 +113,7 @@ public class SPFPerson {
 		SPFServiceExecutor executor = spf.getComponent(SPF.SERVICE_EXECUTION);
 		return executor.sendActivity(mIdentifier, activity);
 	}
+
 
 	@Override
 	public boolean equals(Object o) {

@@ -320,10 +320,6 @@ import android.util.Log;
 	
 	}
 
-	void setGoIntent(int goIntent) {
-
-	}
-
 	private void log(String tag, String msg) {
 		Log.d(tag, msg);
 	}

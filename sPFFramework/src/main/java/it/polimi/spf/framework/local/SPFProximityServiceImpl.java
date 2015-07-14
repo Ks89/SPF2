@@ -31,6 +31,7 @@ import it.polimi.spf.framework.security.SPFSecurityMonitor;
 import it.polimi.spf.framework.security.TokenNotValidException;
 import it.polimi.spf.framework.services.ActivityInjector;
 
+import it.polimi.spf.framework.services.SPFServiceRegistry;
 import it.polimi.spf.shared.aidl.SPFProximityService;
 import it.polimi.spf.shared.aidl.SPFSearchCallback;
 import it.polimi.spf.shared.model.InvocationRequest;
@@ -208,9 +209,45 @@ import it.polimi.spf.shared.model.SPFSearchDescriptor;
 		ActivityInjector.injectDataInActivity(activity, target);
 	}
 
+
+	//this is the implementation of the method definied in AIDL file in SPFShared
 	@Override
-	public void setGoIntent(int goIntent, SPFError err) {
-		Log.d(TAG, "setgointent " + goIntent + ", error: " + err);
-		SPF.get().getSearchManager().setGoIntent(goIntent);
+	public InvocationResponse setGoIntent(int goIntent, String accessToken, String targetId, SPFError err) throws RemoteException {
+		Log.d("SPFProximityServiceImpl", "setgointent " + goIntent + ", accessToken: " + accessToken + ", targetId: " + targetId);
+
+//		try {
+//			Log.d("SPFProximityServiceImpl", "mSecurityMonitor.validateAccess REQUEST");
+//			mSecurityMonitor.validateAccess(accessToken, Permission.BECOME_GROUPOWNER);
+//			Log.d("SPFProximityServiceImpl", "mSecurityMonitor.validateAccess OK");
+//		} catch (TokenNotValidException e) {
+//			Log.d("SPFProximityServiceImpl", "mSecurityMonitor.validateAccess ERROR TOKEN_NOT_VALID_ERROR_CODE");
+//			err.setCode(SPFError.TOKEN_NOT_VALID_ERROR_CODE);
+//			return null;
+//		} catch (PermissionDeniedException e) {
+//			Log.d("SPFProximityServiceImpl", "mSecurityMonitor.validateAccess ERROR PERMISSION_DENIED_ERROR_CODE");
+//			err.setCode(SPFError.PERMISSION_DENIED_ERROR_CODE);
+//			return null;
+//		}
+
+		Log.d("SPFProximityServiceImpl","requesting SPFRemoteInstance");
+
+		try {
+			SPFRemoteInstance target = SPF.get().getPeopleManager().getPerson(targetId);
+			Log.d("SPFProximityServiceImpl", "target= " + target);
+			if (target == null) {
+				Log.d("SPFProximityServiceImpl", "SPFRemoteInstance ERROR INSTANCE_NOT_FOUND_ERROR_CODE");
+				err.setCode(SPFError.INSTANCE_NOT_FOUND_ERROR_CODE);
+				return InvocationResponse.error("target cannot be found in PeopleManager");
+			}
+
+			Log.d("SPFProximityServiceImpl", "Requesting setGoIntent to WFDMiddleware with gointent: " + goIntent);
+			target.setGoIntent(goIntent);
+
+			return InvocationResponse.result("goIntent sent to middleware");
+		} catch (Throwable t) {
+			Log.e("SPFProximityServiceImpl", "Error setting gointent", t);
+			err.setCode(SPFError.NETWORK_ERROR_CODE);
+			return InvocationResponse.error("SPF Internal error while setting gointent. See SPF log for details");
+		}
 	}
 }

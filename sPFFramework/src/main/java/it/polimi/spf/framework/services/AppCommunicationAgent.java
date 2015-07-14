@@ -1,6 +1,7 @@
 /* 
  * Copyright 2014 Jacopo Aliprandi, Dario Archetti
- * 
+ * Copyright 2015 Stefano Cappa
+ *
  * This file is part of SPF.
  * 
  * SPF is free software: you can redistribute it and/or modify it under the
@@ -95,7 +96,7 @@ import android.util.Log;
 	 */
 	public AppCommunicationAgent(Context context) {
 		mContext = context;
-		mProxies = new HashMap<String, AppServiceProxy>();
+		mProxies = new HashMap<>();
 
 		// Dispatch Housekeeper messages on the main thread because threads from
 		// the MW thread pool may get terminated once the execution request has

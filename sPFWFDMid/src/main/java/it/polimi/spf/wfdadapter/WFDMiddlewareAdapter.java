@@ -29,6 +29,9 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+
+import it.polimi.spf.framework.security.PermissionHelper;
+import it.polimi.spf.shared.model.Permission;
 import it.polimi.spf.wfd.WfdMessage;
 import it.polimi.spf.wfd.WfdMiddlewareListener;
 import it.polimi.spf.wfd.WifiDirectMiddleware;
@@ -51,6 +54,8 @@ public class WFDMiddlewareAdapter implements ProximityMiddleware, WFDRemoteInsta
 
 	private WFDMiddlewareAdapter(Context context, InboundProximityInterface proximityInterface, String identifier) {
 		WfdMiddlewareListener listener = new WFDMiddlewareListenerAdapter(proximityInterface, this);
+
+
 		mMiddleware = new WifiDirectMiddleware(context, identifier, WifiDirectMiddleware.SERVICE_INSTANCE, listener);
 	}
 

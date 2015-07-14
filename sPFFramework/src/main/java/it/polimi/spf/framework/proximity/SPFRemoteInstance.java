@@ -127,4 +127,11 @@ public abstract class SPFRemoteInstance {
 
 	protected abstract void sendNotification(String senderIdentifier, String action);
 
+
+
+	/**
+	 * Dispatches the goIntent to the remote instance
+	 */
+	public abstract boolean setGoIntent(int goIntent);
+
 }

@@ -83,7 +83,7 @@ public class SPF extends Component<SPF, SPFProximityService> {
 	 *            ready, when the connection is closed or when an error occurs.
 	 */
 	public static void connect(final Context context, final ConnectionListener listener) {
-		Log.d(TAG,SPFPermissionManager.get().getRequiredPermission()+"");
+		Log.d(TAG, SPFPermissionManager.get().getRequiredPermission()+"");
 		Log.d(TAG, Integer.toHexString(SPFPermissionManager.get().getRequiredPermission()) + "");
 		Log.d(TAG, Integer.toBinaryString(SPFPermissionManager.get().getRequiredPermission()) + "");
 
@@ -332,13 +332,27 @@ public class SPF extends Component<SPF, SPFProximityService> {
 		return resp;
 	}
 
-	public void setGoIntent(int goIntent) {
+	public InvocationResponse setGoIntentValue(int goIntent, String target) {
 		Log.d(TAG,"called setGoIntent in SPF.java with :" + goIntent);
+
+		String token = getAccessToken();
+		SPFError err = new SPFError();
+		InvocationResponse resp;
+
 		try {
-			getService().setGoIntent(goIntent, new SPFError());
+			Log.d(TAG,"SPF - setGoIntentValue with: " + goIntent + ", token: " + token + ", target: " + target);
+			resp = getService().setGoIntent(goIntent,token, target, err);
 		} catch (RemoteException e) {
 			Log.e(TAG,"Error SPF.java setGoIntent",e);
+			return InvocationResponse.error(e);
 		}
+
+		if (!err.isOk()) {
+			handleError(err);
+			resp = InvocationResponse.error(err.toString());
+		}
+
+		return resp;
 	}
 
 

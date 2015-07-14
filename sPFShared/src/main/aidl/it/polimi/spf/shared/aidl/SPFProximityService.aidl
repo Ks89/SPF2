@@ -175,5 +175,5 @@ interface SPFProximityService {
      * @param accessToken
      * @param accessToken
      */
-    void setGoIntent(int goIntent, out SPFError err);
+     InvocationResponse setGoIntent(int goIntent, String accessToken, String target, out SPFError err);
 }

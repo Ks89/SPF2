@@ -70,8 +70,8 @@ public class SPFSearchManager {
 	}
 
 
-	public void setGoIntent(int goIntent) {
-		mSearchScheduler.setGoIntent(goIntent);
-	}
+//	public void setGoIntent(int goIntent) {
+//		mSearchScheduler.setGoIntent(goIntent);
+//	}
 
 }
