@@ -77,6 +77,8 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 	private final String myIdentifier;
 	private final String instanceNamePrefix;
 
+	private int goIntent;
+
 	private GroupActor mGroupActor;
 	private ServerSocket mServerSocket;
 	private int mPort;
@@ -87,6 +89,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 		this.mRecordMap = new HashMap<>();
 		this.instanceNamePrefix = instanceNamePrefix;
 		this.myIdentifier = identifier;
+		this.goIntent = 0;
 	}
 
 	public void connect() {
@@ -292,6 +295,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 		WfdLog.d(TAG, "connect target device found, device address: " + deviceAddress);
 		config.deviceAddress = deviceAddress;
 		config.wps.setup = WpsInfo.PBC;
+		config.groupOwnerIntent = this.goIntent;
 		isGroupCreated = true;
 		mManager.connect(mChannel, config, new ActionListener() {
 
@@ -522,6 +526,10 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 			WfdLog.d(TAG, "sendRequestMessage( ) error", e);
 			return null;
 		}
+	}
+
+	public void setGoIntent(int goIntent) {
+		this.goIntent = goIntent;
 	}
 
 }

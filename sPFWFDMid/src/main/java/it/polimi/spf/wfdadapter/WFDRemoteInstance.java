@@ -90,8 +90,8 @@ class WFDRemoteInstance extends SPFRemoteInstance {
 
 	@Override
 	public boolean setGoIntent(int goIntent) {
-
 		Log.d("WFDRemoteInstance", "gointent: " + goIntent);
+		mMiddleware.setGoIntent(goIntent);
 
 		return true;
 	}
