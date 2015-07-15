@@ -51,7 +51,6 @@ public class SPFService extends Service {
 
 	//associated to the button in the notification to catch clicks
 	private static final String STOPSPF = "it.polimi.spf.app.stop";
-	private static final String TESTBUTTONSPF = "it.polimi.spf.app.test";
 
 
 	private static String ACTION_STOP_FOREGROUND_SWITCH = "it.polimi.spf.framework.SPFService.UPDATE_SWITCH";
@@ -208,25 +207,6 @@ public class SPFService extends Service {
 		}
 	};
 
-	private BroadcastReceiver receivefromServiceNotificationTestingDuringDevelopment = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			Log.d(TAG, "Button 'TEST' pressed in Notification");
-
-			//Restart the service
-			SPFService.stopForeground(service.getBaseContext());
-			SPFService.startForeground(service.getBaseContext());
-
-//			//Now i want to call a LocalBroadcast to ask to the NavigationFragment:
-//			// "Please can you update the switch status?" :)
-//			Intent intent_call_navigationFragment = new Intent(ACTION_STOP_FOREGROUND_SWITCH);
-//			intent_call_navigationFragment.putExtra(CALL_NAVIGATION_FRAGMENT_BROADCAST_INTENT, UPDATESWITCH);
-//
-//			LocalBroadcastManager.getInstance(service).sendBroadcast(intent_call_navigationFragment);
-		}
-	};
-
-
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -236,7 +216,6 @@ public class SPFService extends Service {
 		mDefaultNotification = new Notification.Builder(this).build();
 		Log.d(TAG, "Service created");
 		this.registerReceiver(receivefromServiceNotificationStop, new IntentFilter(STOPSPF));
-		this.registerReceiver(receivefromServiceNotificationTestingDuringDevelopment, new IntentFilter(TESTBUTTONSPF));
 	}
 
 	@Override
@@ -244,7 +223,6 @@ public class SPFService extends Service {
 		super.onDestroy();
 		Log.d(TAG, "Service destroyed");
 		this.unregisterReceiver(receivefromServiceNotificationStop);
-		this.unregisterReceiver(receivefromServiceNotificationTestingDuringDevelopment);
 		SPF.get().onServerDestroy();
 		SPF.get().disconnect();
 	}

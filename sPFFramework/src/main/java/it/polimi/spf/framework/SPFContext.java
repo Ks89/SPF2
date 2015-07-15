@@ -70,12 +70,27 @@ public class SPFContext {
 	 * 
 	 * @param context
 	 */
-	public static synchronized void initialize(Context context, ProximityMiddleware.Factory factory) {
+	public static synchronized void initialize(int goIntent, Context context, ProximityMiddleware.Factory factory) {
 		if (context == null || factory == null) {
 			throw new NullPointerException("Arguments cannot be null");
 		}
 
-		SPF.initialize(context, factory);
+		SPF.initialize(goIntent, context, factory);
+		sInstance = new SPFContext();
+	}
+
+	/**
+	 * Initializes SPFContext. After this method has been called, you can get
+	 * references to SPFContext and SPF.
+	 *
+	 * @param context
+	 */
+	public static synchronized void initializeForcedNoSingleton(int goIntent, Context context, ProximityMiddleware.Factory factory) {
+		if (context == null || factory == null) {
+			throw new NullPointerException("Arguments cannot be null");
+		}
+
+		SPF.initializeForcedNoSingleton(goIntent, context, factory);
 		sInstance = new SPFContext();
 	}
 

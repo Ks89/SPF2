@@ -20,6 +20,7 @@
 package it.polimi.spf.app.navigation;
 
 import it.polimi.spf.app.R;
+import it.polimi.spf.app.SPFApp;
 import it.polimi.spf.app.navigation.Navigation.Entry;
 import it.polimi.spf.framework.SPFContext;
 import it.polimi.spf.framework.SPF;
@@ -76,7 +77,7 @@ public class NavigationFragment extends Fragment {
 	private ItemSelectedListener mCallback;
 	private Navigation mNavigation;
 
-	public Switch connectSwitch;
+	public Switch connectSwitch, groupOwnerSwitch;
 
 
 	@Override
@@ -127,12 +128,37 @@ public class NavigationFragment extends Fragment {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				if (isChecked) {
+					if(groupOwnerSwitch.isChecked()) {
+						Log.d(TAG, "connectSwitch checked -> gointent=15");
+//						SPF.get().forceGoIntentFromSPFApp(15);
+						((SPFApp)getActivity().getApplication()).initSPF(15);
+					} else {
+//						SPF.get().forceGoIntentFromSPFApp(0);
+						((SPFApp)getActivity().getApplication()).initSPF(0);
+
+					}
+
+
 					SPFService.startForeground(getActivity());
 				} else {
 					SPFService.stopForeground(getActivity());
 				}
 			}
 		});
+
+		// Set up group owner switch
+		groupOwnerSwitch = (Switch) root.findViewById(R.id.groupOwner_switch);
+		groupOwnerSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				if (isChecked) {
+					Log.d(TAG, "connectSwitch checked -> gointent=15");
+				} else {
+					Log.d(TAG, "connectSwitch unchecked -> gointent=0");
+				}
+			}
+		});
+
 
 		return root;
 	}

@@ -55,6 +55,7 @@ public class SPF extends Component<SPF, SPFProximityService> {
 	public static final int SERVICE_EXECUTION = 1;
 	public static final int REMOTE_PROFILE = 2;
 	private static final String TAG = "SPF";
+	public static SPF instance = null;
 
 	private static final Descriptor<SPF, SPFProximityService> DESCRIPTOR = new Descriptor<SPF, SPFProximityService>() {
 
@@ -70,9 +71,11 @@ public class SPF extends Component<SPF, SPFProximityService> {
 
 		@Override
 		public SPF createInstance(Context context, SPFProximityService serviceInterface, ServiceConnection connection, ConnectionCallback<SPF> callback) {
-			return new SPF(context, serviceInterface, connection, callback);
+			instance = new SPF(context, serviceInterface, connection, callback);
+			return instance;
 		}
 	};
+
 
 	/**
 	 * Creates a connection to SPF asynchronously.
@@ -84,13 +87,6 @@ public class SPF extends Component<SPF, SPFProximityService> {
 	 *            ready, when the connection is closed or when an error occurs.
 	 */
 	public static void connect(final Context context, final ConnectionListener listener) {
-		Log.d(TAG, SPFPermissionManager.get().getRequiredPermission()+"");
-		Log.d(TAG, Integer.toHexString(SPFPermissionManager.get().getRequiredPermission()) + "");
-		Log.d(TAG, Integer.toBinaryString(SPFPermissionManager.get().getRequiredPermission()) + "");
-
-		if(SPFPermissionManager.get().getRequiredPermission()>256) {
-			Log.d(TAG,"I have the powaaaaa");
-		}
 		Component.load(context, DESCRIPTOR, asBase(listener));
 	}
 
@@ -334,7 +330,7 @@ public class SPF extends Component<SPF, SPFProximityService> {
 	}
 
 	public InvocationResponse setGoIntentValue(int goIntent, String target) {
-		Log.d(TAG,"called setGoIntent in SPF.java with :" + goIntent);
+		Log.d(TAG,"called setGoIntent in SPF.java from external application with :" + goIntent);
 
 		String token = getAccessToken();
 		SPFError err = new SPFError();
@@ -342,7 +338,7 @@ public class SPF extends Component<SPF, SPFProximityService> {
 
 		try {
 			Log.d(TAG,"SPF - setGoIntentValue with: " + goIntent + ", token: " + token + ", target: " + target);
-			resp = getService().setGoIntent(goIntent,token, target, err);
+			resp = getService().setGoIntent(goIntent, token, target, err);
 		} catch (RemoteException e) {
 			Log.e(TAG,"Error SPF.java setGoIntent",e);
 			return InvocationResponse.error(e);
@@ -364,7 +360,7 @@ public class SPF extends Component<SPF, SPFProximityService> {
 	 * @author darioarchetti
 	 * 
 	 */
-	public static interface ConnectionListener {
+	public interface ConnectionListener {
 
 		/**
 		 * Called when the connection to SPF is available.
@@ -373,17 +369,17 @@ public class SPF extends Component<SPF, SPFProximityService> {
 		 *            - the instance of SPF to use to interact with people in
 		 *            the proximity.
 		 */
-		public void onConnected(SPF instance);
+		void onConnected(SPF instance);
 
 		/**
 		 * Called when an error occurs.
 		 */
-		public void onError(SPFError errorMsg);
+		void onError(SPFError errorMsg);
 
 		/**
 		 * Called when the connection with SPF is closed.
 		 */
-		public void onDisconnected();
+		void onDisconnected();
 
 	}
 }

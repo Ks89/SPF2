@@ -32,7 +32,6 @@ import it.polimi.spf.framework.security.SPFSecurityMonitor;
 import it.polimi.spf.framework.security.TokenNotValidException;
 import it.polimi.spf.framework.services.ActivityInjector;
 
-import it.polimi.spf.framework.services.SPFServiceRegistry;
 import it.polimi.spf.shared.aidl.SPFProximityService;
 import it.polimi.spf.shared.aidl.SPFSearchCallback;
 import it.polimi.spf.shared.model.InvocationRequest;
@@ -212,6 +211,7 @@ import it.polimi.spf.shared.model.SPFSearchDescriptor;
 
 
 	//this is the implementation of the method definied in AIDL file in SPFShared
+	//this method is called in it.polimi.spf.lib.SPF.app using getService().setGoIntent(....)
 	@Override
 	public InvocationResponse setGoIntent(int goIntent, String accessToken, String targetId, SPFError err) throws RemoteException {
 		Log.d("SPFProximityServiceImpl", "setgointent " + goIntent + ", accessToken: " + accessToken + ", targetId: " + targetId);
@@ -233,6 +233,7 @@ import it.polimi.spf.shared.model.SPFSearchDescriptor;
 		Log.d("SPFProximityServiceImpl","requesting SPFRemoteInstance");
 
 		try {
+//			SPF.get().getPeopleManager().setGoIntentToAllReferences(goIntent);
 			SPFRemoteInstance target = SPF.get().getPeopleManager().getPerson(targetId);
 			Log.d("SPFProximityServiceImpl", "target= " + target);
 			if (target == null) {

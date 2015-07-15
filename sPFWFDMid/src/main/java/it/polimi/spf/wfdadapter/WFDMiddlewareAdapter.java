@@ -30,8 +30,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
-import it.polimi.spf.framework.security.PermissionHelper;
-import it.polimi.spf.shared.model.Permission;
 import it.polimi.spf.wfd.WfdMessage;
 import it.polimi.spf.wfd.WfdMiddlewareListener;
 import it.polimi.spf.wfd.WifiDirectMiddleware;
@@ -47,16 +45,19 @@ public class WFDMiddlewareAdapter implements ProximityMiddleware, WFDRemoteInsta
 	public static final ProximityMiddleware.Factory FACTORY = new Factory() {
 
 		@Override
-		public ProximityMiddleware createMiddleware(Context context, InboundProximityInterface iface, String identifier) {
-			return new WFDMiddlewareAdapter(context, iface, identifier);
+		public ProximityMiddleware createMiddleware(int goIntentFromSPFApp, Context context, InboundProximityInterface iface, String identifier) {
+			Log.d(TAG,"ProximityMiddleware.Factory.createMiddleware with goIntentFromSPFApp: " + goIntentFromSPFApp);
+			return new WFDMiddlewareAdapter(goIntentFromSPFApp, context, iface, identifier);
 		}
 	};
 
-	private WFDMiddlewareAdapter(Context context, InboundProximityInterface proximityInterface, String identifier) {
+	private WFDMiddlewareAdapter(int goIntentFromSPFApp, Context context, InboundProximityInterface proximityInterface, String identifier) {
+		Log.d(TAG,"WFDMiddlewareAdapter with goIntentFromSPFApp: " + goIntentFromSPFApp);
+
 		WfdMiddlewareListener listener = new WFDMiddlewareListenerAdapter(proximityInterface, this);
 
 
-		mMiddleware = new WifiDirectMiddleware(context, identifier, WifiDirectMiddleware.SERVICE_INSTANCE, listener);
+		mMiddleware = new WifiDirectMiddleware(goIntentFromSPFApp, context, identifier, WifiDirectMiddleware.SERVICE_INSTANCE, listener);
 	}
 
 	@Override

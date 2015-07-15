@@ -19,7 +19,10 @@
  */
 package it.polimi.spf.framework.people;
 
+import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import it.polimi.spf.framework.proximity.SPFRemoteInstance;
 
@@ -39,6 +42,20 @@ public class SPFPeopleManager {
 	public SPFRemoteInstance getPerson(String target) {
 		
 		return rt.getReference(target);
+	}
+
+	//crazy mthod for testing purposes ;)
+	public void setGoIntentToAllReferences(int goIntent) {
+		Iterator<Map.Entry<String, SPFRemoteInstance>> it = rt.getReferences().entrySet().iterator();
+
+		while (it.hasNext()) {
+			Map.Entry<String, SPFRemoteInstance> entry = it.next();
+
+			// Remove entry if key is null or equals 0.
+			if (entry.getKey() != null && !entry.getKey().equals("")) {
+				entry.getValue().setGoIntent(goIntent);
+			}
+		}
 	}
 
 	public void removePerson(String uniqueIdentifier) {

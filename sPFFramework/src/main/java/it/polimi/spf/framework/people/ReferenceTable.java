@@ -20,6 +20,7 @@
 package it.polimi.spf.framework.people;
 
 import it.polimi.spf.framework.proximity.SPFRemoteInstance;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -35,8 +36,13 @@ import android.util.Log;
 	private Map<String, SPFRemoteInstance> references;
 
 	public ReferenceTable() {
-		references = new Hashtable<String, SPFRemoteInstance>();
+		references = new Hashtable<>();
 	}
+
+	public Map<String, SPFRemoteInstance> getReferences() {
+		return references;
+	}
+
 
 	public void addReference(String name, SPFRemoteInstance reference) {
 		references.put(name, reference);

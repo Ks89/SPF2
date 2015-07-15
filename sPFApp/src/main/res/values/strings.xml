@@ -102,6 +102,7 @@
     <string name="action_example">Example action</string>
     <string name="notifications_delete_contentdesc">Delete notification message</string>
     <string name="proximity_toggle_label">Proximity</string>
+    <string name="groupowner_toggle_label">GroupOwner</string>
     <string name="activities_supported_verbs">Supported verbs</string>
     <string name="activities_list_empty">No verb supported.</string>
 

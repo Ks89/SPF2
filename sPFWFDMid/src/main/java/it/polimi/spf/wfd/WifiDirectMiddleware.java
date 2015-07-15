@@ -83,13 +83,15 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 	private ServerSocket mServerSocket;
 	private int mPort;
 
-	public WifiDirectMiddleware(Context context, String identifier, String instanceNamePrefix, WfdMiddlewareListener listener) {
+	public WifiDirectMiddleware(int goIntentFromSPFApp, Context context, String identifier, String instanceNamePrefix, WfdMiddlewareListener listener) {
+		Log.d(TAG,"WifiDirectMiddleware with goIntentFromSPFApp: " + goIntentFromSPFApp);
+
 		this.mContext = context;
 		this.mListener = listener;
 		this.mRecordMap = new HashMap<>();
 		this.instanceNamePrefix = instanceNamePrefix;
 		this.myIdentifier = identifier;
-		this.goIntent = 0;
+		this.goIntent = goIntentFromSPFApp;
 	}
 
 	public void connect() {
@@ -296,6 +298,9 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 		config.deviceAddress = deviceAddress;
 		config.wps.setup = WpsInfo.PBC;
 		config.groupOwnerIntent = this.goIntent;
+
+		Log.d(TAG, "Group with config.groupOwnerIntent= " + config.groupOwnerIntent);
+
 		isGroupCreated = true;
 		mManager.connect(mChannel, config, new ActionListener() {
 

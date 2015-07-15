@@ -14,6 +14,16 @@
         tools:context="it.polimi.spf.app.navigation.NavigationDrawerFragment" />
 
     <Switch
+        android:id="@+id/groupOwner_switch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/navigation_entry_padding"
+        android:textSize="@dimen/navigation_entry_text_size"
+        android:textOn="ON"
+        android:textOff="OFF"
+        android:text="@string/groupowner_toggle_label" />
+
+    <Switch
         android:id="@+id/connect_switch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

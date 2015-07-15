@@ -107,6 +107,7 @@ public abstract class Component<C extends Component<C, I>, I extends IInterface>
 
 				@Override
 				public void onRegistrationSuccessful() {
+					Log.d("Component" , "Access Toekn: " + descriptor);
 					bindToService(context, descriptor, callback);
 				}
 

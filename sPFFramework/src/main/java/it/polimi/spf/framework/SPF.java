@@ -25,6 +25,7 @@ import java.util.Random;
 import com.google.gson.Gson;
 
 import android.content.Context;
+import android.util.Log;
 
 import it.polimi.spf.framework.local.SPFService;
 import it.polimi.spf.framework.notification.SPFAdvertisingManager;
@@ -59,11 +60,15 @@ public class SPF {
 	 * @param context
 	 *            - the context that will be used by SPF
 	 */
-	/* package */synchronized static void initialize(Context context, ProximityMiddleware.Factory factory) {
+	/* package */synchronized static void initialize(int goIntent, Context context, ProximityMiddleware.Factory factory) {
 		if (singleton == null) {
 			loadAlljoynLibrary();
-			singleton = new SPF(context, factory);
+			singleton = new SPF(goIntent, context, factory);
 		}
+	}
+
+	/* package */synchronized static void initializeForcedNoSingleton(int goIntent, Context context, ProximityMiddleware.Factory factory) {
+		singleton = new SPF(goIntent, context, factory);
 	}
 	
 	private static void loadAlljoynLibrary(){
@@ -77,11 +82,24 @@ public class SPF {
 
 	/**
 	 * Obtains a reference to the SPF singleton. Call
-	 * {@link SPFContext#initialize(Context)} before calling this method.
+	 * {@link SPFContext#initialize(Context, ProximityMiddleware.Factory)} before calling this method.
 	 * 
 	 * @return the SPF singleton.
 	 */
 	public static synchronized SPF get() {
+		SPFContext.assertInitialization();
+		return singleton;
+	}
+
+
+
+	/**
+	 * Obtains a reference to the SPF singleton. Call
+	 * {@link SPFContext#initializeForcedNoSingleton(Context, ProximityMiddleware.Factory)} before calling this method.
+	 *
+	 * @return the SPF singleton.
+	 */
+	public static synchronized SPF getForcedNoSingleton() {
 		SPFContext.assertInitialization();
 		return singleton;
 	}
@@ -102,7 +120,7 @@ public class SPF {
 	private SPFNotificationManager mNotificationManager;
 	private SPFAdvertisingManager mAdvertiseManager;
 
-	private SPF(Context context, ProximityMiddleware.Factory factory) {
+	private SPF(int goIntent, Context context, ProximityMiddleware.Factory factory) {
 		mContext = context;
 
 		// Initialize components
@@ -124,7 +142,11 @@ public class SPF {
 
 		// Initialize middleware
 		InboundProximityInterface proximityInterface = new InboundProximityInterfaceImpl(this);
-		mMiddleware = factory.createMiddleware(mContext, proximityInterface, uniqueIdentifier);
+
+		//ATTENTION, NOW I'M USING goIntentFromSPFApp here, but in the future you should remove this
+		//and move the logic to set the goIntent in the middleware in external application, like SPF Couponing Provider/client
+		Log.d(TAG, "Creating middleware with goIntentFromSPFApp: " + goIntent);
+		mMiddleware = factory.createMiddleware(goIntent, mContext, proximityInterface, uniqueIdentifier);
 
 		mAdvertiseManager = new SPFAdvertisingManager(context, mMiddleware);
 	}

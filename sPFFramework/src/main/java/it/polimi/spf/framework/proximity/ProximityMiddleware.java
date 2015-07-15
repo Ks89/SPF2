@@ -38,7 +38,7 @@ public interface ProximityMiddleware {
 		 * @param identifier - the spf instance identifier to be used while advertising the service
 		 * @return ProximityMiddleware
 		 */
-		ProximityMiddleware createMiddleware(Context context, InboundProximityInterface iface, String identifier);
+		ProximityMiddleware createMiddleware(int goIntentFromSPFApp, Context context, InboundProximityInterface iface, String identifier);
 
 	}
 

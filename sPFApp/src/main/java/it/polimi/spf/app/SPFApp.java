@@ -21,6 +21,7 @@ package it.polimi.spf.app;
 
 //import it.polimi.spf.alljoyn.AlljoynProximityMiddleware;
 import it.polimi.spf.framework.ExceptionLogger;
+import it.polimi.spf.framework.SPF;
 import it.polimi.spf.framework.SPFContext;
 import it.polimi.spf.wfdadapter.WFDMiddlewareAdapter;
 import android.app.Application;
@@ -42,28 +43,18 @@ public class SPFApp extends Application {
 
 	private static final String STOPSPF = "it.polimi.spf.app.stop";
 
-	//this is useful only for testing purposes during development
-	private static final String TESTBUTTONSPF = "it.polimi.spf.app.test";
-
 	private RemoteViews contentView;
-
+	private Notification notification;
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		// Initialize SPF
-		//SPFContext.initialize(this, AlljoynProximityMiddleware.FACTORY);
-		// Use this line to initialize SPF on Wi-Fi Direct
-		SPFContext.initialize(this, WFDMiddlewareAdapter.FACTORY);
-		SPFContext.get().setAppRegistrationHandler(new PopupAppRegistrationHandler());
+
 		
 		//Intent for the stop button in the notification layout
 		Intent stopSpf = new Intent(STOPSPF);
 		PendingIntent pendingIntentStop = PendingIntent.getBroadcast(this, 0, stopSpf, 0);
 
-		//only for testing purposes
-		Intent testDevSpf = new Intent(TESTBUTTONSPF);
-		PendingIntent pendingIntentTest = PendingIntent.getBroadcast(this, 0, testDevSpf, 0);
 
 		//intent for the click inside the notification area
 		Intent notificationIntent = new Intent(this, MainActivity.class);
@@ -86,13 +77,11 @@ public class SPFApp extends Application {
 		//add the onclickpendingintent to the button
 		this.contentView.setOnClickPendingIntent(R.id.stopSpfButton,pendingIntentStop);
 
-		//only for testing purposes during development
-		this.contentView.setOnClickPendingIntent(R.id.testButton,pendingIntentTest);
 		//------------------------------------------------------------------------------------
 		//------------------------------------------------------------------------------------
 
 		//build the notification
-		Notification notification = builder.build();
+		this.notification = builder.build();
 
 		// Set data in the RemoteViews programmatically
 		this.setContentViewWithMinimalElements();
@@ -104,14 +93,32 @@ public class SPFApp extends Application {
          */
 		notification.contentView = contentView;
 
+		// Initialize SPF
+		//SPFContext.initialize(this, AlljoynProximityMiddleware.FACTORY);
+		// Use this line to initialize SPF on Wi-Fi Direct
+		SPFContext.initialize(0, this, WFDMiddlewareAdapter.FACTORY);
+		SPFContext.get().setAppRegistrationHandler(new PopupAppRegistrationHandler());
 
 		SPFContext.get().setServiceNotification(notification);
-
 
 		// Set exception logger to log uncaught exceptions
 		ExceptionLogger.installAsDefault(this);
 	}
 
+
+	public void initSPF(int goIntent) {
+		// Initialize SPF
+		//SPFContext.initialize(this, AlljoynProximityMiddleware.FACTORY);
+		// Use this line to initialize SPF on Wi-Fi Direct
+		SPF.get().disconnect();
+		SPFContext.initializeForcedNoSingleton(goIntent, this, WFDMiddlewareAdapter.FACTORY);
+		SPFContext.get().setAppRegistrationHandler(new PopupAppRegistrationHandler());
+
+		SPFContext.get().setServiceNotification(notification);
+
+		// Set exception logger to log uncaught exceptions
+		ExceptionLogger.installAsDefault(this);
+	}
 
 
 	/**
