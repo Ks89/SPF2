@@ -99,6 +99,14 @@ public class CustomizableActionListener implements WifiP2pManager.ActionListener
                 case WifiP2pManager.ERROR:
                     Log.e(tag, failLog + ", reason " + reason + " -> Error");
                     break;
+                case WifiP2pManager.NO_SERVICE_REQUESTS:
+                    /*
+                     * Indicates that the {@link #discoverServices} failed because no service
+                     * requests are added. Use addServiceRequest in WifiP2pManager.java to add a service
+                     * request.
+                     */
+                    Log.e(tag, failLog + ", reason " + reason + " -> No service request");
+                    break;
                 default:
                     Log.e(tag, failLog + ", reason " + reason + " -> ERROR!!! Unknown reason code!!!!");
                     break;

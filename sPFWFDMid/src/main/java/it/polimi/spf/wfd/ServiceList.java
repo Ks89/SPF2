@@ -57,29 +57,78 @@ public class ServiceList {
     }
 
 
-    public boolean containsService(WifiP2pDevice device) {
+    /**
+     * Method to add a service inside the list in a secure way.
+     * The service is added only if isn't already inside the list.
+     * @param service {@link WiFiP2pService} to add.
+     */
+    public void addServiceIfNotPresent(WiFiP2pService service) {
+        if(service==null) {
+            return;
+        }
+
+        boolean add = true;
+        for (WiFiP2pService element : serviceList) {
+            if (element.getDevice().equals(service.getDevice())
+                    && element.getInstanceName().equals(service.getInstanceName())) {
+                add = false; //already in the list
+            }
+        }
+
+        if(add) {
+            serviceList.add(service);
+        }
+    }
+
+    /**
+     * Method to get a service from the list, using only the device.
+     * This method use only the deviceAddress, not the device name, because sometimes Android doesn't
+     * get the name, but only the mac address.
+     * @param device WifiP2pDevice that you want to use to search the service.
+     * @return The WiFiP2pService associated to the device or null, if the device isn't in the list.
+     */
+    public WiFiP2pService getServiceByDevice(WifiP2pDevice device) {
+        if(device==null) {
+            return null;
+        }
+
+        Log.d("ServiceList", "device passed: " + device.deviceName + ", " + device.deviceAddress);
+
+        for (WiFiP2pService element : serviceList) {
+            Log.d("ServiceList", "element in list: " + element.getDevice().deviceName + ", " + element.getDevice().deviceAddress);
+
+            if (element.getDevice().deviceAddress.equals(device.deviceAddress) ) {
+                return element;
+            }
+        }
+        return null;
+    }
+
+
+
+    public boolean containsDevice(WifiP2pDevice device) {
         for(WiFiP2pService serv : serviceList) {
-            if(serv.getDevice().equals(device)) {
+            if(serv.getDevice().deviceAddress.equals(device.deviceAddress)) {
                 return true;
             }
         }
         return false;
     }
 
-    public WiFiP2pService getServiceByDevice(WifiP2pDevice device) {
-        Log.d("ServiceList", "device passed: " + device.deviceName + ", " + device.deviceAddress);
-        for(WiFiP2pService serv : serviceList) {
-            Log.d("ServiceList", "element in list: " + serv.getDevice().deviceName + ", " + serv.getDevice().deviceAddress);
-            if(serv.getDevice().equals(device)) {
-                return serv;
-            }
-        }
-        return null;
-    }
+//    public WiFiP2pService getServiceByDevice(WifiP2pDevice device) {
+//        Log.d("ServiceList", "device passed: " + device.deviceName + ", " + device.deviceAddress);
+//        for(WiFiP2pService serv : serviceList) {
+//            Log.d("ServiceList", "element in list: " + serv.getDevice().deviceName + ", " + serv.getDevice().deviceAddress);
+//            if(serv.getDevice().equals(device)) {
+//                return serv;
+//            }
+//        }
+//        return null;
+//    }
 
-    public WiFiP2pService getServiceByAddress(String address) {
+    public WiFiP2pService getServiceByDeviceAddress(String deviceAddress) {
         for(WiFiP2pService serv : serviceList) {
-            if(serv.getPeerAddress().equals(address)) {
+            if(serv.getDevice().deviceAddress.equals(deviceAddress)) {
                 return serv;
             }
         }

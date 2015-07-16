@@ -24,7 +24,6 @@ package it.polimi.spf.wfd;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,20 +32,17 @@ import android.content.Context;
 import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
-import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pGroup;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.net.wifi.p2p.WifiP2pManager.DnsSdTxtRecordListener;
 import android.net.wifi.p2p.WifiP2pManager.GroupInfoListener;
-import android.net.wifi.p2p.WifiP2pManager.PeerListListener;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
 import android.os.Looper;
 import android.util.Log;
 
-import it.polimi.spf.wfd.actionlisteners.CustomDnsServiceResponseListener;
 import it.polimi.spf.wfd.actionlisteners.CustomizableActionListener;
 import lombok.Getter;
 
@@ -150,7 +146,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
          * by the system when a service is actually discovered.
          */
 		mManager.setDnsSdResponseListeners(mChannel,
-				new CustomDnsServiceResponseListener(), mRecordListener);
+				mServiceListener, mRecordListener);
 
 		// After attaching listeners, create a service request and initiate
 		// discovery.
@@ -238,44 +234,122 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
 	}
 
+	private final WifiP2pManager.DnsSdServiceResponseListener mServiceListener = new WifiP2pManager.DnsSdServiceResponseListener() {
+
+		@Override
+		public void onDnsSdServiceAvailable(String instanceName, String registrationType, WifiP2pDevice srcDevice) {
+			// A service has been discovered. Is this our app?
+
+			Log.d(TAG, "onDnsSdServiceAvailable, instanceName:" + instanceName + ", registrationType:" + registrationType + ",srcDevice:" + srcDevice);
+
+//			if (!fullDomainName.startsWith(Configuration.SERVICE_INSTANCE)) {
+//				return;
+//			}
+
+			if (instanceName.startsWith(Configuration.SERVICE_INSTANCE)) {
+
+//				if (ServiceList.getInstance().containsDevice(srcDevice)) {
+//					return;
+//				}
+
+				WiFiP2pService service = ServiceList.getInstance().getServiceByDeviceAddress(srcDevice.deviceAddress);
+				service.setDevice(srcDevice);
+				service.setInstanceName(instanceName);
+					service.setServiceRegistrationType(registrationType);
+
+//					ServiceList.getInstance().addServiceIfNotPresent(service);
+
+					Log.d(TAG, "onDnsSdServiceAvailable " + instanceName);
+
+
+//				String identifier = txtRecordMap.get(Configuration.IDENTIFIER);
+//				String portString = txtRecordMap.get(Configuration.PORT);
+//
+//				WiFiP2pService service = new WiFiP2pService();
+//				service.setDevice(srcDevice);
+//				service.setPeerAddress(srcDevice.deviceAddress);
+//
+//				int port;
+//				try {
+//					port = Integer.parseInt(portString);
+//				} catch (Throwable t) {
+//					return;
+//				}
+//
+//				service.setIdentifier(identifier);
+//
+//				service.setPort(port);
+//
+//				ServiceList.getInstance().addServiceIfNotPresent(service);
+
+				if (!isGroupCreated) {
+					WfdLog.d(TAG, "createGroup: onDnsSdTxtRecordAvailable");
+					createGroup();
+				}
+			}
+
+//			if (instanceName.equalsIgnoreCase(Configuration.SERVICE_INSTANCE)) {
+//
+//				// update the UI and add the item the discovered device.
+//				WiFiP2pServicesFragment fragment = TabFragment.getWiFiP2pServicesFragment();
+//				if (fragment != null) {
+//					WiFiServicesAdapter adapter = fragment.getMAdapter();
+//					WiFiP2pService service = new WiFiP2pService();
+//					service.setDevice(srcDevice);
+//					service.setInstanceName(instanceName);
+//					service.setServiceRegistrationType(registrationType);
+//
+//					ServiceList.getInstance().addServiceIfNotPresent(service);
+//
+//					if (adapter != null) {
+//						adapter.notifyItemInserted(ServiceList.getInstance().getSize() - 1);
+//					}
+//					Log.d(TAG, "onDnsSdServiceAvailable " + instanceName);
+//				}
+//			}
+		}
+	};
+
 	private final DnsSdTxtRecordListener mRecordListener = new DnsSdTxtRecordListener() {
 
 		@Override
 		public void onDnsSdTxtRecordAvailable(String fullDomainName, Map<String, String> txtRecordMap, WifiP2pDevice srcDevice) {
 			WfdLog.d(TAG, "DnsSdTxtRecord available:\n\n" + fullDomainName + "\n\n" + txtRecordMap + "\n\n" + srcDevice);
+			Log.d(TAG, "onDnsSdTxtRecordAvail: " + srcDevice.deviceName + " is " +
+					txtRecordMap.get(Configuration.TXTRECORD_PROP_AVAILABLE));
 
-			if (!fullDomainName.startsWith(Configuration.SERVICE_INSTANCE)) {
-				return;
-			}
-
-			if(ServiceList.getInstance().containsService(srcDevice)) {
-				return;
-			}
-
+//			if (!fullDomainName.startsWith(Configuration.SERVICE_INSTANCE)) {
+//				return;
+//			}
+//
+//			if(ServiceList.getInstance().containsDevice(srcDevice)) {
+//				return;
+//			}
+//
 			String identifier = txtRecordMap.get(Configuration.IDENTIFIER);
 			String portString = txtRecordMap.get(Configuration.PORT);
-
+//
 			WiFiP2pService service = new WiFiP2pService();
 			service.setDevice(srcDevice);
 			service.setPeerAddress(srcDevice.deviceAddress);
-
+//
 			int port;
 			try {
 				port = Integer.parseInt(portString);
 			} catch (Throwable t) {
 				return;
 			}
-
+//
 			service.setIdentifier(identifier);
 
 			service.setPort(port);
-
-			ServiceList.getInstance().getServiceList().add(service);
-
-			if (!isGroupCreated) {
-				WfdLog.d(TAG,"createGroup: onDnsSdTxtRecordAvailable");
-				createGroup();
-			}
+//
+			ServiceList.getInstance().addServiceIfNotPresent(service);
+//
+//			if (!isGroupCreated) {
+//				WfdLog.d(TAG,"createGroup: onDnsSdTxtRecordAvailable");
+//				createGroup();
+//			}
 
 		}
 
@@ -422,26 +496,33 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 		mManager.requestConnectionInfo(mChannel, this);
 	}
 
-	private void updatePeerList(Collection<WifiP2pDevice> list) {
-
-		//ServiceList.getInstance().getServiceList().clear();
-		WiFiP2pService service;
-
-		for (WifiP2pDevice device : list) {
-			if(ServiceList.getInstance().getServiceByDevice(device) == null) {
-				service = new WiFiP2pService();
-				service.setDevice(device);
-//				service.setIdentifier();
-				service.setPeerAddress(device.deviceAddress);
-//				service.setPort();
-			}
-		}
-
-		if(!ServiceList.getInstance().getServiceList().isEmpty() && !isGroupCreated) {
-			Log.d(TAG,"createGroup: updatePeerList");
-			createGroup();
-		}
-	}
+//	private void updatePeerList(Collection<WifiP2pDevice> list) {
+//
+//		//ServiceList.getInstance().getServiceList().clear();
+//		WiFiP2pService service;
+//
+//		for(WiFiP2pService service1 : ServiceList.getInstance().getServiceList()) {
+//			Log.d(TAG, "ServiceList - this service (with id): " +  service1.getIdentifier() + ", has this device: "  + service1.getDevice() );
+//		}
+//
+//		for (WifiP2pDevice device : list) {
+//			Log.d(TAG, "updatePeerList, list to be updated : " + device);
+//			if(ServiceList.getInstance().getServiceByDevice(device) == null) {
+//				Log.d(TAG, "updatePeerList - no service found with this device: " + device);
+//				service = new WiFiP2pService();
+//				service.setDevice(device);
+////				service.setIdentifier();
+//				service.setPeerAddress(device.deviceAddress);
+////				service.setPort();
+//
+//			}
+//		}
+//
+//		if(!ServiceList.getInstance().getServiceList().isEmpty() && !isGroupCreated) {
+//			Log.d(TAG,"createGroup: updatePeerList");
+//			createGroup();
+//		}
+//	}
 
 	private final GroupActorListener actorListener = new GroupActorListener() {
 
@@ -478,16 +559,17 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 		}
 	};
 
-	public void onPeerListChanged() {
-		mManager.requestPeers(mChannel, new PeerListListener() {
-
-			@Override
-			public void onPeersAvailable(WifiP2pDeviceList peers) {
-				Collection<WifiP2pDevice> peersCollection = peers.getDeviceList();
-				updatePeerList(peersCollection);
-			}
-		});
-	}
+//	public void onPeerListChanged() {
+//		Log.d(TAG, "onPeerListChanged");
+//		mManager.requestPeers(mChannel, new PeerListListener() {
+//
+//			@Override
+//			public void onPeersAvailable(WifiP2pDeviceList peers) {
+//				Collection<WifiP2pDevice> peersCollection = peers.getDeviceList();
+//				updatePeerList(peersCollection);
+//			}
+//		});
+//	}
 
 	public void sendMessage(WfdMessage msg, String targetId) throws IOException {
 		msg.setSenderId(myIdentifier);

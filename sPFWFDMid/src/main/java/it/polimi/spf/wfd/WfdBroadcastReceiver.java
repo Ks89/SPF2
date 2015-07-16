@@ -52,10 +52,11 @@ public class WfdBroadcastReceiver extends BroadcastReceiver {
 				mMid.onNetworkDisconnected();
 			}
 			
-		} else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
-			
-			mMid.onPeerListChanged();
 		}
+//		else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
+//
+//			mMid.onPeerListChanged();
+//		}
 	}
 
 	public void register(Context mContext) {

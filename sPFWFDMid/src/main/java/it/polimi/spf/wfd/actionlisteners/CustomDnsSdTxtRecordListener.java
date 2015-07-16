@@ -52,7 +52,7 @@
 //            return;
 //        }
 //
-//        if(ServiceList.getInstance().containsService(srcDevice)) {
+//        if(ServiceList.getInstance().containsDevice(srcDevice)) {
 //            return;
 //        }
 //
