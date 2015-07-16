@@ -24,7 +24,7 @@ import android.util.Log;
 
 public class WfdLog {
 
-	private static final boolean ENABLED = false;
+	private static final boolean ENABLED = Configuration.WFDLOG;
 
 	public static void d(String tag, String msg) {
 		if (ENABLED) {

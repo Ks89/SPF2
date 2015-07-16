@@ -37,9 +37,7 @@ import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pGroup;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
-import android.net.wifi.p2p.WifiP2pManager.ActionListener;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
-import android.net.wifi.p2p.WifiP2pManager.DnsSdServiceResponseListener;
 import android.net.wifi.p2p.WifiP2pManager.DnsSdTxtRecordListener;
 import android.net.wifi.p2p.WifiP2pManager.GroupInfoListener;
 import android.net.wifi.p2p.WifiP2pManager.PeerListListener;
@@ -50,6 +48,7 @@ import android.util.Log;
 
 import it.polimi.spf.wfd.actionlisteners.CustomDnsServiceResponseListener;
 import it.polimi.spf.wfd.actionlisteners.CustomizableActionListener;
+import lombok.Getter;
 
 /**
  * WifiDirectMiddleware class provides a coordination layer that handles the discovery of peer,
@@ -61,7 +60,6 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
 	private final static String TAG = "WFDMiddleware";
 
-
 	private final Context mContext;
 	private final WfdMiddlewareListener mListener;
 	private final WfdBroadcastReceiver mReceiver = new WfdBroadcastReceiver(this);
@@ -71,7 +69,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 	private WifiP2pDnsSdServiceRequest mServiceRequest;
 	private WifiP2pDnsSdServiceInfo mInfo;
 
-	private boolean connected = false;
+	@Getter private boolean connected = false;
 	private boolean isGroupCreated = false;
 	private final String myIdentifier;
 
@@ -181,70 +179,56 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 						true)); //important: sets true to get detailed message when this method fails
 	}
 
-	public boolean isConnected() {
-		return connected;
-	}
-
 
 	public void disconnect() {
 		mReceiver.unregister();
-		mManager.removeServiceRequest(mChannel, mServiceRequest, new ActionListener() {
 
-			@Override
-			public void onSuccess() {
-				WfdLog.d(TAG, "removeServiceRequest success");
-			}
+		mManager.removeServiceRequest(mChannel, mServiceRequest, new CustomizableActionListener(
+				this.mContext,
+				"disconnect",
+				"RemoveServiceRequest success",
+				null,
+				"RemoveServiceRequest failure",
+				"RemoveServiceRequest failure",
+				false)); //important: sets false if you don't want detailed messages when this method fails
 
-			@Override
-			public void onFailure(int reason) {
-				Log.e(TAG, "removeServiceRequest failure: " + reason);
-			}
-		});
-		mManager.removeLocalService(mChannel, mInfo, new ActionListener() {
 
-			@Override
-			public void onSuccess() {
-				WfdLog.d(TAG, "removeLocalService succeeded");
+		mManager.removeLocalService(mChannel, mInfo, new CustomizableActionListener(
+				this.mContext,
+				"disconnect",
+				"RemoveLocalService success",
+				null,
+				"RemoveLocalService failure",
+				"RemoveLocalService failure",
+				false)); //important: sets false if you don't want detailed messages when this method fails
 
-			}
-
-			@Override
-			public void onFailure(int reason) {
-				WfdLog.d(TAG, "removeLocalService failed");
-
-			}
-		});
 
 		try {
 			mServerSocket.close();
 		} catch (IOException e) {
 			WfdLog.d(TAG, "IOException when closing server socket", e);
 		}
-		mManager.cancelConnect(mChannel, new ActionListener() {
 
-			@Override
-			public void onSuccess() {
-				WfdLog.d(TAG, "cancelConnect success");
-			}
+		mManager.cancelConnect(mChannel, new CustomizableActionListener(
+				this.mContext,
+				"disconnect",
+				"CancelConnect success",
+				null,
+				"CancelConnect failure",
+				"CancelConnect failure",
+				false)); //important: sets false if you don't want detailed messages when this method fails
 
-			@Override
-			public void onFailure(int reason) {
-				WfdLog.d(TAG, "cancelConnect failure: " + reason);
-			}
-		});
-		mManager.removeGroup(mChannel, new ActionListener() {
+		mManager.removeGroup(mChannel, new CustomizableActionListener(
+				this.mContext,
+				"disconnect",
+				"RemoveGroup success",
+				null,
+				"RemoveGroup failure",
+				"RemoveGroup failure",
+				true)); //important: sets true to get detailed message when this method fails
 
-			@Override
-			public void onSuccess() {
-				WfdLog.d(TAG, "removeGroup success");
-			}
-
-			@Override
-			public void onFailure(int reason) {
-				WfdLog.d(TAG, "reason failure: " + reason);
-			}
-		});
 		connected = false;
+
 		if (mGroupActor != null) {
 			mGroupActor.disconnect();
 			mGroupActor = null;
@@ -317,20 +301,14 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 		Log.d(TAG, "Group with config.groupOwnerIntent= " + config.groupOwnerIntent);
 
 		isGroupCreated = true;
-		mManager.connect(mChannel, config, new ActionListener() {
-
-			@Override
-			public void onSuccess() {
-				WfdLog.d(TAG, "connect() succeded");
-
-			}
-
-			@Override
-			public void onFailure(int reason) {
-				isGroupCreated = false;
-				WfdLog.d(TAG, "connect() failed");
-			}
-		});
+		mManager.connect(mChannel, config, new CustomizableActionListener(
+				this.mContext,
+				"createGroup",
+				"Connect success",
+				null,
+				"Connect failure",
+				"Connect failure",
+				true)); //important: sets true to get detailed message when this method fails
 	}
 
 	private String selectDeviceAddess() {

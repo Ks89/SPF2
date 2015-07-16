@@ -28,6 +28,7 @@ package it.polimi.spf.wfd;
  */
 public class Configuration {
 
+    public static final boolean WFDLOG = true;
 
     public static final String SERVICE_REG_TYPE = "_presence._tcp";
     public static final String SERVICE_INSTANCE = "spf_";

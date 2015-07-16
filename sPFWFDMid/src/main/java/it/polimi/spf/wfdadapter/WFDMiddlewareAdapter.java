@@ -30,7 +30,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
-import it.polimi.spf.wfd.Configuration;
 import it.polimi.spf.wfd.WfdMessage;
 import it.polimi.spf.wfd.WfdMiddlewareListener;
 import it.polimi.spf.wfd.WifiDirectMiddleware;
@@ -181,7 +180,7 @@ public class WFDMiddlewareAdapter implements ProximityMiddleware, WFDRemoteInsta
 				try {
 					mMiddlewareRef.sendMessageBroadcast(wfdMsg);
 				} catch (IOException e) {
-
+					Log.e(TAG,"Exception handleMessage msg" , e);
 				}
 				Message msgNew = obtainMessage(SEND_ADVERTISING);
 				msgNew.getData().putString("profile", profile);
