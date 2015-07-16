@@ -22,7 +22,7 @@ package it.polimi.spf.wfd;
 
 import android.util.Log;
 
-class WfdLog {
+public class WfdLog {
 
 	private static final boolean ENABLED = false;
 

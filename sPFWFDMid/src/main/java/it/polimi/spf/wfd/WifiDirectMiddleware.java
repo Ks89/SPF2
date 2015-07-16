@@ -48,6 +48,9 @@ import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
 import android.os.Looper;
 import android.util.Log;
 
+import it.polimi.spf.wfd.actionlisteners.CustomDnsServiceResponseListener;
+import it.polimi.spf.wfd.actionlisteners.CustomizableActionListener;
+
 /**
  * WifiDirectMiddleware class provides a coordination layer that handles the discovery of peer,
  * the creation of the P2P Group and mediates the communication to the upper layer of the system.
@@ -57,13 +60,9 @@ import android.util.Log;
 public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListener {
 
 	private final static String TAG = "WFDMiddleware";
-	private static final String SERVICE_TYPE = "_presence._tcp";
-	public static final String SERVICE_INSTANCE = "spf_";
-	private static final String IDENTIFIER = "identifier";
-	private static final String PORT = "port";
+
 
 	private final Context mContext;
-	private final Map<String, String> mRecordMap;
 	private final WfdMiddlewareListener mListener;
 	private final WfdBroadcastReceiver mReceiver = new WfdBroadcastReceiver(this);
 
@@ -75,7 +74,6 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 	private boolean connected = false;
 	private boolean isGroupCreated = false;
 	private final String myIdentifier;
-	private final String instanceNamePrefix;
 
 	private int goIntent;
 
@@ -83,13 +81,11 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 	private ServerSocket mServerSocket;
 	private int mPort;
 
-	public WifiDirectMiddleware(int goIntentFromSPFApp, Context context, String identifier, String instanceNamePrefix, WfdMiddlewareListener listener) {
-		Log.d(TAG,"WifiDirectMiddleware with goIntentFromSPFApp: " + goIntentFromSPFApp);
+	public WifiDirectMiddleware(int goIntentFromSPFApp, Context context, String identifier, WfdMiddlewareListener listener) {
+		Log.d(TAG, "WifiDirectMiddleware with goIntentFromSPFApp: " + goIntentFromSPFApp);
 
 		this.mContext = context;
 		this.mListener = listener;
-		this.mRecordMap = new HashMap<>();
-		this.instanceNamePrefix = instanceNamePrefix;
 		this.myIdentifier = identifier;
 		this.goIntent = goIntentFromSPFApp;
 	}
@@ -105,63 +101,90 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 		mReceiver.register(mContext);
 		mManager = (WifiP2pManager) mContext.getSystemService(Context.WIFI_P2P_SERVICE);
 		mChannel = mManager.initialize(mContext, Looper.getMainLooper(), null);
-		setDiscovery();
-		setAdvertisement();
+
+
+		this.startRegistration();
+		this.discoverService();
+
+
 		connected = true;
 	}
 
-	private void setDiscovery() {
-		mManager.setDnsSdResponseListeners(mChannel, mServListener, mRecordListener);
+	/**
+	 * Registers a local service.
+	 */
+	private void startRegistration() {
+		//  Create a string map containing information about your service.
+		Map<String, String> mRecordMap = new HashMap<>();
+		mRecordMap.put(Configuration.PORT, Integer.toString(mPort));
+		mRecordMap.put(Configuration.IDENTIFIER, myIdentifier);
+
+		// Service information.  Pass it an instance name, service type
+		// Configuration.SERVICE_REG_TYPE , and the map containing
+		// information other devices will want once they connect to this one.
+		mInfo = WifiP2pDnsSdServiceInfo.newInstance(Configuration.SERVICE_INSTANCE + myIdentifier,
+				Configuration.SERVICE_REG_TYPE, mRecordMap);
+
+		// Add the local service, sending the service info, network channel,
+		// and listener that will be used to indicate success or failure of
+		// the request.
+		mManager.addLocalService(mChannel, mInfo,
+				new CustomizableActionListener(
+						this.mContext,
+						"startRegistration",
+						"Added Local Service",
+						null,
+						"Failed to add a service",
+						"Failed to add a service",
+						true)); //important: sets true to get detailed message when this method fails
+
+	}
+
+	/**
+	 * Method to discover services and put the results
+	 * in {@link it.polimi.spf.wfd.ServiceList}.
+	 * This method updates also the discovery menu item.
+	 */
+	private void discoverService() {
+
+		/*
+         * Register listeners for DNS-SD services. These are callbacks invoked
+         * by the system when a service is actually discovered.
+         */
+		mManager.setDnsSdResponseListeners(mChannel,
+				new CustomDnsServiceResponseListener(), mRecordListener);
+
+		// After attaching listeners, create a service request and initiate
+		// discovery.
 		mServiceRequest = WifiP2pDnsSdServiceRequest.newInstance();
-		mManager.addServiceRequest(mChannel, mServiceRequest, new ActionListener() {
 
-			@Override
-			public void onSuccess() {
-				WfdLog.d(TAG, "addServiceRequest success");
-			}
+		//initiates discovery
+		mManager.addServiceRequest(mChannel, mServiceRequest,
+				new CustomizableActionListener(
+						this.mContext,
+						"discoverService",
+						"Added service discovery request",
+						null,
+						"Failed adding service discovery request",
+						"Failed adding service discovery request",
+						true)); //important: sets true to get detailed message when this method fails
 
-			@Override
-			public void onFailure(int reason) {
-				Log.e(TAG, "addServiceRequest failure: " + reason);
-			}
-		});
-
-		mManager.discoverServices(mChannel, new ActionListener() {
-
-			@Override
-			public void onSuccess() {
-				WfdLog.d(TAG, "discoverServices success");
-			}
-
-			@Override
-			public void onFailure(int reason) {
-				Log.e(TAG, "discoverServices failure: " + reason);
-			}
-		});
+		//starts services discovery
+		mManager.discoverServices(mChannel,
+				new CustomizableActionListener(
+						this.mContext,
+						"discoverService",
+						"Service discovery initiated",
+						null,
+						"Failed starting service discovery",
+						"Failed starting service discovery",
+						true)); //important: sets true to get detailed message when this method fails
 	}
 
 	public boolean isConnected() {
 		return connected;
 	}
 
-	private void setAdvertisement() {
-		mRecordMap.put(PORT, Integer.toString(mPort));
-		mRecordMap.put(IDENTIFIER, myIdentifier);
-		mInfo = WifiP2pDnsSdServiceInfo.newInstance(instanceNamePrefix + myIdentifier, SERVICE_TYPE, mRecordMap);
-
-		mManager.addLocalService(mChannel, mInfo, new ActionListener() {
-
-			@Override
-			public void onSuccess() {
-				WfdLog.d(TAG, "addLocalService success");
-			}
-
-			@Override
-			public void onFailure(int reason) {
-				Log.e(TAG, "addLocalService failure: " + reason);
-			}
-		});
-	}
 
 	public void disconnect() {
 		mReceiver.unregister();
@@ -231,21 +254,13 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
 	}
 
-	private final DnsSdServiceResponseListener mServListener = new DnsSdServiceResponseListener() {
-
-		@Override
-		public void onDnsSdServiceAvailable(String instanceName, String registrationType, WifiP2pDevice srcDevice) {
-			WfdLog.d(TAG, "onDnsSdServiceAvailable ServiceResponseAvailable: " + instanceName + ", regType: " + registrationType + ", device: " + srcDevice);
-		}
-	};
-
 	private final DnsSdTxtRecordListener mRecordListener = new DnsSdTxtRecordListener() {
 
 		@Override
 		public void onDnsSdTxtRecordAvailable(String fullDomainName, Map<String, String> txtRecordMap, WifiP2pDevice srcDevice) {
 			WfdLog.d(TAG, "DnsSdTxtRecord available:\n\n" + fullDomainName + "\n\n" + txtRecordMap + "\n\n" + srcDevice);
 
-			if (!fullDomainName.startsWith(instanceNamePrefix)) {
+			if (!fullDomainName.startsWith(Configuration.SERVICE_INSTANCE)) {
 				return;
 			}
 
@@ -253,8 +268,8 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 				return;
 			}
 
-			String identifier = txtRecordMap.get(IDENTIFIER);
-			String portString = txtRecordMap.get(PORT);
+			String identifier = txtRecordMap.get(Configuration.IDENTIFIER);
+			String portString = txtRecordMap.get(Configuration.PORT);
 
 			WiFiP2pService service = new WiFiP2pService();
 			service.setDevice(srcDevice);

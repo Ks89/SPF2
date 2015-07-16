@@ -21,6 +21,7 @@
 package it.polimi.spf.wfd;
 
 import android.net.wifi.p2p.WifiP2pDevice;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +67,9 @@ public class ServiceList {
     }
 
     public WiFiP2pService getServiceByDevice(WifiP2pDevice device) {
+        Log.d("ServiceList", "device passed: " + device.deviceName + ", " + device.deviceAddress);
         for(WiFiP2pService serv : serviceList) {
+            Log.d("ServiceList", "element in list: " + serv.getDevice().deviceName + ", " + serv.getDevice().deviceAddress);
             if(serv.getDevice().equals(device)) {
                 return serv;
             }
