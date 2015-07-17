@@ -43,12 +43,18 @@ public class CustomDnsServiceResponseListener implements WifiP2pManager.DnsSdSer
 
     private WifiDirectMiddleware wifiDirectMiddleware;
 
-    // Callback interface
+    /**
+     *  Callback interface to {@link WifiDirectMiddleware}
+     */
     public interface CallbackToMiddleware {
         boolean onIsGroupCreated();
         void onCreateGroup();
     }
 
+    /**
+     * CustomDnsServiceResponseListener constructor
+     * @param wifiDirectMiddleware
+     */
     public CustomDnsServiceResponseListener(WifiDirectMiddleware wifiDirectMiddleware) {
         this.wifiDirectMiddleware = wifiDirectMiddleware;
     }

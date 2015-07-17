@@ -39,7 +39,7 @@ public class WfdBroadcastReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context arg0, Intent arg1) {
 		String action =  arg1.getAction();
-		
+
 		if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
 			
 			//call on connection info received
@@ -53,10 +53,6 @@ public class WfdBroadcastReceiver extends BroadcastReceiver {
 			}
 			
 		}
-//		else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
-//
-//			mMid.onPeerListChanged();
-//		}
 	}
 
 	public void register(Context mContext) {

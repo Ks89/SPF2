@@ -63,6 +63,8 @@ public class ServiceList {
      * @param service {@link WiFiP2pService} to add.
      */
     public void addServiceIfNotPresent(WiFiP2pService service) {
+        Log.d("SERVICESERVICESERVICE", "addServiceIfNotPresent BEGIN, with size = " + serviceList.size());
+
         if(service==null) {
             return;
         }
@@ -78,6 +80,8 @@ public class ServiceList {
         if(add) {
             serviceList.add(service);
         }
+
+        Log.d("SERVICESERVICESERVICE", "addServiceIfNotPresent END, with size = " + serviceList.size());
     }
 
     /**
@@ -92,15 +96,22 @@ public class ServiceList {
             return null;
         }
 
-        Log.d("ServiceList", "device passed: " + device.deviceName + ", " + device.deviceAddress);
+        Log.d("ServiceList", "groupownerdevice passe to getServiceByDevice: " + device.deviceName + ", " + device.deviceAddress);
+
+        Log.d("ServiceList", "servicelist size: " + serviceList.size());
 
         for (WiFiP2pService element : serviceList) {
             Log.d("ServiceList", "element in list: " + element.getDevice().deviceName + ", " + element.getDevice().deviceAddress);
+            Log.d("ServiceList", "element passed : " + device.deviceName + ", " + device.deviceAddress);
 
             if (element.getDevice().deviceAddress.equals(device.deviceAddress) ) {
+                Log.d("ServiceList", "getServiceByDevice if satisfied : " + device.deviceAddress + ", " + element.getDevice().deviceAddress);
                 return element;
             }
         }
+
+        Log.d("ServiceList", "servicelist size: " + serviceList.size());
+
         return null;
     }
 

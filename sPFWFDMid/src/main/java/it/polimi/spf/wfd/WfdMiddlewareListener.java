@@ -20,6 +20,11 @@
  */
 package it.polimi.spf.wfd;
 
+/**
+ * Interface implemented by {@link it.polimi.spf.wfdadapter.WFDMiddlewareListenerAdapter} and
+ * used in {@link GroupActor}, because it implements {@link GroupActorListener}
+ * that extends {@link it.polimi.spf.wfdadapter.WFDMiddlewareListenerAdapter}.
+ */
 public interface WfdMiddlewareListener {
 	
 	void onMessageReceived(WfdMessage msg);

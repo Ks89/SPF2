@@ -308,11 +308,11 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
 		WfdLog.d(TAG, "connection info available");
 
-		if (!info.groupFormed) {
-			Log.d(TAG,"createGroup: onConnectionInfoAvailable");
-			createGroup();
-			return;
-		}
+//		if (!info.groupFormed) {
+//			Log.d(TAG,"createGroup: onConnectionInfoAvailable");
+//			createGroup();
+//			return;
+//		}
 
 		WfdLog.d(TAG, "group formed");
 
@@ -330,7 +330,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 					}
 					WifiP2pDevice groupOwnerDevice = group.getOwner();
 
-					Log.d(TAG,"requestGroupInfo - groupOwnerDevice: " + groupOwnerDevice);
+					Log.d(TAG,"requestGroupInfo - groupOwnerDeviceaddress: " + groupOwnerDevice.deviceAddress);
 
 					WiFiP2pService service = ServiceList.getInstance().getServiceByDevice(groupOwnerDevice);
 
@@ -383,11 +383,13 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
 		@Override
 		public void onMessageReceived(WfdMessage msg) {
+			WfdLog.d(TAG, "GroupActorListener.onMessageReceived - msg= " + msg);
 			mListener.onMessageReceived(msg);
 		}
 
 		@Override
 		public void onError() {
+			Log.e(TAG, "GroupActorListener.onError");
 			if (mGroupActor != null) {
 				mGroupActor.disconnect();
 			}
@@ -399,17 +401,19 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
 		@Override
 		public WfdMessage onRequestMessageReceived(WfdMessage msg) {
+			Log.d(TAG, "GroupActorListener.onRequestMessageReceived - msg= " + msg);
 			return mListener.onRequestMessageReceived(msg);
 		}
 
 		@Override
 		public void onInstanceFound(String identifier) {
+			Log.d(TAG, "GroupActorListener.onInstanceFound - identifier= " + identifier);
 			mListener.onInstanceFound(identifier);
-
 		}
 
 		@Override
 		public void onInstanceLost(String identifier) {
+			Log.e(TAG, "GroupActorListener.onInstanceLost - identifier= " + identifier);
 			mListener.onInstanceLost(identifier);
 		}
 	};
@@ -452,6 +456,10 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 	}
 
 
+	/**
+	 * Method to set goIntent in Wi-Fi Direct Middleware.
+	 * @param goIntent
+	 */
 	public void setGoIntent(int goIntent) {
 		this.goIntent = goIntent;
 	}
