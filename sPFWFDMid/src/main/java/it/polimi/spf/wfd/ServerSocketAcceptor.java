@@ -23,42 +23,61 @@ package it.polimi.spf.wfd;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+import it.polimi.spf.wfd.otto.GOEvent;
+import it.polimi.spf.wfd.otto.GOSocketEvent;
+import it.polimi.spf.wfd.otto.NineBus;
 
 class ServerSocketAcceptor extends Thread {
-	private static final String TAG  = "ServerSocketAcceptor";
-	private final GroupOwnerActor groupOwner;
-	private final ServerSocket serverSocket;
-	private boolean closed;
+    private static final String TAG = "ServerSocketAcceptor";
 
-	public ServerSocketAcceptor(GroupOwnerActor groupOwner,
-			ServerSocket serverSocket) {
-		this.groupOwner = groupOwner;
-		this.serverSocket = serverSocket;
-	}
+    private final int THREAD_COUNT = 10;
 
-	public void recycle() {
-		this.closed = true;
-		interrupt();
-	}
+//    private final GroupOwnerActor groupOwner;
+    private final ServerSocket serverSocket;
+    private boolean closed;
 
-	@Override
-	public void run() {
-		Socket s;
-		try {
-			while (!Thread.currentThread().isInterrupted()) {
-				WfdLog.d(TAG, "accept(): waiting for a new client");
-				s = serverSocket.accept();
-				WfdLog.d(TAG, "incoming connection");
-				new GOInternalClient(s,groupOwner).start();
-			}
-		} catch (IOException e) {
+    public ServerSocketAcceptor(/*GroupOwnerActor groupOwner,*/
+                                ServerSocket serverSocket) {
+//        this.groupOwner = groupOwner;
+        this.serverSocket = serverSocket;
+    }
 
-		}
-		WfdLog.d(TAG, "exiting while loop");
-		if (!closed) {
-			WfdLog.d(TAG, "signalling error to groupOwnerActor");
-			groupOwner.onServerSocketError();
-		}
-	}
+    public void recycle() {
+        this.closed = true;
+        interrupt();
+    }
+
+
+    /**
+     * A ThreadPool for client sockets.
+     */
+//	private final ThreadPoolExecutor pool = new ThreadPoolExecutor(
+//			THREAD_COUNT, THREAD_COUNT, 10, TimeUnit.SECONDS,
+//			new LinkedBlockingQueue<Runnable>());
+    @Override
+    public void run() {
+        Socket s;
+        try {
+            while (!Thread.currentThread().isInterrupted()) {
+                WfdLog.d(TAG, "accept(): waiting for a new client");
+                s = serverSocket.accept();
+                WfdLog.d(TAG, "incoming connection");
+//                new GOInternalClient(s, groupOwner).start();
+                NineBus.get().post(new GOSocketEvent("onServerSocketError",s));
+            }
+        } catch (IOException e) {
+
+        }
+        WfdLog.d(TAG, "exiting while loop");
+        if (!closed) {
+            WfdLog.d(TAG, "signalling error to groupOwnerActor");
+//			groupOwner.onServerSocketError();
+            NineBus.get().post(new GOEvent("onServerSocketError"));
+        }
+    }
 
 }

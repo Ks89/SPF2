@@ -31,7 +31,7 @@ import java.net.Socket;
  * them to send messages and to be notified of received ones. A GOInternalClient has to monitor
  * the connections and notify the group owner when a peer leaves the network.
  */
-class GOInternalClient extends Thread {
+public class GOInternalClient extends Thread {
 	private static final String TAG = "GOInternalClient";
 	private final GroupOwnerActor groupOwnerActor;
 	private final Socket socket;
