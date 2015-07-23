@@ -208,13 +208,13 @@ class GroupOwnerActor extends GroupActor {
     }
 
     @Subscribe
-    public void primo(GOEvent event) {
+    public void onGoEvent(GOEvent event) {
         Log.d(TAG, "GoEvent recevived with type: " + event.getType());
         this.onServerSocketError();
     }
 
     @Subscribe
-    public void secondo(GOSocketEvent event) {
+    public void onGoSocketEvent(GOSocketEvent event) {
         Log.d(TAG, "GOSocketEvent recevived with type: " + event.getType());
         new GOInternalClient(event.getSocket(), this).start();
     }
