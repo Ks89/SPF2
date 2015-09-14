@@ -22,12 +22,12 @@ apply plugin: 'com.android.library'
 apply plugin: 'maven'
 
 android {
-    compileSdkVersion 22
-    buildToolsVersion "22.0.1"
+    compileSdkVersion 23
+    buildToolsVersion "23.0.1"
 
     defaultConfig {
         minSdkVersion 17
-        targetSdkVersion 22
+        targetSdkVersion 23
     }
 
     buildTypes {
@@ -46,15 +46,16 @@ android {
     }
 }
 
+task wrapper(type: Wrapper) {
+    gradleVersion = "2.7"
+}
+
 dependencies {
     compile project(':sPFShared')
 //    compile 'it.polimi.spf:spfshared:1.0.0@aar'
-    compile 'com.google.code.gson:gson:2.3'
-    compile 'com.android.support:support-v4:22.2.0'
-    compile 'com.fasterxml.jackson.core:jackson-annotations:2.5.4'
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.5.4'
-    compile 'com.fasterxml.jackson.core:jackson-core:2.5.4'
-    provided 'org.projectlombok:lombok:1.16.4'
+    compile 'com.google.code.gson:gson:2.3.1'
+    compile 'com.android.support:support-v4:23.0.1'
+    provided 'org.projectlombok:lombok:1.16.6'
 }
 
 uploadArchives {

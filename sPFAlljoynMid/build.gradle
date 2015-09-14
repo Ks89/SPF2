@@ -22,12 +22,12 @@ apply plugin: 'com.android.library'
 apply plugin: 'maven'
 
 android {
-    compileSdkVersion 22
-    buildToolsVersion "22.0.1"
+    compileSdkVersion 23
+    buildToolsVersion "23.0.1"
 
     defaultConfig {
         minSdkVersion 17
-        targetSdkVersion 22
+        targetSdkVersion 23
     }
 
     buildTypes {
@@ -45,11 +45,15 @@ android {
     }
 }
 
+task wrapper(type: Wrapper) {
+    gradleVersion = "2.7"
+}
+
 dependencies {
     compile project(':sPFFramework')
     compile files('libs/alljoyn.jar')
     compile files('libs/alljoyn_about.jar')
-    provided 'org.projectlombok:lombok:1.16.4'
+    provided 'org.projectlombok:lombok:1.16.6'
 }
 
 uploadArchives {
