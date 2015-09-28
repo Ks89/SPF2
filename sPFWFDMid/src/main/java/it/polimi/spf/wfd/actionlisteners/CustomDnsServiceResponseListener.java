@@ -39,7 +39,7 @@ import it.polimi.spf.wfd.WifiDirectMiddleware;
  */
 public class CustomDnsServiceResponseListener implements WifiP2pManager.DnsSdServiceResponseListener {
 
-    private static final String TAG = "DnsRespListener";
+    private static final String TAG = CustomDnsServiceResponseListener.class.getSimpleName();
 
     private WifiDirectMiddleware wifiDirectMiddleware;
 

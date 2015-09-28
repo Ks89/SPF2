@@ -46,16 +46,15 @@ import it.polimi.spf.wfd.otto.NineBus;
  * management as well as the routing of messages within the group.
  */
 class GroupOwnerActor extends GroupActor {
+    private static final String TAG = GroupOwnerActor.class.getSimpleName();
 
-    private static final String TAG = "GroupOwnerActor";
     private final ServerSocket serverSocket;
     private ServerSocketAcceptor acceptor;
-    private final Map<String, GOInternalClient> gOInternalClients = new Hashtable<>();
+    private final Map<String, GOInternalClient> goInternalClients = new Hashtable<>();
 
     private final ExecutorService threadPool = Executors.newCachedThreadPool();
 
-    public GroupOwnerActor(ServerSocket serverSocket, String myIdentifier,
-                           GroupActorListener listener) {
+    public GroupOwnerActor(ServerSocket serverSocket, String myIdentifier, GroupActorListener listener) {
         super(listener, myIdentifier);
         this.serverSocket = serverSocket;
         NineBus.get().register(this);
@@ -69,10 +68,10 @@ class GroupOwnerActor extends GroupActor {
 
     void disconnect() {
         acceptor.recycle();
-        for (String id : gOInternalClients.keySet()) {
-            gOInternalClients.get(id).recycle();
+        for (String id : goInternalClients.keySet()) {
+            goInternalClients.get(id).recycle();
         }
-        gOInternalClients.clear();
+        goInternalClients.clear();
     }
 
     /*
@@ -82,14 +81,12 @@ class GroupOwnerActor extends GroupActor {
      */
     private final Semaphore connectionSemaphore = new Semaphore(1);
 
-    public void onClientConnected(String identifier,
-                                  GOInternalClient gOInternalClient) throws InterruptedException {
+    public void onClientConnected(String identifier, GOInternalClient gOInternalClient) throws InterruptedException {
         WfdLog.d(TAG, "New client connected id : " + identifier);
         connectionSemaphore.acquire();
-        Set<String> clients = new HashSet<>(gOInternalClients.keySet());
+        Set<String> clients = new HashSet<>(goInternalClients.keySet());
         clients.add(getIdentifier());
-        GOInternalClient c = gOInternalClients
-                .put(identifier, gOInternalClient);
+        GOInternalClient c = goInternalClients.put(identifier, gOInternalClient);
         signalNewInstanceToGroup(identifier);
         signalGroupToNewClient(gOInternalClient, clients);
         connectionSemaphore.release();
@@ -98,11 +95,10 @@ class GroupOwnerActor extends GroupActor {
         }
     }
 
-    public void onClientDisconnected(String identifier)
-            throws InterruptedException {
+    public void onClientDisconnected(String identifier) throws InterruptedException {
         connectionSemaphore.acquire();
         WfdLog.d(TAG, "Client lost id : " + identifier);
-        GOInternalClient c = gOInternalClients.remove(identifier);
+        GOInternalClient c = goInternalClients.remove(identifier);
         if (c != null) {
             signalInstanceLossToGroup(identifier);
         }
@@ -112,15 +108,14 @@ class GroupOwnerActor extends GroupActor {
         }
     }
 
-    private void signalGroupToNewClient(GOInternalClient gOInternalClient,
-                                        Collection<String> clients) {
+    private void signalGroupToNewClient(GOInternalClient goInternalClient, Collection<String> clients) {
         for (String id : clients) {
             WfdMessage msg = new WfdMessage();
             msg.senderId = getIdentifier();
             msg.type = WfdMessage.TYPE_INSTANCE_DISCOVERY;
             msg.put(WfdMessage.ARG_IDENTIFIER, id);
             msg.put(WfdMessage.ARG_STATUS, WfdMessage.INSTANCE_FOUND);
-            gOInternalClient.sendMessage(msg);
+            goInternalClient.sendMessage(msg);
         }
     }
 
@@ -151,7 +146,6 @@ class GroupOwnerActor extends GroupActor {
 
     public void onMessageReceived(final WfdMessage msg) {
         threadPool.execute(new Runnable() {
-
             @Override
             public void run() {
                 if (msg.getReceiverId().equals(getIdentifier())) {
@@ -173,7 +167,7 @@ class GroupOwnerActor extends GroupActor {
     }
 
     private void sendUnicastMsg(WfdMessage msg, final String receiverId) {
-        GOInternalClient c = gOInternalClients.get(receiverId);
+        GOInternalClient c = goInternalClients.get(receiverId);
         if (c != null) {
             c.sendMessage(msg);
         }
@@ -186,7 +180,7 @@ class GroupOwnerActor extends GroupActor {
             return;
         }
         ArrayList<String> idSet = new ArrayList<>(
-                gOInternalClients.keySet());
+                goInternalClients.keySet());
         idSet.remove(msg.getSenderId());
         if (!msg.getSenderId().equals(getIdentifier())) {
             handle(msg);

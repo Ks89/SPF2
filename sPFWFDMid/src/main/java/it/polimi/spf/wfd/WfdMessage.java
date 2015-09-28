@@ -26,266 +26,241 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class WfdMessage {
-	
-	private static final String KEY_SENDER_ID = "senderId";
-	private static final String KEY_RECEIVER_ID = "receiverId";
-	private static final String KEY_MSG_TYPE = "type";
-	private static final String KEY_TIMESTAMP = "sequenceNumber";
-	private static final String KEY_MSG_CONTENT = "msgContent";
 
-	/**
-	 * Used when a message is addressed to the whole group.
-	 */
-	static final String BROADCAST_RECEIVER_ID = "SEND_TO_ALL";
+    private static final String KEY_SENDER_ID = "senderId";
+    private static final String KEY_RECEIVER_ID = "receiverId";
+    private static final String KEY_MSG_TYPE = "type";
+    private static final String KEY_TIMESTAMP = "sequenceNumber";
+    private static final String KEY_MSG_CONTENT = "msgContent";
 
-	/**
-	 * Used when no target is needed: e.g. connection does not need receiver and
-	 * instance discovery does not need sender.
-	 */
-	private static final String UNKNOWN_RECEIVER_ID = "UNKNOWN_RECEIVER_ID";
+    /**
+     * Used when a message is addressed to the whole group.
+     */
+    static final String BROADCAST_RECEIVER_ID = "SEND_TO_ALL";
 
-	/*
-	 * Message types
-	 */
-	static final String TYPE_CONNECT = "CONNECT";
-	static final String TYPE_SIGNAL = "SIGNAL";
-	static final String TYPE_REQUEST = "REQUEST";
-	static final String TYPE_RESPONSE = "RESPONSE";
-	static final String TYPE_RESPONSE_ERROR = "response_error";
-	static final String TYPE_INSTANCE_DISCOVERY = "DISCOVERY";
+    /**
+     * Used when no target is needed: e.g. connection does not need receiver and
+     * instance discovery does not need sender.
+     */
+    private static final String UNKNOWN_RECEIVER_ID = "UNKNOWN_RECEIVER_ID";
 
-	/*
-	 * Discovery messages parameters (used internally).
-	 */
-	/**
-	 * Content name for discovery messages: the identifier of the instance that
-	 * was found or lost.
-	 */
-	static final String ARG_IDENTIFIER = "identifier";
-	/**
-	 * Content name for discovery messages: boolean that indicates if the
-	 * instance is found (true) or lost (false);
-	 */
-	static final String ARG_STATUS = "status";
-	/**
-	 * Value for {@link WfdMessage#ARG_STATUS}:
-	 */
-	static final boolean INSTANCE_FOUND = true;
-	/**
-	 * Value for {@link WfdMessage#ARG_STATUS}
-	 */
-	static final boolean INSTANCE_LOST = false;
-
-	String receiverId = UNKNOWN_RECEIVER_ID;// default
-	String senderId = UNKNOWN_RECEIVER_ID;
-	String type = TYPE_SIGNAL;// default
-
-	/**
-	 * Holds the payload of the message.
-	 */
-	private JsonObject msgContent;
+    /*
+     * Message types
+     */
+    static final String TYPE_CONNECT = "CONNECT";
+    static final String TYPE_SIGNAL = "SIGNAL";
+    static final String TYPE_REQUEST = "REQUEST";
+    static final String TYPE_RESPONSE = "RESPONSE";
+    static final String TYPE_RESPONSE_ERROR = "response_error";
+    static final String TYPE_INSTANCE_DISCOVERY = "DISCOVERY";
 
 	/*
-	 * if the type is request or response , it is used to associate the pair of
-	 * messages.
+     * Discovery messages parameters (used internally).
 	 */
-	private long sequenceNumber = -1;
+    /**
+     * Content name for discovery messages: the identifier of the instance that
+     * was found or lost.
+     */
+    static final String ARG_IDENTIFIER = "identifier";
+    /**
+     * Content name for discovery messages: boolean that indicates if the
+     * instance is found (true) or lost (false);
+     */
+    static final String ARG_STATUS = "status";
+    /**
+     * Value for {@link WfdMessage#ARG_STATUS}:
+     */
+    static final boolean INSTANCE_FOUND = true;
+    /**
+     * Value for {@link WfdMessage#ARG_STATUS}
+     */
+    static final boolean INSTANCE_LOST = false;
 
-	/**
-	 * Constructs an empty message
-	 */
-	public WfdMessage() {
-		msgContent = new JsonObject();
-	}
+    String receiverId = UNKNOWN_RECEIVER_ID;// default
+    String senderId = UNKNOWN_RECEIVER_ID;
+    String type = TYPE_SIGNAL;// default
 
-	/**
-	 * Returns the string representation for this message.
-	 */
-	public String toString() {
-		JsonObject msgJSON = new JsonObject();
-		msgJSON.addProperty(KEY_SENDER_ID, senderId);
-		msgJSON.addProperty(KEY_RECEIVER_ID, receiverId);
-		msgJSON.addProperty(KEY_TIMESTAMP, sequenceNumber);
-		msgJSON.addProperty(KEY_MSG_TYPE, type);
-		msgJSON.add(KEY_MSG_CONTENT, msgContent);
-		Gson g = new Gson();
-		return g.toJson(msgJSON);
-	}
+    /**
+     * Holds the payload of the message.
+     */
+    private JsonObject msgContent;
 
-	/**
-	 * Returns a {@link WfdMessage} given its string representation. If the
-	 * string cannot be parsed returns null.
-	 * 
-	 * @param str
-	 * @return
-	 */
-	static WfdMessage fromString(String str) {
-		JsonObject o = new JsonParser().parse(str).getAsJsonObject();
-		WfdMessage msg = new WfdMessage();
-		msg.msgContent = o.getAsJsonObject(KEY_MSG_CONTENT);
-		msg.type = o.get(KEY_MSG_TYPE).getAsString();
-		if (msg.type.equals(TYPE_REQUEST) || msg.type.equals(TYPE_RESPONSE)) {
-			msg.sequenceNumber = o.get(KEY_TIMESTAMP).getAsLong();
-		} else {
-			msg.sequenceNumber = -1;
-		}
-		msg.receiverId = o.get(KEY_RECEIVER_ID).getAsString();
-		msg.senderId = o.get(KEY_SENDER_ID).getAsString();
-		return msg;
+    /*
+     * if the type is request or response , it is used to associate the pair of
+     * messages.
+     */
+    private long sequenceNumber = -1;
 
-	}
+    /**
+     * Constructs an empty message
+     */
+    public WfdMessage() {
+        msgContent = new JsonObject();
+    }
 
-	/**
-	 * 
-	 * @param senderId
-	 *            - the identifier to set
-	 */
-	void setSenderId(String senderId) {
-		this.senderId = senderId;
-	}
+    /**
+     * Returns the string representation for this message.
+     */
+    public String toString() {
+        JsonObject msgJSON = new JsonObject();
+        msgJSON.addProperty(KEY_SENDER_ID, senderId);
+        msgJSON.addProperty(KEY_RECEIVER_ID, receiverId);
+        msgJSON.addProperty(KEY_TIMESTAMP, sequenceNumber);
+        msgJSON.addProperty(KEY_MSG_TYPE, type);
+        msgJSON.add(KEY_MSG_CONTENT, msgContent);
+        Gson g = new Gson();
+        return g.toJson(msgJSON);
+    }
 
-	/**
-	 * 
-	 * @param targetId
-	 *            -the identifier to set
-	 */
-	void setReceiverId(String targetId) {
-		receiverId = targetId;
-	}
+    /**
+     * Returns a {@link WfdMessage} given its string representation. If the
+     * string cannot be parsed returns null.
+     *
+     * @param str
+     * @return
+     */
+    static WfdMessage fromString(String str) {
+        JsonObject o = new JsonParser().parse(str).getAsJsonObject();
+        WfdMessage msg = new WfdMessage();
+        msg.msgContent = o.getAsJsonObject(KEY_MSG_CONTENT);
+        msg.type = o.get(KEY_MSG_TYPE).getAsString();
+        if (msg.type.equals(TYPE_REQUEST) || msg.type.equals(TYPE_RESPONSE)) {
+            msg.sequenceNumber = o.get(KEY_TIMESTAMP).getAsLong();
+        } else {
+            msg.sequenceNumber = -1;
+        }
+        msg.receiverId = o.get(KEY_RECEIVER_ID).getAsString();
+        msg.senderId = o.get(KEY_SENDER_ID).getAsString();
+        return msg;
 
-	/**
-	 * @return the receiverId
-	 */
-	String getReceiverId() {
-		return receiverId;
-	}
+    }
 
-	/**
-	 * @return the senderId
-	 */
-	String getSenderId() {
-		return senderId;
-	}
+    /**
+     * @param senderId - the identifier to set
+     */
+    void setSenderId(String senderId) {
+        this.senderId = senderId;
+    }
 
-	/**
-	 * Set the type of the message.
-	 * 
-	 * @param msgType
-	 */
-	void setType(String msgType) {
-		this.type = msgType;
-	}
+    /**
+     * @param targetId -the identifier to set
+     */
+    void setReceiverId(String targetId) {
+        receiverId = targetId;
+    }
 
-	/**
-	 * 
-	 * @return the type of the message
-	 */
-	String getType() {
-		return type;
-	}
+    /**
+     * @return the receiverId
+     */
+    String getReceiverId() {
+        return receiverId;
+    }
 
-	/**
-	 * 
-	 * @param clock
-	 */
-	void setSequenceNumber(long clock) {
-		this.sequenceNumber = clock;
-	}
-	/**
-	 * 
-	 * @return
-	 */
-	long getTimestamp() {
+    /**
+     * @return the senderId
+     */
+    String getSenderId() {
+        return senderId;
+    }
 
-		return sequenceNumber;
-	}
+    /**
+     * Set the type of the message.
+     *
+     * @param msgType
+     */
+    void setType(String msgType) {
+        this.type = msgType;
+    }
 
-	/**
-	 * Maps name to value.
-	 * 
-	 * @param name
-	 *            - the name of the mapping, not null
-	 * @param value
-	 *            - the value of the mapping, not null
-	 * 
-	 */
-	public void put(String name, String value) {
+    /**
+     * @return the type of the message
+     */
+    String getType() {
+        return type;
+    }
 
-		msgContent.addProperty(name, value);
+    /**
+     * @param clock
+     */
+    void setSequenceNumber(long clock) {
+        this.sequenceNumber = clock;
+    }
 
-	}
+    /**
+     * @return
+     */
+    long getTimestamp() {
 
-	/**
-	 * Return the String associated to the specified name.
-	 * 
-	 * @param name
-	 * @return - the associated string
-	 */
-	public String getString(String name) {
-		return msgContent.get(name).getAsString();
+        return sequenceNumber;
+    }
 
-	}
+    /**
+     * Maps name to value.
+     *
+     * @param name  - the name of the mapping, not null
+     * @param value - the value of the mapping, not null
+     */
+    public void put(String name, String value) {
+        msgContent.addProperty(name, value);
+    }
 
-	/**
-	 * Maps name to value
-	 * 
-	 * @param name
-	 *            - the name of the mapping
-	 * @param value
-	 *            - the value of the mapping
-	 * 
-	 */
-	public void put(String name, boolean value) {
+    /**
+     * Return the String associated to the specified name.
+     *
+     * @param name
+     * @return - the associated string
+     */
+    public String getString(String name) {
+        return msgContent.get(name).getAsString();
+    }
 
-		msgContent.addProperty(name, value);
+    /**
+     * Maps name to value
+     *
+     * @param name  - the name of the mapping
+     * @param value - the value of the mapping
+     */
+    public void put(String name, boolean value) {
+        msgContent.addProperty(name, value);
+    }
 
-	}
+    /**
+     * @param name
+     * @return the value, or false if the mapping does not exist or cannot be
+     * coerced to a boolean
+     */
+    public boolean getBoolean(String name) {
+        return msgContent.get(name).getAsBoolean();
+    }
 
-	/**
-	 * 
-	 * @param name
-	 * @return the value, or false if the mapping does not exist or cannot be
-	 *         coerced to a boolean
-	 */
-	public boolean getBoolean(String name) {
+    /**
+     * Maps name to value
+     *
+     * @param name  - the name of the mapping
+     * @param value - the value of the mapping
+     */
+    public void put(String name, int value) {
+        msgContent.addProperty(name, value);
+    }
 
-		return msgContent.get(name).getAsBoolean();
+    /**
+     * Return the integer mapped to the specified name. If the mappings does not
+     * exists returns the provided defaultValue.
+     *
+     * @param name
+     * @return
+     */
+    public int getInt(String name) {
 
-	}
+        return msgContent.get(name).getAsInt();
 
-	/**
-	 * Maps name to value
-	 * 
-	 * @param name
-	 *            - the name of the mapping
-	 * @param value
-	 *            - the value of the mapping
-	 * 
-	 */
-	public void put(String name, int value) {
-		msgContent.addProperty(name, value);
+    }
 
-	}
+    public JsonObject getJsonObject(String name) {
+        return msgContent.get(name).getAsJsonObject();
+    }
 
-	/**
-	 * Return the integer mapped to the specified name. If the mappings does not
-	 * exists returns the provided defaultValue.
-	 * 
-	 * @param defaultValue
-	 * @param name
-	 * @return
-	 */
-	public int getInt(String name) {
-
-		return msgContent.get(name).getAsInt();
-
-	}
-
-	public JsonObject getJsonObject(String name) {
-		return msgContent.get(name).getAsJsonObject();
-	}
-	
-	public void put(String name, JsonElement value){
-		msgContent.add(name, value);
-	}
+    public void put(String name, JsonElement value) {
+        msgContent.add(name, value);
+    }
 }
