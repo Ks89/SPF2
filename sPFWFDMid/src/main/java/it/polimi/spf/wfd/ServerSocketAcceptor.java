@@ -67,7 +67,7 @@ class ServerSocketAcceptor extends Thread {
                 s = serverSocket.accept();
                 WfdLog.d(TAG, "incoming connection");
 //                new GOInternalClient(s, groupOwner).start();
-                NineBus.get().post(new GOSocketEvent("onServerSocketError",s));
+                NineBus.get().post(new GOSocketEvent("onStartGoInternalClient",s));
             }
         } catch (IOException e) {
 

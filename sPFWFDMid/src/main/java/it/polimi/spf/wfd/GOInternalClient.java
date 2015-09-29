@@ -32,7 +32,7 @@ import java.net.Socket;
  * the connections and notify the group owner when a peer leaves the network.
  */
 public class GOInternalClient extends Thread {
-    private static final String TAG = "GOInternalClient";
+    private static final String TAG = GOInternalClient.class.getSimpleName();
     private final GroupOwnerActor groupOwnerActor;
     private final Socket socket;
     private String identifier;
