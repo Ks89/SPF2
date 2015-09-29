@@ -38,6 +38,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -246,12 +247,19 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         }
         WfdLog.d(TAG, "attempt to create group");
         WifiP2pConfig config = new WifiP2pConfig();
-        String deviceAddress = selectDeviceAddess();
-        if (deviceAddress == null) {
+        List<WiFiP2pService> validServices = selectValidServices();
+        if (validServices == null || validServices.size() == 0) {
             WfdLog.d(TAG, "no device address eligible for connection");
             return;
         }
-        WfdLog.d(TAG, "connect target device found, device address: " + deviceAddress);
+
+        //FIXME FIXME FIXME in this first impl i choose the first element in the list
+        String deviceAddress = validServices.get(0).getPeerAddress();
+
+        WfdLog.d(TAG, "connect target device found, " +
+                "device address: " + deviceAddress + " device name: " + validServices.get(0).getInstanceName() +
+                " device id: " + validServices.get(0).getIdentifier());
+
         config.deviceAddress = deviceAddress;
         config.wps.setup = WpsInfo.PBC;
         config.groupOwnerIntent = this.goIntent;
@@ -269,32 +277,26 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
                 true)); //important: sets true to get detailed message when this method fails
     }
 
-    private String selectDeviceAddess() {
-        String eligibleAddress = null;
-        String eligibleIdentifier = null;
+    private List<WiFiP2pService> selectValidServices() {
+        List<WiFiP2pService> validServiceList = new ArrayList<>();
+        for (WiFiP2pService service : ServiceList.getInstance().getServiceList()) {
+            if (service != null && service.getPort() != WiFiP2pService.INVALID && service.getIdentifier() != null) {
+                //if it's a GO
+//                if (service.getDevice() != null && service.getDevice().isGroupOwner()) {
+//                    validServiceList.add(service);
+//                    return validServiceList;
+//                }
 
-
-        List<WiFiP2pService> serviceList = ServiceList.getInstance().getServiceList();
-
-        for (WiFiP2pService service : serviceList) {
-            if (service.getPort() != WiFiP2pService.INVALID && service.getIdentifier() != null) {
-                if (service.getDevice() != null && service.getDevice().isGroupOwner()) {
-                    return service.getPeerAddress();
+                if (!service.getIdentifier().equals(myIdentifier)) {
+                    validServiceList.add(service);
+                    Log.d(TAG, "ValidServiceList: --OK --: " + service.getIdentifier() + "," + service.getPeerAddress());
+                } else {
+                    Log.d(TAG, "ValidServiceList: --NOT--: " + service.getIdentifier() + "," + service.getPeerAddress());
                 }
 
-                String eligibleId = service.getIdentifier();
-                if (!eligibleId.equals(myIdentifier)) {
-                    if (eligibleIdentifier != null && eligibleId.compareTo(eligibleIdentifier) < 0) {
-                        eligibleAddress = service.getPeerAddress();
-                        eligibleIdentifier = eligibleId;
-                    } else if (eligibleIdentifier == null) {
-                        eligibleAddress = service.getPeerAddress();
-                        eligibleIdentifier = eligibleId;
-                    }
-                }
             }
         }
-        return eligibleAddress;
+        return validServiceList;
     }
 
     @Override
@@ -314,8 +316,6 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 //			createGroup();
 //			return;
 //		}
-
-        WfdLog.d(TAG, "group formed");
 
         if (info.isGroupOwner) {
             instantiateGroupOwner();
