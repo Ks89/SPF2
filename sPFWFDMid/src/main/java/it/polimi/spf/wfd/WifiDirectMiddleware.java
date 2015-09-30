@@ -241,12 +241,14 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
     private void createGroup() {
         WfdLog.d(TAG, "createGroup()");
+
         if (isGroupCreated || !connected) {
             WfdLog.d(TAG, "group already created or middleware not started");
             return;
         }
+
         WfdLog.d(TAG, "attempt to create group");
-        WifiP2pConfig config = new WifiP2pConfig();
+
         List<WiFiP2pService> validServices = selectValidServices();
         if (validServices == null || validServices.size() == 0) {
             WfdLog.d(TAG, "no device address eligible for connection");
@@ -260,21 +262,34 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
                 "device address: " + deviceAddress + " device name: " + validServices.get(0).getInstanceName() +
                 " device id: " + validServices.get(0).getIdentifier());
 
-        config.deviceAddress = deviceAddress;
-        config.wps.setup = WpsInfo.PBC;
-        config.groupOwnerIntent = this.goIntent;
-
-        Log.d(TAG, "Group with config.groupOwnerIntent= " + config.groupOwnerIntent);
-
         isGroupCreated = true;
-        mManager.connect(mChannel, config, new CustomizableActionListener(
-                this.mContext,
-                "createGroup",
-                "Connect success",
-                null,
-                "Connect failure",
-                "Connect failure",
-                true)); //important: sets true to get detailed message when this method fails
+
+        if (goIntent == 15) {
+            Log.d(TAG, "This device want to be an autonomous GO, because has gointent: " + goIntent);
+            mManager.createGroup(mChannel, new CustomizableActionListener(
+                    this.mContext,
+                    "createGroup",
+                    "Connect success",
+                    null,
+                    "Connect failure",
+                    "Connect failure",
+                    true)); //important: sets true to get detailed message when this method fails
+        } else {
+            WifiP2pConfig config = new WifiP2pConfig();
+            config.deviceAddress = deviceAddress;
+            config.wps.setup = WpsInfo.PBC;
+            config.groupOwnerIntent = this.goIntent;
+
+            Log.d(TAG, "This device want to be a client, because has gointent: " + goIntent);
+            mManager.connect(mChannel, config, new CustomizableActionListener(
+                    this.mContext,
+                    "createGroup",
+                    "Connect success",
+                    null,
+                    "Connect failure",
+                    "Connect failure",
+                    true)); //important: sets true to get detailed message when this method fails
+        }
     }
 
     private List<WiFiP2pService> selectValidServices() {

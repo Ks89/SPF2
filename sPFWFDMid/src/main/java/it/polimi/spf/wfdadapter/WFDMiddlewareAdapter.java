@@ -177,7 +177,7 @@ public class WFDMiddlewareAdapter implements ProximityMiddleware, WFDRemoteInsta
                     try {
                         mMiddlewareRef.sendMessageBroadcast(wfdMsg);
                     } catch (IOException e) {
-                        Log.e(TAG, "Exception handleMessage msg", e);
+                        Log.e(TAG, "Exception handleMessage msg");
                     }
 
                     Message msgNew = obtainMessage(SEND_ADVERTISING);

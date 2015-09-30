@@ -71,8 +71,14 @@ public class CustomDnsServiceResponseListener implements WifiP2pManager.DnsSdSer
 //				return;
 //			}
 
+            //services are added in CustomDnsServiceResponseListener
+            //and here are updated with device name and other informations.
             WiFiP2pService service = ServiceList.getInstance().getServiceByDeviceAddress(srcDevice.deviceAddress);
+
+            //Indeed, Here i'm updating the device with the human-friendly version from the DnsTxtRecord, assuming one arrived.
             service.setDevice(srcDevice);
+
+            //And i also update this additional informations
             service.setInstanceName(instanceName);
             service.setServiceRegistrationType(registrationType);
 

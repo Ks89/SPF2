@@ -56,13 +56,12 @@ public class CustomDnsSdTxtRecordListener implements WifiP2pManager.DnsSdTxtReco
         int port;
         try {
             port = Integer.parseInt(portString);
+            service.setPort(port);
         } catch (Throwable t) {
             return;
         }
 
         service.setIdentifier(identifier);
-
-        service.setPort(port);
 
         ServiceList.getInstance().addServiceIfNotPresent(service);
     }

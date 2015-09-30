@@ -36,6 +36,7 @@ import lombok.Getter;
  * Created by Stefano Cappa on 07/08/15.
  */
 public class ServiceList {
+    private static final String TAG = ServiceList.class.getSimpleName();
 
     @Getter private final List<WiFiP2pService> serviceList;
 
@@ -63,7 +64,7 @@ public class ServiceList {
      * @param service {@link WiFiP2pService} to add.
      */
     public void addServiceIfNotPresent(WiFiP2pService service) {
-        Log.d("SERVICESERVICESERVICE", "addServiceIfNotPresent BEGIN, with size = " + serviceList.size());
+        Log.d(TAG, "addServiceIfNotPresent BEGIN, with size = " + serviceList.size());
 
         if(service==null) {
             return;
@@ -81,7 +82,7 @@ public class ServiceList {
             serviceList.add(service);
         }
 
-        Log.d("SERVICESERVICESERVICE", "addServiceIfNotPresent END, with size = " + serviceList.size());
+        Log.d(TAG, "addServiceIfNotPresent END, with size = " + serviceList.size());
     }
 
     /**
@@ -96,21 +97,21 @@ public class ServiceList {
             return null;
         }
 
-        Log.d("ServiceList", "groupownerdevice passe to getServiceByDevice: " + device.deviceName + ", " + device.deviceAddress);
+        Log.d(TAG, "groupownerdevice passe to getServiceByDevice: " + device.deviceName + ", " + device.deviceAddress);
 
-        Log.d("ServiceList", "servicelist size: " + serviceList.size());
+        Log.d(TAG, "servicelist size: " + serviceList.size());
 
         for (WiFiP2pService element : serviceList) {
-            Log.d("ServiceList", "element in list: " + element.getDevice().deviceName + ", " + element.getDevice().deviceAddress);
-            Log.d("ServiceList", "element passed : " + device.deviceName + ", " + device.deviceAddress);
+            Log.d(TAG, "element in list: " + element.getDevice().deviceName + ", " + element.getDevice().deviceAddress);
+            Log.d(TAG, "element passed : " + device.deviceName + ", " + device.deviceAddress);
 
             if (element.getDevice().deviceAddress.equals(device.deviceAddress) ) {
-                Log.d("ServiceList", "getServiceByDevice if satisfied : " + device.deviceAddress + ", " + element.getDevice().deviceAddress);
+                Log.d(TAG, "getServiceByDevice if satisfied : " + device.deviceAddress + ", " + element.getDevice().deviceAddress);
                 return element;
             }
         }
 
-        Log.d("ServiceList", "servicelist size: " + serviceList.size());
+        Log.d(TAG, "servicelist size: " + serviceList.size());
 
         return null;
     }
@@ -127,9 +128,9 @@ public class ServiceList {
     }
 
 //    public WiFiP2pService getServiceByDevice(WifiP2pDevice device) {
-//        Log.d("ServiceList", "device passed: " + device.deviceName + ", " + device.deviceAddress);
+//        Log.d(TAG, "device passed: " + device.deviceName + ", " + device.deviceAddress);
 //        for(WiFiP2pService serv : serviceList) {
-//            Log.d("ServiceList", "element in list: " + serv.getDevice().deviceName + ", " + serv.getDevice().deviceAddress);
+//            Log.d(TAG, "element in list: " + serv.getDevice().deviceName + ", " + serv.getDevice().deviceAddress);
 //            if(serv.getDevice().equals(device)) {
 //                return serv;
 //            }

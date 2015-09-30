@@ -107,7 +107,7 @@ class GroupClientActor extends GroupActor implements Runnable {
 			while (!thread.isInterrupted()) {
 				WfdMessage msg = inStream.readMessage();
 				WfdLog.d(TAG, "message received");
-				GroupClientActor.super.handle(msg);
+				super.handle(msg);
 			}
 		} catch (Throwable e) {
 			WfdLog.d(TAG, "error in the run loop", e);
