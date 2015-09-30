@@ -21,6 +21,7 @@
 
 package it.polimi.spf.wfd;
 
+import android.app.Service;
 import android.content.Context;
 import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
@@ -95,15 +96,25 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
             mListener.onError();
             return;
         }
+
         mPort = mServerSocket.getLocalPort();
         mReceiver.register(mContext);
         mManager = (WifiP2pManager) mContext.getSystemService(Context.WIFI_P2P_SERVICE);
-        mChannel = mManager.initialize(mContext, Looper.getMainLooper(), null);
-
+        mChannel = mManager.initialize(mContext, Looper.getMainLooper(), new WifiP2pManager.ChannelListener() {
+            @Override
+            public void onChannelDisconnected() {
+                Log.d(TAG, "Channel disconnected");
+            }
+        });
 
         this.startRegistration();
         this.discoverService();
 
+        //used only if this device is a GO (because gointent == 15)
+//        if(goIntent==15) {
+//            Log.d(TAG, "I'm a GO and i want to become an Autonomous GO");
+//            this.becomeAutonomousGroupOwner();
+//        }
 
         connected = true;
     }
@@ -235,52 +246,55 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         }
 
         ServiceList.getInstance().getServiceList().clear();
-
     }
 
 
+    private void becomeAutonomousGroupOwner() {
+        mManager.createGroup(mChannel, new CustomizableActionListener(
+                this.mContext,
+                "createGroup",
+                "Connect success",
+                null,
+                "Connect failure",
+                "Connect failure",
+                true)); //important: sets true to get detailed message when this method fails
+    }
+
     private void createGroup() {
         WfdLog.d(TAG, "createGroup()");
-
         if (isGroupCreated || !connected) {
             WfdLog.d(TAG, "group already created or middleware not started");
             return;
         }
-
         WfdLog.d(TAG, "attempt to create group");
-
-        List<WiFiP2pService> validServices = selectValidServices();
-        if (validServices == null || validServices.size() == 0) {
-            WfdLog.d(TAG, "no device address eligible for connection");
-            return;
-        }
-
-        //FIXME FIXME FIXME in this first impl i choose the first element in the list
-        String deviceAddress = validServices.get(0).getPeerAddress();
-
-        WfdLog.d(TAG, "connect target device found, " +
-                "device address: " + deviceAddress + " device name: " + validServices.get(0).getInstanceName() +
-                " device id: " + validServices.get(0).getIdentifier());
 
         isGroupCreated = true;
 
         if (goIntent == 15) {
             Log.d(TAG, "This device want to be an autonomous GO, because has gointent: " + goIntent);
-            mManager.createGroup(mChannel, new CustomizableActionListener(
-                    this.mContext,
-                    "createGroup",
-                    "Connect success",
-                    null,
-                    "Connect failure",
-                    "Connect failure",
-                    true)); //important: sets true to get detailed message when this method fails
+
+            this.becomeAutonomousGroupOwner();
         } else {
+            Log.d(TAG, "This device want to be a client, because has gointent: " + goIntent);
+
+            List<WiFiP2pService> validGroupOwners = ServiceList.getInstance().getValidGroupOwners(myIdentifier);
+            if (validGroupOwners == null || validGroupOwners.size() == 0) {
+                WfdLog.d(TAG, "no device address eligible for connection");
+                return;
+            }
+
+            //FIXME FIXME FIXME in this first impl i choose the first element in the list
+            String deviceAddress = validGroupOwners.get(0).getPeerAddress();
+
+            WfdLog.d(TAG, "connect target device found, " +
+                    "device address: " + deviceAddress + " device name: " + validGroupOwners.get(0).getInstanceName() +
+                    " device id: " + validGroupOwners.get(0).getIdentifier());
+
             WifiP2pConfig config = new WifiP2pConfig();
             config.deviceAddress = deviceAddress;
             config.wps.setup = WpsInfo.PBC;
             config.groupOwnerIntent = this.goIntent;
 
-            Log.d(TAG, "This device want to be a client, because has gointent: " + goIntent);
             mManager.connect(mChannel, config, new CustomizableActionListener(
                     this.mContext,
                     "createGroup",
@@ -290,28 +304,6 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
                     "Connect failure",
                     true)); //important: sets true to get detailed message when this method fails
         }
-    }
-
-    private List<WiFiP2pService> selectValidServices() {
-        List<WiFiP2pService> validServiceList = new ArrayList<>();
-        for (WiFiP2pService service : ServiceList.getInstance().getServiceList()) {
-            if (service != null && service.getPort() != WiFiP2pService.INVALID && service.getIdentifier() != null) {
-                //if it's a GO
-//                if (service.getDevice() != null && service.getDevice().isGroupOwner()) {
-//                    validServiceList.add(service);
-//                    return validServiceList;
-//                }
-
-                if (!service.getIdentifier().equals(myIdentifier)) {
-                    validServiceList.add(service);
-                    Log.d(TAG, "ValidServiceList: --OK --: " + service.getIdentifier() + "," + service.getPeerAddress());
-                } else {
-                    Log.d(TAG, "ValidServiceList: --NOT--: " + service.getIdentifier() + "," + service.getPeerAddress());
-                }
-
-            }
-        }
-        return validServiceList;
     }
 
     @Override

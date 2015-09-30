@@ -38,12 +38,14 @@ import lombok.Getter;
 public class ServiceList {
     private static final String TAG = ServiceList.class.getSimpleName();
 
-    @Getter private final List<WiFiP2pService> serviceList;
+    @Getter
+    private final List<WiFiP2pService> serviceList;
 
     private static final ServiceList instance = new ServiceList();
 
     /**
      * Method to get the instance of this class.
+     *
      * @return instance of this class.
      */
     public static ServiceList getInstance() {
@@ -61,12 +63,13 @@ public class ServiceList {
     /**
      * Method to add a service inside the list in a secure way.
      * The service is added only if isn't already inside the list.
+     *
      * @param service {@link WiFiP2pService} to add.
      */
     public void addServiceIfNotPresent(WiFiP2pService service) {
         Log.d(TAG, "addServiceIfNotPresent BEGIN, with size = " + serviceList.size());
 
-        if(service==null) {
+        if (service == null) {
             return;
         }
 
@@ -78,7 +81,7 @@ public class ServiceList {
             }
         }
 
-        if(add) {
+        if (add) {
             serviceList.add(service);
         }
 
@@ -89,11 +92,12 @@ public class ServiceList {
      * Method to get a service from the list, using only the device.
      * This method use only the deviceAddress, not the device name, because sometimes Android doesn't
      * get the name, but only the mac address.
+     *
      * @param device WifiP2pDevice that you want to use to search the service.
      * @return The WiFiP2pService associated to the device or null, if the device isn't in the list.
      */
     public WiFiP2pService getServiceByDevice(WifiP2pDevice device) {
-        if(device==null) {
+        if (device == null) {
             return null;
         }
 
@@ -105,7 +109,7 @@ public class ServiceList {
             Log.d(TAG, "element in list: " + element.getDevice().deviceName + ", " + element.getDevice().deviceAddress);
             Log.d(TAG, "element passed : " + device.deviceName + ", " + device.deviceAddress);
 
-            if (element.getDevice().deviceAddress.equals(device.deviceAddress) ) {
+            if (element.getDevice().deviceAddress.equals(device.deviceAddress)) {
                 Log.d(TAG, "getServiceByDevice if satisfied : " + device.deviceAddress + ", " + element.getDevice().deviceAddress);
                 return element;
             }
@@ -116,31 +120,53 @@ public class ServiceList {
         return null;
     }
 
+    public List<WiFiP2pService> selectValidServices(String myIdentifier) {
+        List<WiFiP2pService> validServiceList = new ArrayList<>();
+        for (WiFiP2pService service : ServiceList.getInstance().getServiceList()) {
+            if (service != null && service.getPort() != WiFiP2pService.INVALID && service.getIdentifier() != null) {
+                //if it's a GO
+//                if (service.getDevice() != null && service.getDevice().isGroupOwner()) {
+//                    validServiceList.add(service);
+//                    return validServiceList;
+//                }
 
+                if (!service.getIdentifier().equals(myIdentifier)) {
+                    validServiceList.add(service);
+                    Log.d(TAG, "--> ValidServiceList: --OK --: " + service.getIdentifier() + "," + service.getPeerAddress());
+                } else {
+                    Log.d(TAG, "--> ValidServiceList: --NOT--: " + service.getIdentifier() + "," + service.getPeerAddress());
+                }
+
+            }
+        }
+        return validServiceList;
+    }
+
+    public List<WiFiP2pService> getValidGroupOwners(String myIdentifier) {
+        List<WiFiP2pService> validServiceList = this.selectValidServices(myIdentifier);
+        for (WiFiP2pService service : validServiceList) {
+            if (service.getDevice().isGroupOwner()) {
+                Log.d(TAG, "--> GetValidGroupOwners: --OK --: " + service.getIdentifier() + "," + service.getPeerAddress());
+                validServiceList.add(service);
+            } else {
+                Log.d(TAG, "--> GetValidGroupOwners: --NOT--: " + service.getIdentifier() + "," + service.getPeerAddress());
+            }
+        }
+        return validServiceList;
+    }
 
     public boolean containsDevice(WifiP2pDevice device) {
-        for(WiFiP2pService serv : serviceList) {
-            if(serv.getDevice().deviceAddress.equals(device.deviceAddress)) {
+        for (WiFiP2pService serv : serviceList) {
+            if (serv.getDevice().deviceAddress.equals(device.deviceAddress)) {
                 return true;
             }
         }
         return false;
     }
 
-//    public WiFiP2pService getServiceByDevice(WifiP2pDevice device) {
-//        Log.d(TAG, "device passed: " + device.deviceName + ", " + device.deviceAddress);
-//        for(WiFiP2pService serv : serviceList) {
-//            Log.d(TAG, "element in list: " + serv.getDevice().deviceName + ", " + serv.getDevice().deviceAddress);
-//            if(serv.getDevice().equals(device)) {
-//                return serv;
-//            }
-//        }
-//        return null;
-//    }
-
     public WiFiP2pService getServiceByDeviceAddress(String deviceAddress) {
-        for(WiFiP2pService serv : serviceList) {
-            if(serv.getDevice().deviceAddress.equals(deviceAddress)) {
+        for (WiFiP2pService serv : serviceList) {
+            if (serv.getDevice().deviceAddress.equals(deviceAddress)) {
                 return serv;
             }
         }
