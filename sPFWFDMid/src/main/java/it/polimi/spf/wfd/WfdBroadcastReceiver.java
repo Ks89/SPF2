@@ -28,50 +28,50 @@ import android.net.NetworkInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 
 public class WfdBroadcastReceiver extends BroadcastReceiver {
-	
-	private final WifiDirectMiddleware mMid;
-	private Context mContext;
 
-	public WfdBroadcastReceiver(WifiDirectMiddleware wifiDirectMiddleware) {
-		mMid =  wifiDirectMiddleware;
-	}
+    private final WifiDirectMiddleware mMid;
+    private Context mContext;
 
-	@Override
-	public void onReceive(Context arg0, Intent arg1) {
-		String action =  arg1.getAction();
+    public WfdBroadcastReceiver(WifiDirectMiddleware wifiDirectMiddleware) {
+        mMid = wifiDirectMiddleware;
+    }
 
-		if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
-			
-			//call on connection info received
-			NetworkInfo netInfo = arg1.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
-			if (netInfo.isConnected()) {
-				// It's a connect
-				mMid.onNetworkConnected();
-			} else {
-				// It's a disconnect
-				mMid.onNetworkDisconnected();
-			}
-			
-		}
-	}
+    @Override
+    public void onReceive(Context arg0, Intent arg1) {
+        String action = arg1.getAction();
 
-	public void register(Context mContext) {
-		this.mContext = mContext;
-		IntentFilter intentFilter = new IntentFilter();
-		
-	    //  Indicates a change in the Wi-Fi P2P status.
-	    intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
+        if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
 
-	    // Indicates the state of Wi-Fi P2P connectivity has changed.
-	    intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
+            //call on connection info received
+            NetworkInfo netInfo = arg1.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
+            if (netInfo.isConnected()) {
+                // It's a connect
+                mMid.onNetworkConnected();
+            } else {
+                // It's a disconnect
+                mMid.onNetworkDisconnected();
+            }
 
-	    // Indicates this device's details have changed.
-	    intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);	
-	    
-	    mContext.registerReceiver(this, intentFilter);
-	}
-	
-	public void unregister(){
-		mContext.unregisterReceiver(this);
-	}
+        }
+    }
+
+    public void register(Context mContext) {
+        this.mContext = mContext;
+        IntentFilter intentFilter = new IntentFilter();
+
+        //  Indicates a change in the Wi-Fi P2P status.
+        intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
+
+        // Indicates the state of Wi-Fi P2P connectivity has changed.
+        intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
+
+        // Indicates this device's details have changed.
+        intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
+
+        mContext.registerReceiver(this, intentFilter);
+    }
+
+    public void unregister() {
+        mContext.unregisterReceiver(this);
+    }
 }

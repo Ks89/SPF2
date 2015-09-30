@@ -101,7 +101,7 @@ public class ServiceList {
             return null;
         }
 
-        Log.d(TAG, "groupownerdevice passe to getServiceByDevice: " + device.deviceName + ", " + device.deviceAddress);
+        Log.d(TAG, "groupownerdevice passed to getServiceByDevice: " + device.deviceName + ", " + device.deviceAddress);
 
         Log.d(TAG, "servicelist size: " + serviceList.size());
 
@@ -123,20 +123,14 @@ public class ServiceList {
     public List<WiFiP2pService> selectValidServices(String myIdentifier) {
         List<WiFiP2pService> validServiceList = new ArrayList<>();
         for (WiFiP2pService service : ServiceList.getInstance().getServiceList()) {
-            if (service != null && service.getPort() != WiFiP2pService.INVALID && service.getIdentifier() != null) {
-                //if it's a GO
-//                if (service.getDevice() != null && service.getDevice().isGroupOwner()) {
-//                    validServiceList.add(service);
-//                    return validServiceList;
-//                }
+            if (service != null && service.getPort() != WiFiP2pService.INVALID
+                    && service.getIdentifier() != null && !service.getIdentifier().equals(myIdentifier)) {
 
-                if (!service.getIdentifier().equals(myIdentifier)) {
-                    validServiceList.add(service);
-                    Log.d(TAG, "--> ValidServiceList: --OK --: " + service.getIdentifier() + "," + service.getPeerAddress());
-                } else {
-                    Log.d(TAG, "--> ValidServiceList: --NOT--: " + service.getIdentifier() + "," + service.getPeerAddress());
-                }
+                validServiceList.add(service);
 
+                Log.d(TAG, "--> ValidServiceList: --OK --: " + service.getIdentifier() + "," + service.getPeerAddress());
+            } else {
+                Log.d(TAG, "--> ValidServiceList: --NOT--: " + service.getIdentifier() + "," + service.getPeerAddress());
             }
         }
         return validServiceList;
@@ -146,10 +140,10 @@ public class ServiceList {
         List<WiFiP2pService> validServiceList = this.selectValidServices(myIdentifier);
         for (WiFiP2pService service : validServiceList) {
             if (service.getDevice().isGroupOwner()) {
-                Log.d(TAG, "--> GetValidGroupOwners: --OK --: " + service.getIdentifier() + "," + service.getPeerAddress());
+                Log.d(TAG, "--> ValidGroupOwnersList: --OK --: " + service.getIdentifier() + "," + service.getPeerAddress());
                 validServiceList.add(service);
             } else {
-                Log.d(TAG, "--> GetValidGroupOwners: --NOT--: " + service.getIdentifier() + "," + service.getPeerAddress());
+                Log.d(TAG, "--> ValidGroupOwnersList: --NOT--: " + service.getIdentifier() + "," + service.getPeerAddress());
             }
         }
         return validServiceList;

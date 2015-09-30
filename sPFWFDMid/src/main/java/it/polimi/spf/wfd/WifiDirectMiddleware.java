@@ -21,7 +21,6 @@
 
 package it.polimi.spf.wfd;
 
-import android.app.Service;
 import android.content.Context;
 import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
@@ -39,7 +38,6 @@ import android.util.Log;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,10 +53,10 @@ import lombok.Getter;
  * In particular, this last function is made with a series of adapters whose aim is to adapt the
  * Wi-Fi Direct middleware interface to the ones required by SPF.
  */
-public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListener,
-        CustomDnsServiceResponseListener.CallbackToMiddleware {
-
+public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListener {
     private final static String TAG = WifiDirectMiddleware.class.getSimpleName();
+
+    private static final int THIS_DEVICE_IS_GO = 15;
 
     private final Context mContext;
     private final WfdMiddlewareListener mListener;
@@ -73,7 +71,6 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
     private boolean connected = false;
     private boolean isGroupCreated = false;
     private final String myIdentifier;
-
     private int goIntent;
 
     private GroupActor mGroupActor;
@@ -82,7 +79,6 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
     public WifiDirectMiddleware(int goIntentFromSPFApp, Context context, String identifier, WfdMiddlewareListener listener) {
         Log.d(TAG, "WifiDirectMiddleware with goIntentFromSPFApp: " + goIntentFromSPFApp);
-
         this.mContext = context;
         this.mListener = listener;
         this.myIdentifier = identifier;
@@ -110,13 +106,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         this.startRegistration();
         this.discoverService();
 
-        //used only if this device is a GO (because gointent == 15)
-//        if(goIntent==15) {
-//            Log.d(TAG, "I'm a GO and i want to become an Autonomous GO");
-//            this.becomeAutonomousGroupOwner();
-//        }
-
-        connected = true;
+        this.connected = true;
     }
 
     /**
@@ -155,7 +145,6 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
      * This method updates also the discovery menu item.
      */
     private void discoverService() {
-
 		/*
          * Register listeners for DNS-SD services. These are callbacks invoked
          * by the system when a service is actually discovered.
@@ -270,7 +259,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
         isGroupCreated = true;
 
-        if (goIntent == 15) {
+        if (goIntent == THIS_DEVICE_IS_GO) {
             Log.d(TAG, "This device want to be an autonomous GO, because has gointent: " + goIntent);
 
             this.becomeAutonomousGroupOwner();
@@ -317,12 +306,6 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         }
 
         WfdLog.d(TAG, "connection info available");
-
-//		if (!info.groupFormed) {
-//			Log.d(TAG,"createGroup: onConnectionInfoAvailable");
-//			createGroup();
-//			return;
-//		}
 
         if (info.isGroupOwner) {
             instantiateGroupOwner();
@@ -463,7 +446,6 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         }
     }
 
-
     /**
      * Method to set goIntent in Wi-Fi Direct Middleware.
      *
@@ -475,20 +457,17 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
 
     /**
-     * method defined in interface {@link CustomDnsServiceResponseListener.CallbackToMiddleware} and
-     * used in {@link CustomDnsServiceResponseListener}
+     * Class and attribute used in {@link CustomDnsServiceResponseListener#onDnsSdServiceAvailable(String, String, WifiP2pDevice)}
+     * to call methods in {@link WifiDirectMiddleware}.
      */
-    @Override
-    public boolean onIsGroupCreated() {
-        return isGroupCreated;
-    }
-
-    /**
-     * method defined in interface {@link CustomDnsServiceResponseListener.CallbackToMiddleware} and
-     * used in {@link CustomDnsServiceResponseListener}
-     */
-    @Override
-    public void onCreateGroup() {
-        createGroup();
+    @Getter
+    private CallbackToMiddleware onServiceDiscovered =  new CallbackToMiddleware();
+    public class CallbackToMiddleware {
+        public boolean onIsGroupCreated() {
+            return isGroupCreated;
+        }
+        public void onCreateGroup() {
+            createGroup();
+        }
     }
 }

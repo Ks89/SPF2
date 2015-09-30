@@ -38,21 +38,12 @@ import it.polimi.spf.wfd.WifiDirectMiddleware;
  * Created by Stefano Cappa on 16/07/15.
  */
 public class CustomDnsServiceResponseListener implements WifiP2pManager.DnsSdServiceResponseListener {
-
     private static final String TAG = CustomDnsServiceResponseListener.class.getSimpleName();
-
     private WifiDirectMiddleware wifiDirectMiddleware;
 
     /**
-     *  Callback interface to {@link WifiDirectMiddleware}
-     */
-    public interface CallbackToMiddleware {
-        boolean onIsGroupCreated();
-        void onCreateGroup();
-    }
-
-    /**
      * CustomDnsServiceResponseListener constructor
+     *
      * @param wifiDirectMiddleware
      */
     public CustomDnsServiceResponseListener(WifiDirectMiddleware wifiDirectMiddleware) {
@@ -62,33 +53,22 @@ public class CustomDnsServiceResponseListener implements WifiP2pManager.DnsSdSer
     @Override
     public void onDnsSdServiceAvailable(String instanceName, String registrationType, WifiP2pDevice srcDevice) {
         // A service has been discovered. Is this our app?
-
         Log.d(TAG, "onDnsSdServiceAvailable, instanceName:" + instanceName + ", registrationType:" + registrationType + ",srcDevice:" + srcDevice);
-
         if (instanceName.startsWith(Configuration.SERVICE_INSTANCE)) {
-
-//			if (ServiceList.getInstance().containsDevice(srcDevice)) {
-//				return;
-//			}
-
             //services are added in CustomDnsServiceResponseListener
             //and here are updated with device name and other informations.
             WiFiP2pService service = ServiceList.getInstance().getServiceByDeviceAddress(srcDevice.deviceAddress);
-
             //Indeed, Here i'm updating the device with the human-friendly version from the DnsTxtRecord, assuming one arrived.
             service.setDevice(srcDevice);
-
             //And i also update this additional informations
             service.setInstanceName(instanceName);
             service.setServiceRegistrationType(registrationType);
 
-//			ServiceList.getInstance().addServiceIfNotPresent(service);
-
             Log.d(TAG, "onDnsSdServiceAvailable " + instanceName);
 
-            if (!((CallbackToMiddleware)wifiDirectMiddleware).onIsGroupCreated()) {
+            if (!wifiDirectMiddleware.getOnServiceDiscovered().onIsGroupCreated()) {
                 WfdLog.d(TAG, "createGroup: onDnsSdTxtRecordAvailable");
-                ((CallbackToMiddleware)wifiDirectMiddleware).onCreateGroup();
+                wifiDirectMiddleware.getOnServiceDiscovered().onCreateGroup();
             }
         }
     }
