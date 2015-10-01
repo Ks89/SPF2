@@ -58,7 +58,6 @@ task wrapper(type: Wrapper) {
 
 dependencies {
     compile project(':sPFFramework')
-    //compile project(':sPFAlljoynMid')
     compile project(':sPFWFDMid')
     provided 'org.projectlombok:lombok:1.16.6'
 

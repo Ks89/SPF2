@@ -52,27 +52,7 @@ task wrapper(type: Wrapper) {
 
 dependencies {
     compile project(':sPFShared')
-//    compile 'it.polimi.spf:spfshared:1.0.0@aar'
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.android.support:support-v4:23.0.1'
     provided 'org.projectlombok:lombok:1.16.6'
-}
-
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            repository(
-                    url: "${nexusUrl}/content/repositories/releases") {
-                authentication(userName: nexusUsername, password: nexusPassword)
-            }
-            snapshotRepository(
-                    url: "${nexusUrl}/content/repositories/snapshots") {
-                authentication(userName: nexusUsername, password: nexusPassword)
-            }
-
-            pom.version = "1.0.0.3"
-            pom.artifactId = "spfframework"
-            pom.groupId = "it.polimi.spf"
-        }
-    }
 }

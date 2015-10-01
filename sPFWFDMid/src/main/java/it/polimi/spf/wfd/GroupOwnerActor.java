@@ -69,6 +69,11 @@ class GroupOwnerActor extends GroupActor {
 
     @Override
     void disconnect() {
+        try {
+            serverSocket.close();
+        } catch (IOException e) {
+            WfdLog.e(TAG, "Error while closing socket in GroupOwnerActor", e);
+        }
         acceptor.recycle();
         for (String id : goInternalClients.keySet()) {
             goInternalClients.get(id).recycle();
