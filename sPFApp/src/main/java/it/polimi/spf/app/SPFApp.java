@@ -26,6 +26,7 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 import it.polimi.spf.framework.ExceptionLogger;
@@ -41,7 +42,7 @@ import it.polimi.spf.wfdadapter.WFDMiddlewareAdapter;
  * <ul>
  */
 public class SPFApp extends Application {
-
+    private static final String TAG = SPFApp.class.getSimpleName();
     private static final String STOPSPF = "it.polimi.spf.app.stop";
 
     private RemoteViews contentView;
@@ -121,6 +122,10 @@ public class SPFApp extends Application {
         ExceptionLogger.installAsDefault(this);
     }
 
+    public void updateIdentifier(int goIntent) {
+        Log.d(TAG, "Called updateIdentifier with goIntent: " + goIntent);
+        SPF.get().updateIdentifier(goIntent);
+    }
 
     /**
      * Method to set the contentview with Title, Text and Image.

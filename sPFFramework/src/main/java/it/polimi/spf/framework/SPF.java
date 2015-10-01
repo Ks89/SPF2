@@ -125,7 +125,8 @@ public class SPF {
         mNotificationManager = new SPFNotificationManager(context);
         mSecurityMonitor = new SPFSecurityMonitor(context);
 
-        this.initIdentifier(goIntent);
+        //TODO FIXME refactor, because this method can rename or init the idenfier
+        this.updateIdentifier(goIntent);
 
         // Initialize middleware
         InboundProximityInterface proximityInterface = new InboundProximityInterfaceImpl(this);
@@ -138,7 +139,22 @@ public class SPF {
         mAdvertiseManager = new SPFAdvertisingManager(context, mMiddleware);
     }
 
-    public void initIdentifier(int goIntent) {
+//    public void initIdentifier(int goIntent) {
+//        // unique id generation
+//        if (mProfileManager != null) {
+//            ProfileFieldContainer pfc = mProfileManager.getProfileFieldBulk(SPFPersona.getDefault(), ProfileField.IDENTIFIER);
+//            uniqueIdentifier = pfc.getFieldValue(ProfileField.IDENTIFIER);
+//            if (uniqueIdentifier == null) {// TODO move out
+//                uniqueIdentifier = identifierAppendix + ((int) (new Random().nextFloat() * 10000));
+//                pfc.setFieldValue(ProfileField.IDENTIFIER, uniqueIdentifier);
+//            }
+//            mProfileManager.setProfileFieldBulk(pfc, SPFPersona.getDefault());
+//        } else {
+//            Log.d(TAG, "mProfileManager==null during uniqueIdentifier generation");
+//        }
+//    }
+
+    public void updateIdentifier(int goIntent) {
         //***************************************************************************************
         //***************************************************************************************
         //CONVENTION THAT I DEFINED IN SPF2 (NOT IN PREVIOUS VERSIONS)
@@ -149,7 +165,7 @@ public class SPF {
         // - IF A DEVICE IS CHOSEN TO BE A GROUPOWNER, IDENTIFIER WILL START WITH "GO"
         // - OTHERWISE WITH "U" (I CAN USE "C" OR OTHER LETTERS, BUT IT'S NOT IMPORTANT)
         //THE IMPORTANT PART IS FOR THE GO.
-        Log.d(TAG, "initIdentifier - gointent is: " + goIntent);
+        Log.d(TAG, "InitIdentifier called with gointent is: " + goIntent);
         if (goIntent == 15) {
             //this device is chosen as a GO
             identifierAppendix = AP_APPENDIX;
@@ -163,13 +179,18 @@ public class SPF {
         if (mProfileManager != null) {
             ProfileFieldContainer pfc = mProfileManager.getProfileFieldBulk(SPFPersona.getDefault(), ProfileField.IDENTIFIER);
             uniqueIdentifier = pfc.getFieldValue(ProfileField.IDENTIFIER);
-            if (uniqueIdentifier == null) {// TODO move out
+            if (uniqueIdentifier == null) {
                 uniqueIdentifier = identifierAppendix + ((int) (new Random().nextFloat() * 10000));
-                pfc.setFieldValue(ProfileField.IDENTIFIER, uniqueIdentifier);
+            } else {
+                uniqueIdentifier = uniqueIdentifier.replace(AP_APPENDIX, "").replace(SLAVE_APPENDIX, "");
+                Log.d(TAG, "Identifier cleaned from Appendix is " + uniqueIdentifier);
+                uniqueIdentifier = identifierAppendix + uniqueIdentifier;
+                Log.d(TAG, "Finally, the generated identifier is " + uniqueIdentifier);
             }
+            pfc.setFieldValue(ProfileField.IDENTIFIER, uniqueIdentifier);
             mProfileManager.setProfileFieldBulk(pfc, SPFPersona.getDefault());
         } else {
-            Log.d(TAG, "mProfileManager==null during uniqueIdentifier generation");
+            Log.e(TAG, "mProfileManager==null during uniqueIdentifier generation");
         }
     }
 

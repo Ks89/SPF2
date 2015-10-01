@@ -147,8 +147,10 @@ public class NavigationFragment extends Fragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     Log.d(TAG, "connectSwitch checked -> gointent=15");
+                    ((SPFApp) getActivity().getApplication()).updateIdentifier(15);
                 } else {
                     Log.d(TAG, "connectSwitch unchecked -> gointent=0");
+                    ((SPFApp) getActivity().getApplication()).updateIdentifier(0);
                 }
             }
         });
