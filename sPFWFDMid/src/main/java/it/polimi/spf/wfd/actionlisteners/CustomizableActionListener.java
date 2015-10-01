@@ -47,12 +47,13 @@ public class CustomizableActionListener implements WifiP2pManager.ActionListener
     /**
      * Constructor of CustomizableActionListener.
      * successLog, successToast, failLog, failToast can be == null, and if this happens the associated action is skipped.
-     * @param context Context necessary to display Toasts.
-     * @param tag String that represents the tag for Log.d, but if is == null, this constructor uses "ActionListenerTag" as tag.
-     * @param successLog String that represent the message for Log.d in onSuccess
+     *
+     * @param context      Context necessary to display Toasts.
+     * @param tag          String that represents the tag for Log.d, but if is == null, this constructor uses "ActionListenerTag" as tag.
+     * @param successLog   String that represent the message for Log.d in onSuccess
      * @param successToast String that represent the message for Toasts in onSuccess
-     * @param failLog String that represent the message for Log.d in onFailure. The failure code will be added automatically.
-     * @param failToast String that represent the message for Toasts in onFailure
+     * @param failLog      String that represent the message for Log.d in onFailure. The failure code will be added automatically.
+     * @param failToast    String that represent the message for Toasts in onFailure
      */
     public CustomizableActionListener(@NonNull Context context,
                                       String tag,
@@ -65,7 +66,7 @@ public class CustomizableActionListener implements WifiP2pManager.ActionListener
         this.failToast = failToast;
         this.deepCheckOnFailure = deepCheckOnFailure;
 
-        if(tag==null) {
+        if (tag == null) {
             this.tag = "ActionListenerTag";
         } else {
             this.tag = tag;
@@ -74,10 +75,10 @@ public class CustomizableActionListener implements WifiP2pManager.ActionListener
 
     @Override
     public void onSuccess() {
-        if(successLog != null) {
+        if (successLog != null) {
             WfdLog.d(tag, successLog);
         }
-        if(context!=null && successToast != null) {
+        if (context != null && successToast != null) {
             Toast.makeText(context, successToast, Toast.LENGTH_SHORT).show();
         }
     }
@@ -87,9 +88,9 @@ public class CustomizableActionListener implements WifiP2pManager.ActionListener
 
         //if i want a detailed log messages, pass
         //deepCheckOnFailure=true to the constructor of this class
-        if(deepCheckOnFailure) {
+        if (deepCheckOnFailure) {
             // Command failed.  Check for P2P_UNSUPPORTED, ERROR, or BUSY
-            switch(reason) {
+            switch (reason) {
                 case WifiP2pManager.P2P_UNSUPPORTED:
                     Log.e(tag, failLog + ", reason " + reason + " -> P2P isn't supported on this device.");
                     break;

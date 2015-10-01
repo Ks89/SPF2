@@ -124,7 +124,7 @@ abstract class GroupActor {
 			try {
 				sendMessage(response);
 			} catch (IOException e) {
-				
+				WfdLog.e(TAG, "IOException onRequestReceived", e);
 			}
 		}
 	}

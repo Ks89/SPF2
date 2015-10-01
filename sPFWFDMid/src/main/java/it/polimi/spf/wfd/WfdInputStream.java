@@ -21,59 +21,62 @@
 
 package it.polimi.spf.wfd;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
 class WfdInputStream {
-	private final BufferedReader reader;
+    private static final String TAG = WfdInputStream.class.getSimpleName();
+    private final BufferedReader reader;
 
-	public WfdInputStream(InputStream inputStream) {
-		this.reader = new BufferedReader(new InputStreamReader(inputStream));
-	}
+    public WfdInputStream(InputStream inputStream) {
+        this.reader = new BufferedReader(new InputStreamReader(inputStream));
+    }
 
-	public WfdMessage readMessage() throws IOException {
-		String str = reader.readLine();
-		return WfdMessage.fromString(str);
-	}
+    public WfdMessage readMessage() throws IOException {
+        String str = reader.readLine();
+        return WfdMessage.fromString(str);
+    }
 
-	public WfdMessage readMessage(long l) throws InterruptedException {
-		TimedRead tr = new TimedRead();
-		tr.start();
-		String str = tr.readResult(l);
-		if (str != null) {
-			return WfdMessage.fromString(str);
-		}
-		return null;
-	}
+    public WfdMessage readMessage(long l) throws InterruptedException {
+        TimedRead tr = new TimedRead();
+        tr.start();
+        String str = tr.readResult(l);
+        if (str != null) {
+            return WfdMessage.fromString(str);
+        }
+        return null;
+    }
 
-	class TimedRead extends Thread {
-		
-		String str = null;
+    class TimedRead extends Thread {
 
-		@Override
-		public void run() {
-			try {
-				str = WfdInputStream.this.reader.readLine();
+        String str = null;
 
-			} catch (IOException e) {
+        @Override
+        public void run() {
+            try {
+                str = WfdInputStream.this.reader.readLine();
 
-			} finally {
-				synchronized (this) {
-					notify();
-				}
-			}
-		}
+            } catch (IOException e) {
+                Log.e(TAG, "IOException during readline in WfdInputStream", e);
+            } finally {
+                synchronized (this) {
+                    notify();
+                }
+            }
+        }
 
-		String readResult(long millis) throws InterruptedException {
-			synchronized (this) {
-				if (str == null) {
-					wait(millis);
-				}
-				return str;
-			}
-		}
-	}
+        String readResult(long millis) throws InterruptedException {
+            synchronized (this) {
+                if (str == null) {
+                    wait(millis);
+                }
+                return str;
+            }
+        }
+    }
 
 }

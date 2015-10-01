@@ -130,7 +130,9 @@ public class ServiceList {
 
                 Log.d(TAG, "--> ValidServiceList: --OK --: " + service.getIdentifier() + "," + service.getPeerAddress());
             } else {
-                Log.d(TAG, "--> ValidServiceList: --NOT--: " + service.getIdentifier() + "," + service.getPeerAddress());
+                if (service != null) {
+                    Log.d(TAG, "--> ValidServiceList: --NOT--: " + service.getIdentifier() + "," + service.getPeerAddress());
+                }
             }
         }
         return validServiceList;
