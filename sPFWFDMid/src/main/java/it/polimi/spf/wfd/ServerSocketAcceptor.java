@@ -83,15 +83,18 @@ class ServerSocketAcceptor extends Thread {
                 WfdLog.d(TAG, "accept(): waiting for a new client");
                 s = serverSocket.accept();
                 WfdLog.d(TAG, "incoming connection");
+                WfdLog.d(TAG, "IP Address: " + s.getInetAddress());
                 NineBus.get().post(new GOSocketEvent("onStartGoInternalClient", s));
             }
         } catch (IOException e) {
-
-        }
-        WfdLog.d(TAG, "exiting while loop");
-        if (!closed) {
-            WfdLog.d(TAG, "signalling error to groupOwnerActor");
-            NineBus.get().post(new GOEvent("onServerSocketError"));
+            WfdLog.e(TAG, "ServerSocketAcceptor IOException", e);
+        } finally {
+            WfdLog.d(TAG, "ServerSocketAcceptor exiting while loop in run()");
+            if (!closed) {
+                WfdLog.d(TAG, "signalling error to groupOwnerActor");
+                NineBus.get().post(new GOEvent("onServerSocketError"));
+            }
+            pool.shutdownNow();
         }
     }
 

@@ -74,7 +74,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
     private int goIntent;
 
     private GroupActor mGroupActor;
-    private ServerSocket mServerSocket;
+
     private int mPort;
 
     public WifiDirectMiddleware(int goIntentFromSPFApp, Context context, String identifier, WfdMiddlewareListener listener) {
@@ -87,13 +87,12 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
     public void connect() {
         try {
-            mServerSocket = new ServerSocket(0);
+            mPort = this.requestAvailablePortFromOs();
         } catch (IOException e) {
             mListener.onError();
             return;
         }
 
-        mPort = mServerSocket.getLocalPort();
         mReceiver.register(mContext);
         mManager = (WifiP2pManager) mContext.getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = mManager.initialize(mContext, Looper.getMainLooper(), new WifiP2pManager.ChannelListener() {
@@ -145,7 +144,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
      * This method updates also the discovery menu item.
      */
     private void discoverService() {
-		/*
+        /*
          * Register listeners for DNS-SD services. These are callbacks invoked
          * by the system when a service is actually discovered.
          */
@@ -201,13 +200,6 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
                 "RemoveLocalService failure",
                 "RemoveLocalService failure",
                 false)); //important: sets false if you don't want detailed messages when this method fails
-
-
-        try {
-            mServerSocket.close();
-        } catch (IOException e) {
-            WfdLog.d(TAG, "IOException when closing server socket", e);
-        }
 
         mManager.cancelConnect(mChannel, new CustomizableActionListener(
                 this.mContext,
@@ -308,7 +300,11 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         WfdLog.d(TAG, "connection info available");
 
         if (info.isGroupOwner) {
-            instantiateGroupOwner();
+            try {
+                instantiateGroupOwner();
+            } catch (IOException e) {
+                WfdLog.e(TAG, "Impossible to instantiate the GroupOwner Actor!", e);
+            }
         } else {
             mManager.requestGroupInfo(mChannel, new GroupInfoListener() {
                 @Override
@@ -347,9 +343,9 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
     }
 
-    private void instantiateGroupOwner() {
+    private void instantiateGroupOwner() throws IOException {
         WfdLog.d(TAG, "Instantiating group owner's logic");
-        mGroupActor = new GroupOwnerActor(mServerSocket, myIdentifier, actorListener);
+        mGroupActor = new GroupOwnerActor(mPort, actorListener, myIdentifier);
         mGroupActor.connect();
     }
 
@@ -446,6 +442,20 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         }
     }
 
+    private int requestAvailablePortFromOs() throws IOException {
+        ServerSocket mServerSocket = new ServerSocket(0);
+        int assignedPort = mServerSocket.getLocalPort();
+
+        //close this socket, but i want to maintain in a global variable the assigned port
+        try {
+            mServerSocket.close();
+        } catch (IOException e) {
+            WfdLog.d(TAG, "IOException during mServerSocket.close().");
+        }
+
+        return assignedPort;
+    }
+
     /**
      * Method to set goIntent in Wi-Fi Direct Middleware.
      *
@@ -461,11 +471,13 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
      * to call methods in {@link WifiDirectMiddleware}.
      */
     @Getter
-    private CallbackToMiddleware onServiceDiscovered =  new CallbackToMiddleware();
+    private CallbackToMiddleware onServiceDiscovered = new CallbackToMiddleware();
+
     public class CallbackToMiddleware {
         public boolean onIsGroupCreated() {
             return isGroupCreated;
         }
+
         public void onCreateGroup() {
             createGroup();
         }

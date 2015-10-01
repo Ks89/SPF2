@@ -47,7 +47,7 @@ public class GOInternalClient extends Thread {
         try {
             socket.close();
         } catch (IOException e) {
-
+            WfdLog.d(TAG, "Error while closing socket in GOInternalClient");
         }
         if (isAlive()) {
             closed = true;
@@ -74,13 +74,13 @@ public class GOInternalClient extends Thread {
             try {
                 groupOwnerActor.onClientDisconnected(identifier);
             } catch (InterruptedException e) {
-
+                WfdLog.e(TAG, "Error while running the GOInternalClient", e);
             }
         }
         try {
             socket.close();
         } catch (IOException e) {
-
+            WfdLog.e(TAG, "Error while closing socket in run() of GOInternalClient", e);
         }
     }
 
@@ -93,7 +93,7 @@ public class GOInternalClient extends Thread {
                 groupOwnerActor.onMessageReceived(msg);
             }
         } catch (Exception e) {
-
+            WfdLog.e(TAG, "Error in enterReadLoop() in GOInternalClient", e);
         }
         WfdLog.d(TAG, "Exiting while loop: " + identifier);
     }

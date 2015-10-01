@@ -21,6 +21,11 @@
 
 package it.polimi.spf.wfd;
 
+import android.util.Log;
+
+import com.squareup.otto.Subscribe;
+
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,10 +36,6 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
-
-import android.util.Log;
-
-import com.squareup.otto.Subscribe;
 
 import it.polimi.spf.wfd.otto.GOEvent;
 import it.polimi.spf.wfd.otto.GOSocketEvent;
@@ -54,9 +55,9 @@ class GroupOwnerActor extends GroupActor {
 
     private final ExecutorService threadPool = Executors.newCachedThreadPool();
 
-    public GroupOwnerActor(ServerSocket serverSocket, String myIdentifier, GroupActorListener listener) {
+    public GroupOwnerActor(int port, GroupActorListener listener, String myIdentifier) throws IOException {
         super(listener, myIdentifier);
-        this.serverSocket = serverSocket;
+        serverSocket = new ServerSocket(port);
         NineBus.get().register(this);
     }
 
@@ -66,6 +67,7 @@ class GroupOwnerActor extends GroupActor {
         acceptor.start();
     }
 
+    @Override
     void disconnect() {
         acceptor.recycle();
         for (String id : goInternalClients.keySet()) {
