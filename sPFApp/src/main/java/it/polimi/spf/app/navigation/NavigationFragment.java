@@ -19,13 +19,6 @@
  */
 package it.polimi.spf.app.navigation;
 
-import it.polimi.spf.app.R;
-import it.polimi.spf.app.SPFApp;
-import it.polimi.spf.app.navigation.Navigation.Entry;
-import it.polimi.spf.framework.SPFContext;
-import it.polimi.spf.framework.SPF;
-import it.polimi.spf.framework.local.SPFService;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
@@ -42,198 +35,198 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
 import android.widget.Switch;
-import android.widget.CompoundButton.OnCheckedChangeListener;
+
+import it.polimi.spf.app.R;
+import it.polimi.spf.app.SPFApp;
+import it.polimi.spf.app.navigation.Navigation.Entry;
+import it.polimi.spf.framework.SPF;
+import it.polimi.spf.framework.SPFContext;
+import it.polimi.spf.framework.local.SPFService;
 
 /**
  * Base navigation fragment without drawer functionalities to be used in two
  * panes version of main activity
- *
  */
 public class NavigationFragment extends Fragment {
 
-	/**
-	 * Interface for components (main activity) called when user an item is
-	 * selected
-	 *
-	 */
-	public interface ItemSelectedListener {
-		void onItemSelect(int position, boolean replace);
-	}
+    /**
+     * Interface for components (main activity) called when user an item is
+     * selected
+     */
+    public interface ItemSelectedListener {
+        void onItemSelect(int position, boolean replace);
+    }
 
-	/**
-	 * Remember the position of the selected item.
-	 */
-	private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
-	private static String ACTION_STOP_FOREGROUND_SWITCH = "it.polimi.spf.framework.SPFService.UPDATE_SWITCH";
-	private static String CALL_NAVIGATION_FRAGMENT_BROADCAST_INTENT = "it.polimi.spf.SPFService.spfservice-navigationfragment";
-	private static final int UPDATESWITCH = 1;
+    /**
+     * Remember the position of the selected item.
+     */
+    private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
+    private static String ACTION_STOP_FOREGROUND_SWITCH = "it.polimi.spf.framework.SPFService.UPDATE_SWITCH";
+    private static String CALL_NAVIGATION_FRAGMENT_BROADCAST_INTENT = "it.polimi.spf.SPFService.spfservice-navigationfragment";
+    private static final int UPDATESWITCH = 1;
 
-	private static final String TAG = "NotificationFragment";
+    private static final String TAG = "NotificationFragment";
 
-	private ListView mNavigationListView;
-	private int mCurrentSelectedPosition = 0;
-	private ItemSelectedListener mCallback;
-	private Navigation mNavigation;
+    private ListView mNavigationListView;
+    private int mCurrentSelectedPosition = 0;
+    private ItemSelectedListener mCallback;
+    private Navigation mNavigation;
 
-	public Switch connectSwitch, groupOwnerSwitch;
-
-
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		mCallback = (ItemSelectedListener) activity;
-	}
-
-	@Override
-	public void onDetach() {
-		super.onDetach();
-		mCallback = null;
-	}
-
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-
-		if (savedInstanceState != null) {
-			mCurrentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION);
-		}
-	}
-
-	@Override
-	public final View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View root = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
-
-		// Set up navigation entries
-		mNavigationListView = (ListView) root.findViewById(R.id.navigation_entries);
-		mNavigationListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				selectItem(position, true);
-			}
-		});
-
-		String[] pageTitles = getResources().getStringArray(R.array.content_fragments_titles);
-		mNavigationListView.setAdapter(new NavigationArrayAdapter(getActivity(), pageTitles));
-		mNavigationListView.setItemChecked(mCurrentSelectedPosition, true);
-
-		// Set up connect switch
-		connectSwitch = (Switch) root.findViewById(R.id.connect_switch);
-		//update switch status.
-		connectSwitch.setChecked(SPF.get().isConnected());
-
-		connectSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				if (isChecked) {
-					if(groupOwnerSwitch.isChecked()) {
-						Log.d(TAG, "connectSwitch checked -> gointent=15");
-//						SPF.get().forceGoIntentFromSPFApp(15);
-						((SPFApp)getActivity().getApplication()).initSPF(15);
-					} else {
-//						SPF.get().forceGoIntentFromSPFApp(0);
-						((SPFApp)getActivity().getApplication()).initSPF(0);
-
-					}
+    public Switch connectSwitch, groupOwnerSwitch;
 
 
-					SPFService.startForeground(getActivity());
-				} else {
-					SPFService.stopForeground(getActivity());
-				}
-			}
-		});
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mCallback = (ItemSelectedListener) activity;
+    }
 
-		// Set up group owner switch
-		groupOwnerSwitch = (Switch) root.findViewById(R.id.groupOwner_switch);
-		groupOwnerSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				if (isChecked) {
-					Log.d(TAG, "connectSwitch checked -> gointent=15");
-				} else {
-					Log.d(TAG, "connectSwitch unchecked -> gointent=0");
-				}
-			}
-		});
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallback = null;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            mCurrentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION);
+        }
+    }
+
+    @Override
+    public final View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View root = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
+
+        // Set up navigation entries
+        mNavigationListView = (ListView) root.findViewById(R.id.navigation_entries);
+        mNavigationListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                selectItem(position, true);
+            }
+        });
+
+        String[] pageTitles = getResources().getStringArray(R.array.content_fragments_titles);
+        mNavigationListView.setAdapter(new NavigationArrayAdapter(getActivity(), pageTitles));
+        mNavigationListView.setItemChecked(mCurrentSelectedPosition, true);
+
+        // Set up connect switch
+        connectSwitch = (Switch) root.findViewById(R.id.connect_switch);
+        //update switch status.
+        connectSwitch.setChecked(SPF.get().isConnected());
+
+        connectSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    if (groupOwnerSwitch.isChecked()) {
+                        Log.d(TAG, "connectSwitch checked -> gointent=15");
+                        ((SPFApp) getActivity().getApplication()).initSPF(15);
+                    } else {
+                        ((SPFApp) getActivity().getApplication()).initSPF(0);
+
+                    }
+                    SPFService.startForeground(getActivity());
+                } else {
+                    SPFService.stopForeground(getActivity());
+                }
+            }
+        });
+
+        // Set up group owner switch
+        groupOwnerSwitch = (Switch) root.findViewById(R.id.groupOwner_switch);
+        groupOwnerSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    Log.d(TAG, "connectSwitch checked -> gointent=15");
+                } else {
+                    Log.d(TAG, "connectSwitch unchecked -> gointent=0");
+                }
+            }
+        });
 
 
-		return root;
-	}
+        return root;
+    }
 
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		selectItem(mCurrentSelectedPosition, savedInstanceState == null);
-		mNavigation = new Navigation(getActivity());
-		SPFContext.get().registerEventListener(mNavigation);
-	}
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        selectItem(mCurrentSelectedPosition, savedInstanceState == null);
+        mNavigation = new Navigation(getActivity());
+        SPFContext.get().registerEventListener(mNavigation);
+    }
 
-	@Override
-	public void onStart() {
-		super.onStart();
-		LocalBroadcastManager.getInstance(this.getActivity()).registerReceiver((mMessageReceiver),
-				new IntentFilter(ACTION_STOP_FOREGROUND_SWITCH));
-	}
+    @Override
+    public void onStart() {
+        super.onStart();
+        LocalBroadcastManager.getInstance(this.getActivity()).registerReceiver((mMessageReceiver),
+                new IntentFilter(ACTION_STOP_FOREGROUND_SWITCH));
+    }
 
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		SPFContext.get().unregisterEventListener(mNavigation);
-		LocalBroadcastManager.getInstance(this.getActivity()).unregisterReceiver(mMessageReceiver);
-	}
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        SPFContext.get().unregisterEventListener(mNavigation);
+        LocalBroadcastManager.getInstance(this.getActivity()).unregisterReceiver(mMessageReceiver);
+    }
 
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		outState.putInt(STATE_SELECTED_POSITION, mCurrentSelectedPosition);
-	}
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(STATE_SELECTED_POSITION, mCurrentSelectedPosition);
+    }
 
-	public boolean hasOptionsMenu() {
-		return false;
-	}
+    public boolean hasOptionsMenu() {
+        return false;
+    }
 
-	protected void selectItem(int position, boolean replace) {
+    protected void selectItem(int position, boolean replace) {
 //		mNavigationListView.setItemChecked(mCurrentSelectedPosition, false);
 //		mNavigationListView.setItemChecked(position, true);
-		mCurrentSelectedPosition = position;
+        mCurrentSelectedPosition = position;
 
-		if (mNavigationListView == null || mCallback == null) {
-			return;
-		}
+        if (mNavigationListView == null || mCallback == null) {
+            return;
+        }
 
-		mCallback.onItemSelect(position, replace);
-	}
+        mCallback.onItemSelect(position, replace);
+    }
 
-	protected ActionBar getActionBar() {
-		return getActivity().getActionBar();
-	}
+    protected ActionBar getActionBar() {
+        return getActivity().getActionBar();
+    }
 
-	private class NavigationArrayAdapter extends ArrayAdapter<String> {
+    private class NavigationArrayAdapter extends ArrayAdapter<String> {
 
-		public NavigationArrayAdapter(Context context, String[] pageTitles) {
-			super(context, android.R.layout.simple_list_item_1, pageTitles);
-		}
+        public NavigationArrayAdapter(Context context, String[] pageTitles) {
+            super(context, android.R.layout.simple_list_item_1, pageTitles);
+        }
 
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			return mNavigation.createEntryView(Entry.values()[position]);
-		}
-	}
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            return mNavigation.createEntryView(Entry.values()[position]);
+        }
+    }
 
 
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d(TAG, "Received message from SPFService, to update the switch");
 
-	private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			Log.d(TAG, "Received message from SPFService, to update the switch");
-
-			if(intent!=null && intent.getIntExtra(CALL_NAVIGATION_FRAGMENT_BROADCAST_INTENT,0) == UPDATESWITCH) {
-				//force disable switch
-				connectSwitch.setChecked(false);
-			}
-		}
-	};
+            if (intent != null && intent.getIntExtra(CALL_NAVIGATION_FRAGMENT_BROADCAST_INTENT, 0) == UPDATESWITCH) {
+                //force disable switch
+                connectSwitch.setChecked(false);
+            }
+        }
+    };
 }

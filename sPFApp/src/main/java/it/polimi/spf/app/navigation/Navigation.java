@@ -38,7 +38,7 @@ import it.polimi.spf.framework.SPF;
  */
 public class Navigation implements SPFContext.OnEventListener {
 
-	public static enum Entry {
+	public enum Entry {
 		PROFILE, PERSONAS, CONTACTS, NOTIFICATIONS, ADVERTISING, APPS, ACTIVITIES;
 	}
 

@@ -55,6 +55,7 @@ public class SPF {
 
     private static final String AP_APPENDIX = "AP"; //or GO in case of Wifi direct
     private static final String SLAVE_APPENDIX = "U"; //or client in case of wifi direct
+    private String identifierAppendix;
 
     /**
      * Initializes SPF with a {@link Context} reference. Called by
@@ -65,7 +66,6 @@ public class SPF {
     /* package */
     synchronized static void initialize(int goIntent, Context context, ProximityMiddleware.Factory factory) {
         if (singleton == null) {
-            loadAlljoynLibrary();
             singleton = new SPF(goIntent, context, factory);
         }
     }
@@ -73,15 +73,6 @@ public class SPF {
     /* package */
     synchronized static void initializeForcedNoSingleton(int goIntent, Context context, ProximityMiddleware.Factory factory) {
         singleton = new SPF(goIntent, context, factory);
-    }
-
-    private static void loadAlljoynLibrary() {
-        // TODO FIXME AND SO ON: ALLJOYN DEACTIVATED FOR TESTING PURPOSES!!!!
-//		if (SPFConfig.IS_X86 && SPFConfig.DEBUG) {
-//			Log.w(TAG, "Alljoyn library not loaded");
-//		} else {
-//			System.loadLibrary("alljoyn_java");
-//		}
     }
 
     /**
@@ -134,35 +125,7 @@ public class SPF {
         mNotificationManager = new SPFNotificationManager(context);
         mSecurityMonitor = new SPFSecurityMonitor(context);
 
-        //***************************************************************************************
-        //***************************************************************************************
-        //CONVENTION THAT I DEFINED IN SPF2 (NON IN PREVIOUS VERSIONS)
-        //MIDDLEWARES, LIKE "SPFWFDMID", REQUIRE TO UNDERSTAND IF A DEVICE IS A GO OR A CLIENT,
-        //BUT IN SOME PART OF THE CODE, IT WILL BE MORE SIMPLE TO KNOW IF A DEVICE IS A GO OR NOT
-        //WHERE THIS INFORMATION CAN'T BE EXTRACTED FROM THE WIFIP2PDEVICE (FROM GOOGLE API).
-        //FOR THIS REASON I DEFINED THIS CONVENTION FOR IDENTIFIERS:
-        // - IF A DEVICE IS CHOSEN TO BE A GROUPOWNER, IDENTIFIER WILL START WITH "GO"
-        // - OTHERWISE WITH "U" (I CAN USE "C" OR OTHER LETTERS, BUT IT'S NOT IMPORTANT)
-        //THE IMPORTANT PART IS FOR THE GO.
-        String identifierAppendix;
-        if (goIntent == 15) {
-            //this device is chosen as a GO
-            identifierAppendix = AP_APPENDIX;
-        } else {
-            identifierAppendix = SLAVE_APPENDIX;
-        }
-        //***************************************************************************************
-        //***************************************************************************************
-
-
-        // unique id generation
-        ProfileFieldContainer pfc = mProfileManager.getProfileFieldBulk(SPFPersona.getDefault(), ProfileField.IDENTIFIER);
-        uniqueIdentifier = pfc.getFieldValue(ProfileField.IDENTIFIER);
-        if (uniqueIdentifier == null) {// TODO move out
-            uniqueIdentifier = identifierAppendix + ((int) (new Random().nextFloat() * 10000));
-            pfc.setFieldValue(ProfileField.IDENTIFIER, uniqueIdentifier);
-        }
-        mProfileManager.setProfileFieldBulk(pfc, SPFPersona.getDefault());
+        this.initIdentifier(goIntent);
 
         // Initialize middleware
         InboundProximityInterface proximityInterface = new InboundProximityInterfaceImpl(this);
@@ -173,6 +136,41 @@ public class SPF {
         mMiddleware = factory.createMiddleware(goIntent, mContext, proximityInterface, uniqueIdentifier);
 
         mAdvertiseManager = new SPFAdvertisingManager(context, mMiddleware);
+    }
+
+    public void initIdentifier(int goIntent) {
+        //***************************************************************************************
+        //***************************************************************************************
+        //CONVENTION THAT I DEFINED IN SPF2 (NOT IN PREVIOUS VERSIONS)
+        //MIDDLEWARES, LIKE "SPFWFDMID", REQUIRE TO UNDERSTAND IF A DEVICE IS A GO OR A CLIENT,
+        //BUT IN SOME PART OF THE CODE, IT WILL BE MORE SIMPLE TO KNOW IF A DEVICE IS A GO OR NOT
+        //WHERE THIS INFORMATION CAN'T BE EXTRACTED FROM THE WIFIP2PDEVICE (FROM GOOGLE API).
+        //FOR THIS REASON I DEFINED THIS CONVENTION FOR IDENTIFIERS:
+        // - IF A DEVICE IS CHOSEN TO BE A GROUPOWNER, IDENTIFIER WILL START WITH "GO"
+        // - OTHERWISE WITH "U" (I CAN USE "C" OR OTHER LETTERS, BUT IT'S NOT IMPORTANT)
+        //THE IMPORTANT PART IS FOR THE GO.
+        Log.d(TAG, "initIdentifier - gointent is: " + goIntent);
+        if (goIntent == 15) {
+            //this device is chosen as a GO
+            identifierAppendix = AP_APPENDIX;
+        } else {
+            identifierAppendix = SLAVE_APPENDIX;
+        }
+        //***************************************************************************************
+        //***************************************************************************************
+
+        // unique id generation
+        if (mProfileManager != null) {
+            ProfileFieldContainer pfc = mProfileManager.getProfileFieldBulk(SPFPersona.getDefault(), ProfileField.IDENTIFIER);
+            uniqueIdentifier = pfc.getFieldValue(ProfileField.IDENTIFIER);
+            if (uniqueIdentifier == null) {// TODO move out
+                uniqueIdentifier = identifierAppendix + ((int) (new Random().nextFloat() * 10000));
+                pfc.setFieldValue(ProfileField.IDENTIFIER, uniqueIdentifier);
+            }
+            mProfileManager.setProfileFieldBulk(pfc, SPFPersona.getDefault());
+        } else {
+            Log.d(TAG, "mProfileManager==null during uniqueIdentifier generation");
+        }
     }
 
     // Utility getters
