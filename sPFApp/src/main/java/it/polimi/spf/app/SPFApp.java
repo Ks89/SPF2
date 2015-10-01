@@ -19,8 +19,6 @@
  */
 package it.polimi.spf.app;
 
-//import it.polimi.spf.alljoyn.AlljoynProximityMiddleware;
-
 import android.app.Application;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -72,14 +70,10 @@ public class SPFApp extends Application {
 
 
         //------------------------------------------------------------------------------------
-        //------------------------------------------------------------------------------------
         // when you click on buttons in a notification, the actions will be implemented in
         // SPSService in the Framework's module.
-
         //add the onclickpendingintent to the button
         this.contentView.setOnClickPendingIntent(R.id.stopSpfButton, pendingIntentStop);
-
-        //------------------------------------------------------------------------------------
         //------------------------------------------------------------------------------------
 
         //build the notification

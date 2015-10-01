@@ -19,60 +19,40 @@
  */
 package it.polimi.spf.framework.people;
 
-import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import it.polimi.spf.framework.proximity.SPFRemoteInstance;
 
-
 /**
- * TODO implement resource management 
- *
+ * TODO implement resource management
  */
 public class SPFPeopleManager {
-	
-	private ReferenceTable rt=new ReferenceTable();
-	
-	public SPFPeopleManager() {
-		
-	}
 
-	public SPFRemoteInstance getPerson(String target) {
-		
-		return rt.getReference(target);
-	}
+    private ReferenceTable rt = new ReferenceTable();
 
-	//crazy mthod for testing purposes ;)
-	public void setGoIntentToAllReferences(int goIntent) {
-		Iterator<Map.Entry<String, SPFRemoteInstance>> it = rt.getReferences().entrySet().iterator();
+    public SPFPeopleManager() {
+    }
 
-		while (it.hasNext()) {
-			Map.Entry<String, SPFRemoteInstance> entry = it.next();
+    public SPFRemoteInstance getPerson(String target) {
 
-			// Remove entry if key is null or equals 0.
-			if (entry.getKey() != null && !entry.getKey().equals("")) {
-				entry.getValue().setGoIntent(goIntent);
-			}
-		}
-	}
+        return rt.getReference(target);
+    }
 
-	public void removePerson(String uniqueIdentifier) {
-		rt.removeReference(uniqueIdentifier);		
-	}
+    public void removePerson(String uniqueIdentifier) {
+        rt.removeReference(uniqueIdentifier);
+    }
 
-	public void newPerson(SPFRemoteInstance instance) {
-		rt.addReference(instance.getUniqueIdentifier(), instance);	
-		//SPF.get(SPFApp.get()).dispatchSearchResult(instance.getUniqueIdentifier());
-   }
+    public void newPerson(SPFRemoteInstance instance) {
+        rt.addReference(instance.getUniqueIdentifier(), instance);
+        //SPF.get(SPFApp.get()).dispatchSearchResult(instance.getUniqueIdentifier());
+    }
 
-	public boolean hasPerson(String identifier) {
-		return getPerson(identifier) != null;
-	}
+    public boolean hasPerson(String identifier) {
+        return getPerson(identifier) != null;
+    }
 
-	public List<String> clear() {
-		return rt.clear();
-	}
+    public List<String> clear() {
+        return rt.clear();
+    }
 
 }
