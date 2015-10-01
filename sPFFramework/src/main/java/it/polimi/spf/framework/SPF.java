@@ -139,23 +139,7 @@ public class SPF {
         mAdvertiseManager = new SPFAdvertisingManager(context, mMiddleware);
     }
 
-//    public void initIdentifier(int goIntent) {
-//        // unique id generation
-//        if (mProfileManager != null) {
-//            ProfileFieldContainer pfc = mProfileManager.getProfileFieldBulk(SPFPersona.getDefault(), ProfileField.IDENTIFIER);
-//            uniqueIdentifier = pfc.getFieldValue(ProfileField.IDENTIFIER);
-//            if (uniqueIdentifier == null) {// TODO move out
-//                uniqueIdentifier = identifierAppendix + ((int) (new Random().nextFloat() * 10000));
-//                pfc.setFieldValue(ProfileField.IDENTIFIER, uniqueIdentifier);
-//            }
-//            mProfileManager.setProfileFieldBulk(pfc, SPFPersona.getDefault());
-//        } else {
-//            Log.d(TAG, "mProfileManager==null during uniqueIdentifier generation");
-//        }
-//    }
-
     public void updateIdentifier(int goIntent) {
-        //***************************************************************************************
         //***************************************************************************************
         //CONVENTION THAT I DEFINED IN SPF2 (NOT IN PREVIOUS VERSIONS)
         //MIDDLEWARES, LIKE "SPFWFDMID", REQUIRE TO UNDERSTAND IF A DEVICE IS A GO OR A CLIENT,
@@ -172,7 +156,6 @@ public class SPF {
         } else {
             identifierAppendix = SLAVE_APPENDIX;
         }
-        //***************************************************************************************
         //***************************************************************************************
 
         // unique id generation
