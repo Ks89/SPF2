@@ -140,12 +140,14 @@ public class ServiceList {
         List<WiFiP2pService> validServiceList = this.selectValidServices(myIdentifier);
         List<WiFiP2pService> validGoList = new ArrayList<>();
         for (WiFiP2pService service : validServiceList) {
-            if (service.getDevice().isGroupOwner()) {
-                Log.d(TAG, "--> ValidGroupOwnersList: --OK --: " + service.getIdentifier() + "," + service.getPeerAddress());
-                validGoList.add(service);
-            } else {
-                Log.d(TAG, "--> ValidGroupOwnersList: --NOT--: " + service.getIdentifier() + "," + service.getPeerAddress());
-            }
+            //FIXME TODO FIXME: i don't know how can I discriminate a GO from Clients at this point
+            //FIXME TODO FIXME: i can define a convention, where a GO ha no identifier (U....), but (GO....), for example
+//            if (service.getDevice().isGroupOwner()) {
+            Log.d(TAG, "--> ValidGroupOwnersList: --OK --: " + service.getIdentifier() + "," + service.getPeerAddress());
+            validGoList.add(service);
+//            } else {
+//                Log.d(TAG, "--> ValidGroupOwnersList: --NOT--: " + service.getIdentifier() + "," + service.getPeerAddress());
+//            }
         }
         return validGoList;
     }
