@@ -101,7 +101,7 @@ public class GOInternalClient extends Thread {
     private boolean attachToGroupOwner(WfdMessage connmsg) {
         if (connmsg != null && connmsg.getType().equals(WfdMessage.TYPE_CONNECT)) {
             this.identifier = connmsg.getSenderId();
-            WfdLog.d(TAG, "Attaching to groupOwner id: " + identifier);
+            WfdLog.d(TAG, "Attaching GOInternalClient to groupOwner id: " + identifier);
             try {
                 groupOwnerActor.onClientConnected(identifier, this);
                 return true;

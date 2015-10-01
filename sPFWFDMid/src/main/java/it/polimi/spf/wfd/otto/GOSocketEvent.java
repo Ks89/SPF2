@@ -8,8 +8,10 @@ import lombok.Getter;
  * Created by Stefano Cappa on 22/07/15.
  */
 public class GOSocketEvent {
-    @Getter public String type;
-    @Getter public Socket socket;
+    @Getter
+    public String type;
+    @Getter
+    public Socket socket;
 
     public GOSocketEvent(String type, Socket socket) {
         this.type = type;

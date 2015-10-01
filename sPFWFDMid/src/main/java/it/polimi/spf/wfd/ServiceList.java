@@ -138,15 +138,16 @@ public class ServiceList {
 
     public List<WiFiP2pService> getValidGroupOwners(String myIdentifier) {
         List<WiFiP2pService> validServiceList = this.selectValidServices(myIdentifier);
+        List<WiFiP2pService> validGoList = new ArrayList<>();
         for (WiFiP2pService service : validServiceList) {
             if (service.getDevice().isGroupOwner()) {
                 Log.d(TAG, "--> ValidGroupOwnersList: --OK --: " + service.getIdentifier() + "," + service.getPeerAddress());
-                validServiceList.add(service);
+                validGoList.add(service);
             } else {
                 Log.d(TAG, "--> ValidGroupOwnersList: --NOT--: " + service.getIdentifier() + "," + service.getPeerAddress());
             }
         }
-        return validServiceList;
+        return validGoList;
     }
 
     public boolean containsDevice(WifiP2pDevice device) {

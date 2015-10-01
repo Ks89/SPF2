@@ -20,6 +20,8 @@
  */
 package it.polimi.spf.wfd;
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -36,13 +38,10 @@ class ServerSocketAcceptor extends Thread {
 
     private final int THREAD_COUNT = 10;
 
-//    private final GroupOwnerActor groupOwner;
     private final ServerSocket serverSocket;
     private boolean closed;
 
-    public ServerSocketAcceptor(/*GroupOwnerActor groupOwner,*/
-                                ServerSocket serverSocket) {
-//        this.groupOwner = groupOwner;
+    public ServerSocketAcceptor(ServerSocket serverSocket) {
         this.serverSocket = serverSocket;
     }
 
@@ -55,9 +54,27 @@ class ServerSocketAcceptor extends Thread {
     /**
      * A ThreadPool for client sockets.
      */
-//	private final ThreadPoolExecutor pool = new ThreadPoolExecutor(
-//			THREAD_COUNT, THREAD_COUNT, 10, TimeUnit.SECONDS,
-//			new LinkedBlockingQueue<Runnable>());
+    private final ThreadPoolExecutor pool = new ThreadPoolExecutor(
+            Configuration.THREAD_COUNT, Configuration.THREAD_COUNT,
+            Configuration.THREAD_POOL_EXECUTOR_KEEP_ALIVE_TIME, TimeUnit.SECONDS,
+            new LinkedBlockingQueue<Runnable>());
+
+
+    /**
+     * Method to close the group owner sockets and kill this entire thread.
+     */
+    public void closeSocketAndKillThisThread() {
+        if (serverSocket != null && !serverSocket.isClosed()) {
+            try {
+                serverSocket.close();
+            } catch (IOException e) {
+                Log.e(TAG, "IOException during close Socket", e);
+            }
+            pool.shutdown();
+        }
+    }
+
+
     @Override
     public void run() {
         Socket s;
@@ -66,8 +83,7 @@ class ServerSocketAcceptor extends Thread {
                 WfdLog.d(TAG, "accept(): waiting for a new client");
                 s = serverSocket.accept();
                 WfdLog.d(TAG, "incoming connection");
-//                new GOInternalClient(s, groupOwner).start();
-                NineBus.get().post(new GOSocketEvent("onStartGoInternalClient",s));
+                NineBus.get().post(new GOSocketEvent("onStartGoInternalClient", s));
             }
         } catch (IOException e) {
 
@@ -75,7 +91,6 @@ class ServerSocketAcceptor extends Thread {
         WfdLog.d(TAG, "exiting while loop");
         if (!closed) {
             WfdLog.d(TAG, "signalling error to groupOwnerActor");
-//			groupOwner.onServerSocketError();
             NineBus.get().post(new GOEvent("onServerSocketError"));
         }
     }

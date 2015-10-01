@@ -272,7 +272,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
                 return;
             }
 
-            //FIXME FIXME FIXME in this first impl i choose the first element in the list
+            //TODO TODO FIXME FIXME FIXME in this first impl i choose the first element in the list
             String deviceAddress = validGroupOwners.get(0).getPeerAddress();
 
             WfdLog.d(TAG, "connect target device found, " +

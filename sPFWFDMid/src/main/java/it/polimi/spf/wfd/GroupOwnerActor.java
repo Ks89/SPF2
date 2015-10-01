@@ -62,7 +62,7 @@ class GroupOwnerActor extends GroupActor {
 
     @Override
     public void connect() {
-        acceptor = new ServerSocketAcceptor(/*this,*/ serverSocket);
+        acceptor = new ServerSocketAcceptor(serverSocket);
         acceptor.start();
     }
 
