@@ -19,40 +19,41 @@
  */
 package it.polimi.spf.app.fragments.personas;
 
-import it.polimi.spf.app.R;
-import it.polimi.spf.framework.profile.SPFPersona;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
+import it.polimi.spf.app.R;
+import it.polimi.spf.framework.profile.SPFPersona;
+
 public class PersonasCirclesActivity extends Activity {
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_persona_circles);
-		SPFPersona persona = getIntent().getParcelableExtra("persona");
-		PersonasCirclesFragment fragment = PersonasCirclesFragment.newInstance(persona);
-		getFragmentManager().beginTransaction().replace(R.id.activity_persona_circles_container, fragment).commit();
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_persona_circles);
+        SPFPersona persona = getIntent().getParcelableExtra("persona");
+        PersonasCirclesFragment fragment = PersonasCirclesFragment.newInstance(persona);
+        getFragmentManager().beginTransaction().replace(R.id.activity_persona_circles_container, fragment).commit();
 
-		getActionBar().setDisplayHomeAsUpEnabled(true);
-	}
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+    }
 
-	public static void start(Activity callingActivity, SPFPersona persona) {
-		Intent intent = new Intent(callingActivity, PersonasCirclesActivity.class);
-		intent.putExtra("persona", persona);
-		callingActivity.startActivity(intent);
-	}
+    public static void start(Activity callingActivity, SPFPersona persona) {
+        Intent intent = new Intent(callingActivity, PersonasCirclesActivity.class);
+        intent.putExtra("persona", persona);
+        callingActivity.startActivity(intent);
+    }
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			finish();
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
-		}
-	}
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 }

@@ -77,7 +77,10 @@ class ServerSocketAcceptor extends Thread {
 
     @Override
     public void run() {
-        Socket s;
+
+        WfdLog.d(TAG, "ServerSocketAcceptor's variable 'serverSocket' has port: " + serverSocket.getLocalPort());
+
+        Socket s = null;
         try {
             while (!Thread.currentThread().isInterrupted()) {
                 WfdLog.d(TAG, "accept(): waiting for a new client");
@@ -88,13 +91,20 @@ class ServerSocketAcceptor extends Thread {
             }
         } catch (IOException e) {
             WfdLog.e(TAG, "ServerSocketAcceptor IOException", e);
+            if (s != null) {
+                try {
+                    s.close();
+                } catch (IOException e1) {
+                    WfdLog.e(TAG, "ServerSocketAcceptor IOException while closing socket 's' ", e1);
+                }
+            }
         } finally {
             WfdLog.d(TAG, "ServerSocketAcceptor exiting while loop in run()");
             if (!closed) {
                 WfdLog.d(TAG, "signalling error to groupOwnerActor");
                 NineBus.get().post(new GOEvent("onServerSocketError"));
             }
-            pool.shutdownNow();
+//            pool.shutdownNow();
         }
     }
 

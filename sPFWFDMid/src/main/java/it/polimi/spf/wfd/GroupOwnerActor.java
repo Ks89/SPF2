@@ -105,9 +105,12 @@ class GroupOwnerActor extends GroupActor {
     public void onClientDisconnected(String identifier) throws InterruptedException {
         connectionSemaphore.acquire();
         WfdLog.d(TAG, "Client lost id : " + identifier);
-        GOInternalClient c = goInternalClients.remove(identifier);
-        if (c != null) {
-            signalInstanceLossToGroup(identifier);
+        GOInternalClient c = null;
+        if (identifier != null) {
+            c = goInternalClients.remove(identifier);
+            if (c != null) {
+                signalInstanceLossToGroup(identifier);
+            }
         }
         connectionSemaphore.release();
         if (c != null) {

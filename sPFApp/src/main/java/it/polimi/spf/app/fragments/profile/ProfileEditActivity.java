@@ -19,8 +19,6 @@
  */
 package it.polimi.spf.app.fragments.profile;
 
-import it.polimi.spf.app.R;
-import it.polimi.spf.framework.profile.SPFPersona;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -32,77 +30,80 @@ import android.view.MenuItem;
 
 import com.soundcloud.android.crop.Crop;
 
+import it.polimi.spf.app.R;
+import it.polimi.spf.framework.profile.SPFPersona;
+
 public class ProfileEditActivity extends Activity {
 
-	public static final String EXTRA_PERSONA = "persona";
+    public static final String EXTRA_PERSONA = "persona";
 
-	private ProfileFragment mFragment;
+    private ProfileFragment mFragment;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_profile_edit);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_profile_edit);
 
-		if (savedInstanceState == null) {
-			//received from ProfileFragment - onOptionsItemSelected - case R.id.profileview_edit
-			SPFPersona persona = getIntent().getExtras().getParcelable(EXTRA_PERSONA);
-			mFragment = ProfileFragment.createEditSelfProfileFragment(persona);
-			getFragmentManager().beginTransaction().replace(R.id.container, mFragment).commit();
-		} else {
-			mFragment = (ProfileFragment) getFragmentManager().findFragmentById(R.id.container);
-		}
+        if (savedInstanceState == null) {
+            //received from ProfileFragment - onOptionsItemSelected - case R.id.profileview_edit
+            SPFPersona persona = getIntent().getExtras().getParcelable(EXTRA_PERSONA);
+            mFragment = ProfileFragment.createEditSelfProfileFragment(persona);
+            getFragmentManager().beginTransaction().replace(R.id.container, mFragment).commit();
+        } else {
+            mFragment = (ProfileFragment) getFragmentManager().findFragmentById(R.id.container);
+        }
 
-		getActionBar().setDisplayHomeAsUpEnabled(true);
-	}
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+    }
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		mFragment.onCreateOptionsMenu(menu, getMenuInflater());
-		return true;
-	}
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        mFragment.onCreateOptionsMenu(menu, getMenuInflater());
+        return true;
+    }
 
-	@Override
-	public boolean onMenuItemSelected(int featureId, MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			finish();
-			return true;
-		default:
-			return mFragment.onOptionsItemSelected(item);
-		}
-	}
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return mFragment.onOptionsItemSelected(item);
+        }
+    }
 
-	@Override
-	public void finish() {
-		setResult(mFragment.isContainerModifiedAtLeastOnce() ? RESULT_OK : RESULT_CANCELED);
-		
-		if (mFragment.isContainerModified()) {
-			new AlertDialog.Builder(this).setMessage(R.string.profileedit_confirm_message).setPositiveButton(R.string.profileedit_confirm_yes, new DialogInterface.OnClickListener() {
+    @Override
+    public void finish() {
+        setResult(mFragment.isContainerModifiedAtLeastOnce() ? RESULT_OK : RESULT_CANCELED);
 
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					setResult(RESULT_CANCELED);
-					ProfileEditActivity.super.finish();
-				}
-			}).setNegativeButton(R.string.profileedit_confirm_no, new DialogInterface.OnClickListener() {
+        if (mFragment.isContainerModified()) {
+            new AlertDialog.Builder(this).setMessage(R.string.profileedit_confirm_message).setPositiveButton(R.string.profileedit_confirm_yes, new DialogInterface.OnClickListener() {
 
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.dismiss();
-				}
-			}).show();
-		} else {
-			super.finish();
-		}
-	}
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    setResult(RESULT_CANCELED);
+                    ProfileEditActivity.super.finish();
+                }
+            }).setNegativeButton(R.string.profileedit_confirm_no, new DialogInterface.OnClickListener() {
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent result) {
-		Log.d("ProfileEditActivity", "Crop image calle by ProfileEditActivity");
-		if (requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
-			mFragment.beginCrop(result.getData());
-		} else if (requestCode == Crop.REQUEST_CROP) {
-			mFragment.handleCrop(resultCode, result);
-		}
-	}
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            }).show();
+        } else {
+            super.finish();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent result) {
+        Log.d("ProfileEditActivity", "Crop image calle by ProfileEditActivity");
+        if (requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
+            mFragment.beginCrop(result.getData());
+        } else if (requestCode == Crop.REQUEST_CROP) {
+            mFragment.handleCrop(resultCode, result);
+        }
+    }
 }

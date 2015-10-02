@@ -19,7 +19,6 @@
  */
 package it.polimi.spf.app.fragments.profile;
 
-import it.polimi.spf.app.R;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
@@ -28,51 +27,53 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import it.polimi.spf.app.R;
+
 public class ProfileViewActivity extends Activity {
 
-	private static final String PERSON_IDENTIFIER_KEY = "personIdentifier";
+    private static final String PERSON_IDENTIFIER_KEY = "personIdentifier";
 
-	Fragment mFragment;
+    Fragment mFragment;
 
-	public static Intent getIntent(Context context, String uuid) {
-		if (context == null || uuid == null) {
-			throw new NullPointerException();
-		}
+    public static Intent getIntent(Context context, String uuid) {
+        if (context == null || uuid == null) {
+            throw new NullPointerException();
+        }
 
-		Intent i = new Intent(context, ProfileViewActivity.class);
-		i.putExtra(PERSON_IDENTIFIER_KEY, uuid);
-		return i;
-	}
+        Intent i = new Intent(context, ProfileViewActivity.class);
+        i.putExtra(PERSON_IDENTIFIER_KEY, uuid);
+        return i;
+    }
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_profile_view);
-		String identifier = getIntent().getStringExtra(PERSON_IDENTIFIER_KEY);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_profile_view);
+        String identifier = getIntent().getStringExtra(PERSON_IDENTIFIER_KEY);
 
-		if (identifier == null) {
-			mFragment = ProfileFragment.createViewSelfProfileFragment();
-		} else {
-			mFragment = ProfileFragment.createRemoteProfileFragment(identifier);
-		}
+        if (identifier == null) {
+            mFragment = ProfileFragment.createViewSelfProfileFragment();
+        } else {
+            mFragment = ProfileFragment.createRemoteProfileFragment(identifier);
+        }
 
-		getFragmentManager().beginTransaction().add(R.id.container, mFragment).commit();
-	}
+        getFragmentManager().beginTransaction().add(R.id.container, mFragment).commit();
+    }
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		mFragment.onCreateOptionsMenu(menu, getMenuInflater());
-		return true;
-	}
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        mFragment.onCreateOptionsMenu(menu, getMenuInflater());
+        return true;
+    }
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		return mFragment.onOptionsItemSelected(item);
-	}
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return mFragment.onOptionsItemSelected(item);
+    }
 
-	@Override
-	public boolean onPrepareOptionsMenu(Menu menu) {
-		mFragment.onPrepareOptionsMenu(menu);
-		return true;
-	}
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        mFragment.onPrepareOptionsMenu(menu);
+        return true;
+    }
 }
