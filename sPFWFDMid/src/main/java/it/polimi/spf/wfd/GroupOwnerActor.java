@@ -35,7 +35,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import it.polimi.spf.wfd.otto.GOEvent;
 import it.polimi.spf.wfd.otto.GOSocketEvent;
@@ -189,8 +192,7 @@ class GroupOwnerActor extends GroupActor {
             Log.e(TAG, "Illegal message in sendBroadcastSignal");
             return;
         }
-        ArrayList<String> idSet = new ArrayList<>(
-                goInternalClients.keySet());
+        ArrayList<String> idSet = new ArrayList<>(goInternalClients.keySet());
         idSet.remove(msg.getSenderId());
         if (!msg.getSenderId().equals(getIdentifier())) {
             handle(msg);
@@ -221,6 +223,20 @@ class GroupOwnerActor extends GroupActor {
     public void onGoSocketEvent(GOSocketEvent event) {
         Log.d(TAG, "GOSocketEvent recevived with type: " + event.getType());
         new GOInternalClient(event.getSocket(), this).start();
+//        pool.execute(new GOInternalClient(event.getSocket(), this));
     }
+
+//
+//    /**
+//     * A ThreadPool for client sockets.
+//     */
+//    private final ThreadPoolExecutor pool = new ThreadPoolExecutor(
+//            Configuration.THREAD_COUNT, Configuration.THREAD_COUNT,
+//            Configuration.THREAD_POOL_EXECUTOR_KEEP_ALIVE_TIME, TimeUnit.SECONDS,
+//            new LinkedBlockingQueue<Runnable>());
+//
+//    public void closeAndKillThisThread() {
+//        pool.shutdown();
+//    }
 
 }
