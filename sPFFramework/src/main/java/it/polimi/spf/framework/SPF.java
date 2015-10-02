@@ -55,7 +55,6 @@ public class SPF {
 
     private static final String AP_APPENDIX = "AP"; //or GO in case of Wifi direct
     private static final String SLAVE_APPENDIX = "U"; //or client in case of wifi direct
-    private String identifierAppendix;
 
     /**
      * Initializes SPF with a {@link Context} reference. Called by
@@ -149,6 +148,7 @@ public class SPF {
         // - IF A DEVICE IS CHOSEN TO BE A GROUPOWNER, IDENTIFIER WILL START WITH "GO"
         // - OTHERWISE WITH "U" (I CAN USE "C" OR OTHER LETTERS, BUT IT'S NOT IMPORTANT)
         //THE IMPORTANT PART IS FOR THE GO.
+        String identifierAppendix;
         Log.d(TAG, "InitIdentifier called with gointent is: " + goIntent);
         if (goIntent == 15) {
             //this device is chosen as a GO

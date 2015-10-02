@@ -37,6 +37,8 @@ import lombok.Getter;
  */
 public class ServiceList {
     private static final String TAG = ServiceList.class.getSimpleName();
+    private static final String AP_APPENDIX = "AP"; //or GO in case of Wifi direct
+    private static final String SLAVE_APPENDIX = "U"; //or client in case of wifi direct
 
     @Getter
     private final List<WiFiP2pService> serviceList;
@@ -67,7 +69,7 @@ public class ServiceList {
      * @param service {@link WiFiP2pService} to add.
      */
     public void addServiceIfNotPresent(WiFiP2pService service) {
-        Log.d(TAG, "addServiceIfNotPresent BEGIN, with size = " + serviceList.size());
+        WfdLog.d(TAG, "addServiceIfNotPresent BEGIN, with size = " + serviceList.size());
 
         if (service == null) {
             return;
@@ -85,7 +87,7 @@ public class ServiceList {
             serviceList.add(service);
         }
 
-        Log.d(TAG, "addServiceIfNotPresent END, with size = " + serviceList.size());
+        WfdLog.d(TAG, "addServiceIfNotPresent END, with size = " + serviceList.size());
     }
 
     /**
@@ -101,21 +103,21 @@ public class ServiceList {
             return null;
         }
 
-        Log.d(TAG, "groupownerdevice passed to getServiceByDevice: " + device.deviceName + ", " + device.deviceAddress);
+        WfdLog.d(TAG, "groupownerdevice passed to getServiceByDevice: " + device.deviceName + ", " + device.deviceAddress);
 
-        Log.d(TAG, "servicelist size: " + serviceList.size());
+        WfdLog.d(TAG, "servicelist size: " + serviceList.size());
 
         for (WiFiP2pService element : serviceList) {
-            Log.d(TAG, "element in list: " + element.getDevice().deviceName + ", " + element.getDevice().deviceAddress);
-            Log.d(TAG, "element passed : " + device.deviceName + ", " + device.deviceAddress);
+            WfdLog.d(TAG, "element in list: " + element.getDevice().deviceName + ", " + element.getDevice().deviceAddress);
+            WfdLog.d(TAG, "element passed : " + device.deviceName + ", " + device.deviceAddress);
 
             if (element.getDevice().deviceAddress.equals(device.deviceAddress)) {
-                Log.d(TAG, "getServiceByDevice if satisfied : " + device.deviceAddress + ", " + element.getDevice().deviceAddress);
+                WfdLog.d(TAG, "getServiceByDevice if satisfied : " + device.deviceAddress + ", " + element.getDevice().deviceAddress);
                 return element;
             }
         }
 
-        Log.d(TAG, "servicelist size: " + serviceList.size());
+        WfdLog.d(TAG, "servicelist size: " + serviceList.size());
 
         return null;
     }
@@ -128,10 +130,10 @@ public class ServiceList {
 
                 validServiceList.add(service);
 
-                Log.d(TAG, "--> ValidServiceList: --OK --: " + service.getIdentifier() + "," + service.getPeerAddress());
+                WfdLog.d(TAG, "--> ValidServiceList: --OK --: " + service.getIdentifier() + "," + service.getPeerAddress());
             } else {
                 if (service != null) {
-                    Log.d(TAG, "--> ValidServiceList: --NOT--: " + service.getIdentifier() + "," + service.getPeerAddress());
+                    WfdLog.d(TAG, "--> ValidServiceList: --NOT--: " + service.getIdentifier() + "," + service.getPeerAddress());
                 }
             }
         }
@@ -142,14 +144,10 @@ public class ServiceList {
         List<WiFiP2pService> validServiceList = this.selectValidServices(myIdentifier);
         List<WiFiP2pService> validGoList = new ArrayList<>();
         for (WiFiP2pService service : validServiceList) {
-            //FIXME TODO FIXME: i don't know how can I discriminate a GO from Clients at this point
-            //FIXME TODO FIXME: i can define a convention, where a GO ha no identifier (U....), but (GO....), for example
-//            if (service.getDevice().isGroupOwner()) {
-            Log.d(TAG, "--> ValidGroupOwnersList: --OK --: " + service.getIdentifier() + "," + service.getPeerAddress());
-            validGoList.add(service);
-//            } else {
-//                Log.d(TAG, "--> ValidGroupOwnersList: --NOT--: " + service.getIdentifier() + "," + service.getPeerAddress());
-//            }
+            if (service.getIdentifier().startsWith(AP_APPENDIX)) {
+                WfdLog.d(TAG, "--> ValidGroupOwnersList: --OK --: " + service.getIdentifier() + "," + service.getPeerAddress());
+                validGoList.add(service);
+            }
         }
         return validGoList;
     }
