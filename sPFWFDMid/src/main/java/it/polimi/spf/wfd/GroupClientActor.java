@@ -88,8 +88,7 @@ class GroupClientActor extends GroupActor implements Runnable {
     @Override
     void sendMessage(WfdMessage msg) throws IOException {
         WfdLog.d(TAG, "Sending message");
-        WfdOutputStream outstream = new WfdOutputStream(
-                socket.getOutputStream());
+        WfdOutputStream outstream = new WfdOutputStream(socket.getOutputStream());
         outstream.writeMessage(msg);
     }
 
@@ -100,8 +99,7 @@ class GroupClientActor extends GroupActor implements Runnable {
         try {
             WfdLog.d(TAG, "Opening socket connection");
             socket = new Socket();
-            SocketAddress remoteAddr = new InetSocketAddress(
-                    groupOwnerAddress, destPort);
+            SocketAddress remoteAddr = new InetSocketAddress(groupOwnerAddress, destPort);
             socket.connect(remoteAddr, 1000);
             inStream = new WfdInputStream(socket.getInputStream());
             establishConnection();

@@ -91,6 +91,8 @@ class GroupOwnerActor extends GroupActor {
      */
     private final Semaphore connectionSemaphore = new Semaphore(1);
 
+
+    //called from GoInternalClient
     public void onClientConnected(String identifier, GOInternalClient gOInternalClient) throws InterruptedException {
         WfdLog.d(TAG, "New client connected id : " + identifier);
         connectionSemaphore.acquire();
@@ -105,6 +107,7 @@ class GroupOwnerActor extends GroupActor {
         }
     }
 
+    //called from GoInternalClient
     public void onClientDisconnected(String identifier) throws InterruptedException {
         connectionSemaphore.acquire();
         WfdLog.d(TAG, "Client lost id : " + identifier);
@@ -157,6 +160,7 @@ class GroupOwnerActor extends GroupActor {
         super.onError();
     }
 
+    //called from the GOInternalClient
     public void onMessageReceived(final WfdMessage msg) {
         threadPool.execute(new Runnable() {
             @Override
