@@ -30,7 +30,8 @@ proguard/
 *.log
 
 # IntelliJ IDEA
-/*/*.iml
 .idea
 
-SPF.iml
+*.iml
+
+*.DS_Store
