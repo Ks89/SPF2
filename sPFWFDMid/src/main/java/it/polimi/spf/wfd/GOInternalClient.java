@@ -41,6 +41,7 @@ public class GOInternalClient extends Thread {
     GOInternalClient(Socket socket, GroupOwnerActor groupOwnerActor) {
         this.socket = socket;
         this.groupOwnerActor = groupOwnerActor;
+        this.setName("GOInternalClient");
     }
 
     void recycle() {
@@ -126,7 +127,7 @@ public class GOInternalClient extends Thread {
     synchronized void sendMessage(WfdMessage msg) {
         WfdOutputStream outStream;
         try {
-            WfdLog.d(TAG, "Sending message:");
+            WfdLog.d(TAG, "Sending message: " + msg);
             outStream = new WfdOutputStream(socket.getOutputStream());
             outStream.writeMessage(msg);
         } catch (Throwable tr) {

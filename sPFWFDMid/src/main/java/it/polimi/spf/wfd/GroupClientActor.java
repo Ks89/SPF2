@@ -51,6 +51,7 @@ class GroupClientActor extends GroupActor implements Runnable {
         this.destPort = destPort;
 
         thread = new Thread(this);
+        thread.setName("GroupClientActor");
     }
 
     public void connect() {
@@ -99,6 +100,7 @@ class GroupClientActor extends GroupActor implements Runnable {
         try {
             WfdLog.d(TAG, "Opening socket connection");
             socket = new Socket();
+            socket.bind(null);
             SocketAddress remoteAddr = new InetSocketAddress(groupOwnerAddress, destPort);
             socket.connect(remoteAddr, 1000);
             inStream = new WfdInputStream(socket.getInputStream());

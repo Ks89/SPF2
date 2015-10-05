@@ -36,6 +36,7 @@ class ServerSocketAcceptor extends Thread {
 
     public ServerSocketAcceptor(ServerSocket serverSocket) {
         this.serverSocket = serverSocket;
+        this.setName("ServerSocketAcceptor");
     }
 
     public void recycle() {

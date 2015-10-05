@@ -35,10 +35,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import it.polimi.spf.wfd.otto.GOEvent;
 import it.polimi.spf.wfd.otto.GOSocketEvent;
@@ -157,6 +154,7 @@ class GroupOwnerActor extends GroupActor {
 
     public void onServerSocketError() {
         disconnect();
+//        this.closeAndKillThisThread();
         super.onError();
     }
 
@@ -206,6 +204,10 @@ class GroupOwnerActor extends GroupActor {
         }
     }
 
+//    private void closeAndKillThisThread() {
+//        clientsPoolExecutor.shutdown();
+//    }
+
     @Override
     public synchronized void sendMessage(WfdMessage msg) {
         msg.setSenderId(getIdentifier());
@@ -229,18 +231,4 @@ class GroupOwnerActor extends GroupActor {
         new GOInternalClient(event.getSocket(), this).start();
 //        pool.execute(new GOInternalClient(event.getSocket(), this));
     }
-
-//
-//    /**
-//     * A ThreadPool for client sockets.
-//     */
-//    private final ThreadPoolExecutor pool = new ThreadPoolExecutor(
-//            Configuration.THREAD_COUNT, Configuration.THREAD_COUNT,
-//            Configuration.THREAD_POOL_EXECUTOR_KEEP_ALIVE_TIME, TimeUnit.SECONDS,
-//            new LinkedBlockingQueue<Runnable>());
-//
-//    public void closeAndKillThisThread() {
-//        pool.shutdown();
-//    }
-
 }
