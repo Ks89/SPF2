@@ -56,19 +56,7 @@ class GroupOwnerActor extends GroupActor {
     private ServerSocketAcceptor acceptor;
     private final Map<String, GOInternalClient> goInternalClients = new Hashtable<>();
 
-    /**
-     * ThreadPool for ServerSocketAcceptor
-     */
     private final ExecutorService threadPool = Executors.newCachedThreadPool();
-
-    /**
-     * ThreadPool for client sockets.
-     */
-    private final ThreadPoolExecutor clientsPoolExecutor = new ThreadPoolExecutor(
-            Configuration.THREAD_COUNT, Configuration.THREAD_COUNT,
-            Configuration.THREAD_POOL_EXECUTOR_KEEP_ALIVE_TIME, TimeUnit.SECONDS,
-            new LinkedBlockingQueue<Runnable>());
-
 
     public GroupOwnerActor(int port, GroupActorListener listener, String myIdentifier) throws IOException {
         super(listener, myIdentifier);
@@ -76,7 +64,25 @@ class GroupOwnerActor extends GroupActor {
         NineBus.get().register(this);
     }
 
+    @Override
+    public void connect() {
+        acceptor = new ServerSocketAcceptor(serverSocket);
+        acceptor.start();
+    }
 
+    @Override
+    void disconnect() {
+        try {
+            serverSocket.close();
+        } catch (IOException e) {
+            WfdLog.e(TAG, "Error while closing socket in GroupOwnerActor", e);
+        }
+        acceptor.recycle();
+        for (String id : goInternalClients.keySet()) {
+            goInternalClients.get(id).recycle();
+        }
+        goInternalClients.clear();
+    }
 
     /*
      * this is a semaphore to handle client's connection and disconnection. the
@@ -151,7 +157,6 @@ class GroupOwnerActor extends GroupActor {
 
     public void onServerSocketError() {
         disconnect();
-        this.closeAndKillThisThread();
         super.onError();
     }
 
@@ -201,30 +206,6 @@ class GroupOwnerActor extends GroupActor {
         }
     }
 
-    private void closeAndKillThisThread() {
-        clientsPoolExecutor.shutdown();
-    }
-
-    @Override
-    public void connect() {
-        acceptor = new ServerSocketAcceptor(serverSocket);
-        acceptor.start();
-    }
-
-    @Override
-    void disconnect() {
-        try {
-            serverSocket.close();
-        } catch (IOException e) {
-            WfdLog.e(TAG, "Error while closing socket in GroupOwnerActor", e);
-        }
-        acceptor.recycle();
-        for (String id : goInternalClients.keySet()) {
-            goInternalClients.get(id).recycle();
-        }
-        goInternalClients.clear();
-    }
-
     @Override
     public synchronized void sendMessage(WfdMessage msg) {
         msg.setSenderId(getIdentifier());
@@ -245,7 +226,21 @@ class GroupOwnerActor extends GroupActor {
     @Subscribe
     public void onGoSocketEvent(GOSocketEvent event) {
         Log.d(TAG, "GOSocketEvent recevived with type: " + event.getType());
-//        new GOInternalClient(event.getSocket(), this).start();
-        clientsPoolExecutor.execute(new GOInternalClient(event.getSocket(), this));
+        new GOInternalClient(event.getSocket(), this).start();
+//        pool.execute(new GOInternalClient(event.getSocket(), this));
     }
+
+//
+//    /**
+//     * A ThreadPool for client sockets.
+//     */
+//    private final ThreadPoolExecutor pool = new ThreadPoolExecutor(
+//            Configuration.THREAD_COUNT, Configuration.THREAD_COUNT,
+//            Configuration.THREAD_POOL_EXECUTOR_KEEP_ALIVE_TIME, TimeUnit.SECONDS,
+//            new LinkedBlockingQueue<Runnable>());
+//
+//    public void closeAndKillThisThread() {
+//        pool.shutdown();
+//    }
+
 }
