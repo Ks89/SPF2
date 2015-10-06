@@ -21,8 +21,13 @@
 
 package it.polimi.spf.wfd;
 
+import com.squareup.otto.Subscribe;
+
 import java.io.IOException;
 import java.util.concurrent.Semaphore;
+
+import it.polimi.spf.wfd.otto.NineBus;
+import it.polimi.spf.wfd.otto.goEvent.GOConnectionEvent;
 
 /**
  * GroupActor is the abstract class that defines the interface in common to a group owners
@@ -40,9 +45,35 @@ abstract class GroupActor extends Thread {
     private final Semaphore requestSemaphore = new Semaphore(1, true);
     private final ResponseHolder respHolder = new ResponseHolder(REQUEST_TIMEOUT);
 
+    /**
+     * Object to be registered on {@link it.polimi.spf.wfd.otto.NineBus}.
+     * We need it to make extending classes inherit "@Subscribe" methods.
+     */
+    private Object busListener;
+
     GroupActor(GroupActorListener listener, String identifier) {
         this.myIdentifier = identifier;
         this.listener = listener;
+
+        busListener = new Object() {
+            @Subscribe
+            public void onGOActorActionEvent(GOConnectionEvent event) {
+                switch (event.getAction()) {
+                    case GOConnectionEvent.CONNECT_STRING:
+                        WfdLog.d(TAG, "Connect event received");
+                        connect();
+                        break;
+                    case GOConnectionEvent.DISCONNECT_STRING:
+                        WfdLog.d(TAG, "Disconnect event received");
+                        disconnect(false); //normal  disconnection without errors
+                        break;
+                    default:
+                        WfdLog.d(TAG, "Unknown GOConnectionEvent");
+                }
+            }
+        };
+
+        NineBus.get().register(busListener);
     }
 
     public WfdMessage sendRequestMessage(WfdMessage msg) throws IOException {
@@ -137,7 +168,9 @@ abstract class GroupActor extends Thread {
         respHolder.set(msg);
     }
 
-    abstract void disconnect();
+    protected void disconnect(boolean withError) {
+        NineBus.get().unregister(busListener);
+    }
 
     abstract void sendMessage(WfdMessage msg) throws IOException;
 

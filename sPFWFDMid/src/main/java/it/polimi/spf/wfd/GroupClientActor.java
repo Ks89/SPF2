@@ -25,16 +25,11 @@ package it.polimi.spf.wfd;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.squareup.otto.Subscribe;
-
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
-
-import it.polimi.spf.wfd.otto.NineBus;
-import it.polimi.spf.wfd.otto.goEvent.GOConnectionEvent;
 
 /**
  * GroupClientActor is the class that implements the role of a standard group member,
@@ -54,16 +49,7 @@ class GroupClientActor extends GroupActor {
         this.groupOwnerAddress = groupOwnerAddress;
         this.destPort = destPort;
 
-        NineBus.get().register(this);
         this.setName("GroupClientActor");
-    }
-
-    private void closeSocket() {
-        try {
-            socket.close();
-        } catch (IOException e) {
-            WfdLog.e(TAG, "IOException during socket.close", e);
-        }
     }
 
     private void establishConnection() throws IOException {
@@ -80,7 +66,8 @@ class GroupClientActor extends GroupActor {
     }
 
     @Override
-    public void disconnect() {
+    protected void disconnect(boolean withError) {
+        super.disconnect(withError);
         try {
             WfdLog.d(TAG, "Disconnect called");
             this.interrupt();
@@ -117,7 +104,7 @@ class GroupClientActor extends GroupActor {
         } catch (Throwable e) {
             WfdLog.d(TAG, "error in the run loop", e);
         } finally {
-            closeSocket();
+            disconnect(false); //without errors
         }
 
         new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -127,21 +114,5 @@ class GroupClientActor extends GroupActor {
                 GroupClientActor.super.onError();
             }
         });
-    }
-
-    @Subscribe
-    public void onGOActorActionEvent(GOConnectionEvent event) {
-        switch (event.getAction()) {
-            case GOConnectionEvent.CONNECT_STRING:
-                WfdLog.d(TAG, "Connect event received");
-                this.connect();
-                break;
-            case GOConnectionEvent.DISCONNECT_STRING:
-                WfdLog.d(TAG, "Disconnect event received");
-                this.disconnect();
-                break;
-            default:
-                WfdLog.d(TAG, "Unknown GOConnectionEvent");
-        }
     }
 }

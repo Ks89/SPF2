@@ -27,6 +27,7 @@ import com.squareup.otto.Subscribe;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -38,7 +39,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
 
 import it.polimi.spf.wfd.otto.NineBus;
-import it.polimi.spf.wfd.otto.goEvent.GOConnectionEvent;
 import it.polimi.spf.wfd.otto.goEvent.GOErrorEvent;
 import it.polimi.spf.wfd.otto.goEvent.GOInternalClientEvent;
 
@@ -51,7 +51,6 @@ class GroupOwnerActor extends GroupActor {
     private static final String TAG = GroupOwnerActor.class.getSimpleName();
 
     private final ServerSocket serverSocket;
-    private ServerSocketAcceptor acceptor;
     private final Map<String, GOInternalClient> goInternalClients = new Hashtable<>();
 
     private final ExecutorService threadPool = Executors.newCachedThreadPool();
@@ -66,7 +65,9 @@ class GroupOwnerActor extends GroupActor {
     public GroupOwnerActor(int port, GroupActorListener listener, String myIdentifier) throws IOException {
         super(listener, myIdentifier);
         serverSocket = new ServerSocket(port);
+
         NineBus.get().register(this);
+        this.setName("GroupOwnerActor");
     }
 
     //called from GoInternalClient
@@ -132,11 +133,6 @@ class GroupOwnerActor extends GroupActor {
         sendBroadcastSignal(msg);
     }
 
-    private void onServerSocketError() {
-        this.disconnect();
-        super.onError();
-    }
-
     //called from the GOInternalClient
     public void onMessageReceived(final WfdMessage msg) {
         threadPool.execute(new Runnable() {
@@ -185,24 +181,55 @@ class GroupOwnerActor extends GroupActor {
 
     @Override
     public void connect() {
-        acceptor = new ServerSocketAcceptor(serverSocket);
-        acceptor.start();
+        this.start();
     }
 
     @Override
     public void run() {
+        WfdLog.d(TAG, "ServerSocketAcceptor's variable 'serverSocket' has port: " + serverSocket.getLocalPort());
 
+        Socket s = null;
+        try {
+            while (!Thread.currentThread().isInterrupted()) {
+                WfdLog.d(TAG, "accept(): waiting for a new client");
+                s = serverSocket.accept();
+                WfdLog.d(TAG, "incoming connection");
+                WfdLog.d(TAG, "IP Address: " + s.getInetAddress());
+                NineBus.get().post(new GOInternalClientEvent("onStartGoInternalClient", s));
+            }
+        } catch (IOException e) {
+            WfdLog.e(TAG, "ServerSocketAcceptor IOException", e);
+            if (s != null) {
+                try {
+                    s.close();
+                } catch (IOException e1) {
+                    WfdLog.e(TAG, "ServerSocketAcceptor IOException while closing socket 's' ", e1);
+                }
+            }
+        } finally {
+            WfdLog.d(TAG, "ServerSocketAcceptor exiting while loop in run()");
+            if (!serverSocket.isClosed()) {
+                WfdLog.d(TAG, "signalling error to groupOwnerActor");
+                NineBus.get().post(new GOErrorEvent("onServerSocketError"));
+            }
+        }
     }
 
     @Override
-    void disconnect() {
+    protected void disconnect(boolean withError) {
+        super.disconnect(withError);
+        NineBus.get().unregister(this);
+
         WfdLog.d(TAG, "GroupOwnerActor Disconnecting...");
         try {
             serverSocket.close();
         } catch (IOException e) {
-            WfdLog.e(TAG, "Error while closing socket in GroupOwnerActor", e);
+            if (!withError) {
+                WfdLog.d(TAG, "ServerSocket force-closed in GroupOwnerActor", e);
+            } else {
+                WfdLog.e(TAG, "ServerSocket error in GroupOwnerActor while closing", e);
+            }
         }
-        acceptor.recycle();
         for (String id : goInternalClients.keySet()) {
             goInternalClients.get(id).recycle();
         }
@@ -221,25 +248,10 @@ class GroupOwnerActor extends GroupActor {
     }
 
     @Subscribe
-    public void onGOActorActionEvent(GOConnectionEvent event) {
-        switch (event.getAction()) {
-            case GOConnectionEvent.CONNECT_STRING:
-                WfdLog.d(TAG, "Connect event received");
-                this.connect();
-                break;
-            case GOConnectionEvent.DISCONNECT_STRING:
-                WfdLog.d(TAG, "Disconnect event received");
-                this.disconnect();
-                break;
-            default:
-                WfdLog.d(TAG, "Unknown GOConnectionEvent");
-        }
-    }
-
-    @Subscribe
     public void onGOErrorEvent(GOErrorEvent event) {
         WfdLog.d(TAG, "GOErrorEvent received with type: " + event.getType());
-        this.onServerSocketError();
+        this.disconnect(true); //true = with errors
+        super.onError();
     }
 
     @Subscribe

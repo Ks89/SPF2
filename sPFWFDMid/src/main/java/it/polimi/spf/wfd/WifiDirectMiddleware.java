@@ -29,7 +29,6 @@ import android.net.wifi.p2p.WifiP2pGroup;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
-import android.net.wifi.p2p.WifiP2pManager.GroupInfoListener;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
 import android.os.Looper;
@@ -57,6 +56,7 @@ import lombok.Getter;
  * Wi-Fi Direct middleware interface to the ones required by SPF.
  */
 public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListener {
+
     private final static String TAG = WifiDirectMiddleware.class.getSimpleName();
 
     private static final int THIS_DEVICE_IS_GO = 15;
@@ -302,40 +302,13 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
         WfdLog.d(TAG, "connection info available");
 
+        //here the connection info is available, but groups aren't created yet.
+        //Groups are really available only in GroupOwnerInfoListener and GroupClientInfoListener
+        //after the mManager.requestGroupInfo
         if (info.isGroupOwner) {
-            try {
-                instantiateGroupOwner();
-            } catch (IOException e) {
-                WfdLog.e(TAG, "Impossible to instantiate the GroupOwner Actor!", e);
-            }
+            mManager.requestGroupInfo(mChannel, new GroupOwnerInfoListener(info));
         } else {
-            mManager.requestGroupInfo(mChannel, new GroupInfoListener() {
-                @Override
-                public void onGroupInfoAvailable(WifiP2pGroup group) {
-                    if (group == null) {
-                        // happens when the go goes away and the
-                        // framework does not have time to update the
-                        // connection loss
-                        return;
-                    }
-                    WifiP2pDevice groupOwnerDevice = group.getOwner();
-
-                    Log.d(TAG, "requestGroupInfo - groupOwnerDeviceaddress: " + groupOwnerDevice.deviceAddress);
-
-                    WiFiP2pService service = ServiceList.getInstance().getServiceByDevice(groupOwnerDevice);
-
-                    Log.d(TAG, "requestGroupInfo - service: " + service);
-
-                    if (service == null) {
-                        Log.e(TAG, "service is null");
-                        mManager.removeGroup(mChannel, null);
-                    } else {
-                        int destPort = service.getPort();
-                        //TODO NULLPointerException perche' info==null (se ricordo bene)
-                        instantiateGroupClient(info.groupOwnerAddress, destPort);
-                    }
-                }
-            });
+            mManager.requestGroupInfo(mChannel, new GroupClientInfoListener(info));
         }
     }
 
@@ -471,6 +444,58 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
      */
     public void setGoIntent(int goIntent) {
         this.goIntent = goIntent;
+    }
+
+
+    public class GroupClientInfoListener implements WifiP2pManager.GroupInfoListener {
+        private WifiP2pInfo info;
+
+        public GroupClientInfoListener(WifiP2pInfo info) {
+            this.info = info;
+        }
+
+        @Override
+        public void onGroupInfoAvailable(WifiP2pGroup group) {
+            if (group == null) {
+                // happens when the go goes away and theif (group == null) {
+                // happens when the go goes away and the
+                // framework does not have time to update the
+                // connection loss
+                return;
+            }
+            WifiP2pDevice groupOwnerDevice = group.getOwner();
+
+            Log.d(TAG, "requestGroupInfo - groupOwnerDeviceaddress: " + groupOwnerDevice.deviceAddress);
+
+            WiFiP2pService service = ServiceList.getInstance().getServiceByDevice(groupOwnerDevice);
+
+            Log.d(TAG, "requestGroupInfo - service: " + service);
+
+            if (service == null) {
+                Log.e(TAG, "service is null");
+                mManager.removeGroup(mChannel, null);
+            } else {
+                int destPort = service.getPort();
+                instantiateGroupClient(info.groupOwnerAddress, destPort);
+            }
+        }
+    }
+
+    public class GroupOwnerInfoListener implements WifiP2pManager.GroupInfoListener {
+        private WifiP2pInfo info;
+
+        public GroupOwnerInfoListener(WifiP2pInfo info) {
+            this.info = info;
+        }
+
+        @Override
+        public void onGroupInfoAvailable(WifiP2pGroup group) {
+            try {
+                instantiateGroupOwner();
+            } catch (IOException e) {
+                WfdLog.e(TAG, "Impossible to instantiate the GroupOwner Actor!", e);
+            }
+        }
     }
 
 
