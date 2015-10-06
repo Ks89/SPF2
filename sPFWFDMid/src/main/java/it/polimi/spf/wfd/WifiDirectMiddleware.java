@@ -45,6 +45,9 @@ import java.util.Map;
 import it.polimi.spf.wfd.actionlisteners.CustomDnsSdTxtRecordListener;
 import it.polimi.spf.wfd.actionlisteners.CustomDnsServiceResponseListener;
 import it.polimi.spf.wfd.actionlisteners.CustomizableActionListener;
+import it.polimi.spf.wfd.otto.Event;
+import it.polimi.spf.wfd.otto.NineBus;
+import it.polimi.spf.wfd.otto.goEvent.GOConnectionEvent;
 import lombok.Getter;
 
 /**
@@ -129,7 +132,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         mManager.addLocalService(mChannel, mInfo,
                 new CustomizableActionListener(
                         this.mContext,
-                        "startRegistration",
+                        TAG,
                         "Added Local Service",
                         null,
                         "Failed to add a service",
@@ -159,7 +162,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         mManager.addServiceRequest(mChannel, mServiceRequest,
                 new CustomizableActionListener(
                         this.mContext,
-                        "discoverService",
+                        TAG,
                         "Added service discovery request",
                         null,
                         "Failed adding service discovery request",
@@ -170,7 +173,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         mManager.discoverServices(mChannel,
                 new CustomizableActionListener(
                         this.mContext,
-                        "discoverService",
+                        TAG,
                         "Service discovery initiated",
                         null,
                         "Failed starting service discovery",
@@ -184,7 +187,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
         mManager.removeServiceRequest(mChannel, mServiceRequest, new CustomizableActionListener(
                 this.mContext,
-                "disconnect",
+                TAG,
                 "RemoveServiceRequest success",
                 null,
                 "RemoveServiceRequest failure",
@@ -194,7 +197,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
         mManager.removeLocalService(mChannel, mInfo, new CustomizableActionListener(
                 this.mContext,
-                "disconnect",
+                TAG,
                 "RemoveLocalService success",
                 null,
                 "RemoveLocalService failure",
@@ -203,7 +206,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
         mManager.cancelConnect(mChannel, new CustomizableActionListener(
                 this.mContext,
-                "disconnect",
+                TAG,
                 "CancelConnect success",
                 null,
                 "CancelConnect failure",
@@ -212,7 +215,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
         mManager.removeGroup(mChannel, new CustomizableActionListener(
                 this.mContext,
-                "disconnect",
+                TAG,
                 "RemoveGroup success",
                 null,
                 "RemoveGroup failure",
@@ -222,7 +225,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         connected = false;
 
         if (mGroupActor != null) {
-            mGroupActor.disconnect();
+            this.postEvent(new GOConnectionEvent(GOConnectionEvent.DISCONNECT_STRING));
             mGroupActor = null;
         }
 
@@ -233,7 +236,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
     private void becomeAutonomousGroupOwner() {
         mManager.createGroup(mChannel, new CustomizableActionListener(
                 this.mContext,
-                "createGroup",
+                TAG,
                 "Connect success",
                 null,
                 "Connect failure",
@@ -278,7 +281,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
             mManager.connect(mChannel, config, new CustomizableActionListener(
                     this.mContext,
-                    "createGroup",
+                    TAG,
                     "Connect success",
                     null,
                     "Connect failure",
@@ -339,14 +342,14 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
     private void instantiateGroupClient(InetAddress groupOwnerAddress, int destPort) {
         WfdLog.d(TAG, "Instantiating group client's logic");
         mGroupActor = new GroupClientActor(groupOwnerAddress, destPort, actorListener, myIdentifier);
-        mGroupActor.connect();
+        this.postEvent(new GOConnectionEvent(GOConnectionEvent.CONNECT_STRING));
 
     }
 
     private void instantiateGroupOwner() throws IOException {
         WfdLog.d(TAG, "Instantiating group owner's logic");
         mGroupActor = new GroupOwnerActor(mPort, actorListener, myIdentifier);
-        mGroupActor.connect();
+        this.postEvent(new GOConnectionEvent(GOConnectionEvent.CONNECT_STRING));
     }
 
     public void onNetworkConnected() {
@@ -358,7 +361,8 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
     public void onNetworkDisconnected() {
         WfdLog.d(TAG, "onNetworkDisconnected");
         if (mGroupActor != null) {
-            mGroupActor.disconnect();
+            WfdLog.d(TAG, "Disconnecting");
+            this.postEvent(new GOConnectionEvent(GOConnectionEvent.DISCONNECT_STRING));
         }
         isGroupCreated = false;
         mGroupActor = null;
@@ -378,7 +382,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         public void onError() {
             Log.e(TAG, "GroupActorListener.onError");
             if (mGroupActor != null) {
-                mGroupActor.disconnect();
+                postEvent(new GOConnectionEvent(GOConnectionEvent.DISCONNECT_STRING));
             }
             isGroupCreated = false;
             mGroupActor = null;
@@ -454,6 +458,10 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         }
 
         return assignedPort;
+    }
+
+    private void postEvent(Event event) {
+        NineBus.get().post(event);
     }
 
     /**

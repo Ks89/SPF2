@@ -5,11 +5,11 @@ import lombok.Getter;
 /**
  * Created by Stefano Cappa on 22/07/15.
  */
-public class GOEvent {
+public abstract class Event {
     @Getter
-    public String type;
+    private String type;
 
-    public GOEvent(String type) {
+    public Event(String type) {
         this.type = type;
     }
 }

@@ -25,24 +25,28 @@ package it.polimi.spf.wfd;
 import android.os.Handler;
 import android.os.Looper;
 
+import com.squareup.otto.Subscribe;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 
+import it.polimi.spf.wfd.otto.NineBus;
+import it.polimi.spf.wfd.otto.goEvent.GOConnectionEvent;
+
 /**
  * GroupClientActor is the class that implements the role of a standard group member,
  * as such its solely duty is to connect to the group owner and offer functions for sending
  * and receiving messages through its socket connections.
  */
-class GroupClientActor extends GroupActor implements Runnable {
+class GroupClientActor extends GroupActor {
 
     private static final String TAG = "GroupClientActor";
     private final InetAddress groupOwnerAddress;
     private final int destPort;
     private Socket socket;
-    private final Thread thread;
 
     public GroupClientActor(InetAddress groupOwnerAddress, int destPort,
                             GroupActorListener listener, String myIdentifier) {
@@ -50,25 +54,9 @@ class GroupClientActor extends GroupActor implements Runnable {
         this.groupOwnerAddress = groupOwnerAddress;
         this.destPort = destPort;
 
-        thread = new Thread(this);
-        thread.setName("GroupClientActor");
+        NineBus.get().register(this);
+        this.setName("GroupClientActor");
     }
-
-    public void connect() {
-
-        thread.start();
-    }
-
-    public void disconnect() {
-        try {
-            WfdLog.d(TAG, "Disconnect called");
-            thread.interrupt();
-            socket.close();
-        } catch (IOException e) {
-            WfdLog.d(TAG, "error on closing socket", e);
-        }
-    }
-
 
     private void closeSocket() {
         try {
@@ -81,9 +69,25 @@ class GroupClientActor extends GroupActor implements Runnable {
     private void establishConnection() throws IOException {
         WfdMessage msg = new WfdMessage();
         msg.setType(WfdMessage.TYPE_CONNECT);
-        msg.setSenderId(getIdentifier());
+        msg.setSenderId(super.myIdentifier);
         WfdLog.d(TAG, "Sending connection message... ");
         sendMessage(msg);
+    }
+
+    @Override
+    public void connect() {
+        this.start();
+    }
+
+    @Override
+    public void disconnect() {
+        try {
+            WfdLog.d(TAG, "Disconnect called");
+            this.interrupt();
+            socket.close();
+        } catch (IOException e) {
+            WfdLog.d(TAG, "error on closing socket", e);
+        }
     }
 
     @Override
@@ -92,7 +96,6 @@ class GroupClientActor extends GroupActor implements Runnable {
         WfdOutputStream outstream = new WfdOutputStream(socket.getOutputStream());
         outstream.writeMessage(msg);
     }
-
 
     @Override
     public void run() {
@@ -106,7 +109,7 @@ class GroupClientActor extends GroupActor implements Runnable {
             inStream = new WfdInputStream(socket.getInputStream());
             establishConnection();
             WfdLog.d(TAG, "Entering read loop");
-            while (!thread.isInterrupted()) {
+            while (!this.isInterrupted()) {
                 WfdMessage msg = inStream.readMessage();
                 WfdLog.d(TAG, "message received");
                 super.handle(msg);
@@ -124,5 +127,21 @@ class GroupClientActor extends GroupActor implements Runnable {
                 GroupClientActor.super.onError();
             }
         });
+    }
+
+    @Subscribe
+    public void onGOActorActionEvent(GOConnectionEvent event) {
+        switch (event.getAction()) {
+            case GOConnectionEvent.CONNECT_STRING:
+                WfdLog.d(TAG, "Connect event received");
+                this.connect();
+                break;
+            case GOConnectionEvent.DISCONNECT_STRING:
+                WfdLog.d(TAG, "Disconnect event received");
+                this.disconnect();
+                break;
+            default:
+                WfdLog.d(TAG, "Unknown GOConnectionEvent");
+        }
     }
 }

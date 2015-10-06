@@ -24,9 +24,9 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import it.polimi.spf.wfd.otto.GOEvent;
-import it.polimi.spf.wfd.otto.GOSocketEvent;
 import it.polimi.spf.wfd.otto.NineBus;
+import it.polimi.spf.wfd.otto.goEvent.GOErrorEvent;
+import it.polimi.spf.wfd.otto.goEvent.GOInternalClientEvent;
 
 class ServerSocketAcceptor extends Thread {
     private static final String TAG = ServerSocketAcceptor.class.getSimpleName();
@@ -55,7 +55,7 @@ class ServerSocketAcceptor extends Thread {
                 s = serverSocket.accept();
                 WfdLog.d(TAG, "incoming connection");
                 WfdLog.d(TAG, "IP Address: " + s.getInetAddress());
-                NineBus.get().post(new GOSocketEvent("onStartGoInternalClient", s));
+                NineBus.get().post(new GOInternalClientEvent("onStartGoInternalClient", s));
             }
         } catch (IOException e) {
             WfdLog.e(TAG, "ServerSocketAcceptor IOException", e);
@@ -70,7 +70,7 @@ class ServerSocketAcceptor extends Thread {
             WfdLog.d(TAG, "ServerSocketAcceptor exiting while loop in run()");
             if (!closed) {
                 WfdLog.d(TAG, "signalling error to groupOwnerActor");
-                NineBus.get().post(new GOEvent("onServerSocketError"));
+                NineBus.get().post(new GOErrorEvent("onServerSocketError"));
             }
         }
     }
