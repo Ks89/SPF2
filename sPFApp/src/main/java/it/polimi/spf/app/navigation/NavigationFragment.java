@@ -35,10 +35,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
 import android.widget.Switch;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnCheckedChanged;
 import it.polimi.spf.app.R;
 import it.polimi.spf.app.SPFApp;
 import it.polimi.spf.app.navigation.Navigation.Entry;
@@ -70,13 +72,18 @@ public class NavigationFragment extends Fragment {
 
     private static final String TAG = "NotificationFragment";
 
-    private ListView mNavigationListView;
+    @Bind(R.id.navigation_entries)
+    ListView mNavigationListView;
+
+    @Bind(R.id.connect_switch)
+    Switch connectSwitch;
+
+    @Bind(R.id.groupOwner_switch)
+    Switch groupOwnerSwitch;
+
     private int mCurrentSelectedPosition = 0;
     private ItemSelectedListener mCallback;
     private Navigation mNavigation;
-
-    public Switch connectSwitch, groupOwnerSwitch;
-
 
     @Override
     public void onAttach(Activity activity) {
@@ -103,8 +110,9 @@ public class NavigationFragment extends Fragment {
     public final View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
 
+        ButterKnife.bind(this, root);
+
         // Set up navigation entries
-        mNavigationListView = (ListView) root.findViewById(R.id.navigation_entries);
         mNavigationListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -116,48 +124,12 @@ public class NavigationFragment extends Fragment {
         mNavigationListView.setAdapter(new NavigationArrayAdapter(getActivity(), pageTitles));
         mNavigationListView.setItemChecked(mCurrentSelectedPosition, true);
 
-        // Set up connect switch
-        connectSwitch = (Switch) root.findViewById(R.id.connect_switch);
         //update switch status.
         connectSwitch.setChecked(SPF.get().isConnected());
 
-        connectSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    if (groupOwnerSwitch.isChecked()) {
-                        Log.d(TAG, "connectSwitch checked -> gointent=15");
-                        ((SPFApp) getActivity().getApplication()).initSPF(15);
-                    } else {
-                        ((SPFApp) getActivity().getApplication()).initSPF(0);
-
-                    }
-                    SPFService.startForeground(getActivity());
-                } else {
-                    SPFService.stopForeground(getActivity());
-                }
-            }
-        });
-
-        // Set up group owner switch
-        groupOwnerSwitch = (Switch) root.findViewById(R.id.groupOwner_switch);
-        groupOwnerSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    Log.d(TAG, "connectSwitch checked -> gointent=15");
-                    ((SPFApp) getActivity().getApplication()).updateIdentifier(15);
-                } else {
-                    Log.d(TAG, "connectSwitch unchecked -> gointent=0");
-                    ((SPFApp) getActivity().getApplication()).updateIdentifier(0);
-                }
-            }
-        });
-
-
         return root;
     }
+
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -219,7 +191,6 @@ public class NavigationFragment extends Fragment {
         }
     }
 
-
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -231,4 +202,35 @@ public class NavigationFragment extends Fragment {
             }
         }
     };
+
+    @OnCheckedChanged(R.id.connect_switch)
+    public void onCheckChangedConnectSwitch(boolean isChecked) {
+        if (isChecked) {
+            if (groupOwnerSwitch.isChecked()) {
+                Log.d(TAG, "connectSwitch checked -> gointent=15");
+                ((SPFApp) getActivity().getApplication()).initSPF(15);
+            } else {
+                ((SPFApp) getActivity().getApplication()).initSPF(0);
+
+            }
+            SPFService.startForeground(getActivity());
+
+            groupOwnerSwitch.setEnabled(false);
+        } else {
+            SPFService.stopForeground(getActivity());
+
+            groupOwnerSwitch.setEnabled(true);
+        }
+    }
+
+    @OnCheckedChanged(R.id.groupOwner_switch)
+    public void onCheckChangedGOSwitch(boolean isChecked) {
+        if (isChecked) {
+            Log.d(TAG, "connectSwitch checked -> gointent=15");
+            ((SPFApp) getActivity().getApplication()).updateIdentifier(15);
+        } else {
+            Log.d(TAG, "connectSwitch unchecked -> gointent=0");
+            ((SPFApp) getActivity().getApplication()).updateIdentifier(0);
+        }
+    }
 }
