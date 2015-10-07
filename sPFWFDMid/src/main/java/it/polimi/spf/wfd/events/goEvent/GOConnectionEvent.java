@@ -1,4 +1,4 @@
-package it.polimi.spf.wfd.otto.goEvent;
+package it.polimi.spf.wfd.events.goEvent;
 
 /**
  * Created by Stefano Cappa on 22/07/15.

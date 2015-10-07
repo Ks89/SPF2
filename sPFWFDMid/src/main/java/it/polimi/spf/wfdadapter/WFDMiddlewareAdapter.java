@@ -34,7 +34,7 @@ import it.polimi.spf.framework.proximity.InboundProximityInterface;
 import it.polimi.spf.framework.proximity.ProximityMiddleware;
 import it.polimi.spf.framework.proximity.SPFRemoteInstance;
 import it.polimi.spf.wfd.WfdMessage;
-import it.polimi.spf.wfd.WfdMiddlewareListener;
+import it.polimi.spf.wfd.listeners.WfdMiddlewareListener;
 import it.polimi.spf.wfd.WifiDirectMiddleware;
 
 public class WFDMiddlewareAdapter implements ProximityMiddleware, WFDRemoteInstance.Factory {

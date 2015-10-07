@@ -20,7 +20,7 @@
  */
 
 
-package it.polimi.spf.wfd;
+package it.polimi.spf.wfd.groups;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -31,12 +31,18 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 
+import it.polimi.spf.wfd.listeners.GroupActorListener;
+import it.polimi.spf.wfd.util.WfdLog;
+import it.polimi.spf.wfd.WfdMessage;
+import it.polimi.spf.wfd.groups.streams.WfdInputStream;
+import it.polimi.spf.wfd.groups.streams.WfdOutputStream;
+
 /**
  * GroupClientActor is the class that implements the role of a standard group member,
  * as such its solely duty is to connect to the group owner and offer functions for sending
  * and receiving messages through its socket connections.
  */
-class GroupClientActor extends GroupActor {
+public class GroupClientActor extends GroupActor {
 
     private static final String TAG = "GroupClientActor";
     private final InetAddress groupOwnerAddress;
@@ -61,7 +67,7 @@ class GroupClientActor extends GroupActor {
     }
 
     @Override
-    public void connect() {
+    void connect() {
         this.start();
     }
 
@@ -78,7 +84,7 @@ class GroupClientActor extends GroupActor {
     }
 
     @Override
-    void sendMessage(WfdMessage msg) throws IOException {
+    public void sendMessage(WfdMessage msg) throws IOException {
         WfdLog.d(TAG, "Sending message: " + msg);
         WfdOutputStream outstream = new WfdOutputStream(socket.getOutputStream());
         outstream.writeMessage(msg);

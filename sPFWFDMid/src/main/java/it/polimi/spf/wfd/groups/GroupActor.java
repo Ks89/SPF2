@@ -19,15 +19,18 @@
  *
  */
 
-package it.polimi.spf.wfd;
+package it.polimi.spf.wfd.groups;
 
 import com.squareup.otto.Subscribe;
 
 import java.io.IOException;
 import java.util.concurrent.Semaphore;
 
-import it.polimi.spf.wfd.otto.NineBus;
-import it.polimi.spf.wfd.otto.goEvent.GOConnectionEvent;
+import it.polimi.spf.wfd.listeners.GroupActorListener;
+import it.polimi.spf.wfd.util.WfdLog;
+import it.polimi.spf.wfd.WfdMessage;
+import it.polimi.spf.wfd.events.NineBus;
+import it.polimi.spf.wfd.events.goEvent.GOConnectionEvent;
 
 /**
  * GroupActor is the abstract class that defines the interface in common to a group owners
@@ -35,18 +38,17 @@ import it.polimi.spf.wfd.otto.goEvent.GOConnectionEvent;
  * messages to the application. This class extends Thread, because all subclasses
  * perform network operations that cannot be executed on the UI Thread.
  */
-abstract class GroupActor extends Thread {
+public abstract class GroupActor extends Thread {
     private static final String TAG = GroupActor.class.getSimpleName();
-
     private static final long REQUEST_TIMEOUT = 60000;
-    protected final String myIdentifier;
     private final GroupActorListener listener;
+    final String myIdentifier;
 
     private final Semaphore requestSemaphore = new Semaphore(1, true);
     private final ResponseHolder respHolder = new ResponseHolder(REQUEST_TIMEOUT);
 
     /**
-     * Object to be registered on {@link it.polimi.spf.wfd.otto.NineBus}.
+     * Object to be registered on {@link it.polimi.spf.wfd.events.NineBus}.
      * We need it to make extending classes inherit "@Subscribe" methods.
      */
     private Object busListener;
@@ -175,7 +177,7 @@ abstract class GroupActor extends Thread {
         busListener = null;
     }
 
-    abstract void sendMessage(WfdMessage msg) throws IOException;
+    public abstract void sendMessage(WfdMessage msg) throws IOException;
 
     abstract void connect();
 

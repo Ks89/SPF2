@@ -36,7 +36,7 @@ public class WfdMessage {
     /**
      * Used when a message is addressed to the whole group.
      */
-    static final String BROADCAST_RECEIVER_ID = "SEND_TO_ALL";
+    public static final String BROADCAST_RECEIVER_ID = "SEND_TO_ALL";
 
     /**
      * Used when no target is needed: e.g. connection does not need receiver and
@@ -47,12 +47,12 @@ public class WfdMessage {
     /*
      * Message types
      */
-    static final String TYPE_CONNECT = "CONNECT";
-    static final String TYPE_SIGNAL = "SIGNAL";
-    static final String TYPE_REQUEST = "REQUEST";
-    static final String TYPE_RESPONSE = "RESPONSE";
-    static final String TYPE_RESPONSE_ERROR = "response_error";
-    static final String TYPE_INSTANCE_DISCOVERY = "DISCOVERY";
+    public static final String TYPE_CONNECT = "CONNECT";
+    public static final String TYPE_SIGNAL = "SIGNAL";
+    public  static final String TYPE_REQUEST = "REQUEST";
+    public static final String TYPE_RESPONSE = "RESPONSE";
+    public static final String TYPE_RESPONSE_ERROR = "response_error";
+    public static final String TYPE_INSTANCE_DISCOVERY = "DISCOVERY";
 
 	/*
      * Discovery messages parameters (used internally).
@@ -61,24 +61,24 @@ public class WfdMessage {
      * Content name for discovery messages: the identifier of the instance that
      * was found or lost.
      */
-    static final String ARG_IDENTIFIER = "identifier";
+    public static final String ARG_IDENTIFIER = "identifier";
     /**
      * Content name for discovery messages: boolean that indicates if the
      * instance is found (true) or lost (false);
      */
-    static final String ARG_STATUS = "status";
+    public static final String ARG_STATUS = "status";
     /**
      * Value for {@link WfdMessage#ARG_STATUS}:
      */
-    static final boolean INSTANCE_FOUND = true;
+    public static final boolean INSTANCE_FOUND = true;
     /**
      * Value for {@link WfdMessage#ARG_STATUS}
      */
-    static final boolean INSTANCE_LOST = false;
+    public static final boolean INSTANCE_LOST = false;
 
-    String receiverId = UNKNOWN_RECEIVER_ID;// default
-    String senderId = UNKNOWN_RECEIVER_ID;
-    String type = TYPE_SIGNAL;// default
+    public String receiverId = UNKNOWN_RECEIVER_ID;// default
+    public String senderId = UNKNOWN_RECEIVER_ID;
+    public String type = TYPE_SIGNAL;// default
 
     /**
      * Holds the payload of the message.
@@ -119,7 +119,7 @@ public class WfdMessage {
      * @param str
      * @return
      */
-    static WfdMessage fromString(String str) {
+    public static WfdMessage fromString(String str) {
         JsonObject o = new JsonParser().parse(str).getAsJsonObject();
         WfdMessage msg = new WfdMessage();
         msg.msgContent = o.getAsJsonObject(KEY_MSG_CONTENT);
@@ -138,28 +138,28 @@ public class WfdMessage {
     /**
      * @param senderId - the identifier to set
      */
-    void setSenderId(String senderId) {
+    public void setSenderId(String senderId) {
         this.senderId = senderId;
     }
 
     /**
      * @param targetId -the identifier to set
      */
-    void setReceiverId(String targetId) {
+    public void setReceiverId(String targetId) {
         receiverId = targetId;
     }
 
     /**
      * @return the receiverId
      */
-    String getReceiverId() {
+    public String getReceiverId() {
         return receiverId;
     }
 
     /**
      * @return the senderId
      */
-    String getSenderId() {
+    public String getSenderId() {
         return senderId;
     }
 
@@ -168,28 +168,28 @@ public class WfdMessage {
      *
      * @param msgType
      */
-    void setType(String msgType) {
+    public void setType(String msgType) {
         this.type = msgType;
     }
 
     /**
      * @return the type of the message
      */
-    String getType() {
+    public String getType() {
         return type;
     }
 
     /**
      * @param clock
      */
-    void setSequenceNumber(long clock) {
+    public void setSequenceNumber(long clock) {
         this.sequenceNumber = clock;
     }
 
     /**
      * @return
      */
-    long getTimestamp() {
+    public long getTimestamp() {
 
         return sequenceNumber;
     }

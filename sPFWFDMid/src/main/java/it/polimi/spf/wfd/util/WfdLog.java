@@ -18,42 +18,32 @@
  * along with SPF.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+package it.polimi.spf.wfd.util;
 
-package it.polimi.spf.wfd;
+import android.util.Log;
 
-class ResponseHolder {
+import it.polimi.spf.wfd.Configuration;
 
-	private final long REQ_TIMEOUT;
-	private WfdMessage msg;
-	private boolean threadWaiting = false;
-	private long requestSequenceId = 0;
+public class WfdLog {
 
-	public ResponseHolder(long timeout) {
-		this.REQ_TIMEOUT = timeout;
-	}
-	
-	public synchronized void set(WfdMessage msg) {
-		long sequenceNum = msg.getTimestamp();
+	private static final boolean ENABLED = Configuration.WFDLOG;
 
-		if (threadWaiting && sequenceNum == requestSequenceId) {
-			this.msg = msg;
-			notify();
+	public static void d(String tag, String msg) {
+		if (ENABLED) {
+			Log.d(tag, msg);
 		}
 	}
 
-	public synchronized WfdMessage get() throws InterruptedException {
-		if (msg == null) {
-			threadWaiting = true;
-			wait(REQ_TIMEOUT);
-			WfdMessage _tmpMsg = msg;
-			msg = null;
-			threadWaiting = false;
-			return _tmpMsg;
+	public static void d(String tag, String msg, Throwable tr) {
+		if (ENABLED) {
+			Log.d(tag, msg, tr);
 		}
-		return null;
 	}
 
-	public long assignRequestSequenceId() {
-		return ++requestSequenceId;
+	public static void e(String tag, String msg, Throwable tr) {
+		if (ENABLED) {
+			Log.e(tag, msg, tr);
+		}
 	}
+
 }

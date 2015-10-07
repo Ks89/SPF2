@@ -20,10 +20,15 @@
  */
 
 
-package it.polimi.spf.wfd;
+package it.polimi.spf.wfd.groups;
 
 import java.io.IOException;
 import java.net.Socket;
+
+import it.polimi.spf.wfd.util.WfdLog;
+import it.polimi.spf.wfd.WfdMessage;
+import it.polimi.spf.wfd.groups.streams.WfdInputStream;
+import it.polimi.spf.wfd.groups.streams.WfdOutputStream;
 
 /**
  * A GOInternalClient represents the server side connection of a GroupClientActor.
@@ -31,7 +36,7 @@ import java.net.Socket;
  * them to send messages and to be notified of received ones. A GOInternalClient has to monitor
  * the connections and notify the group owner when a peer leaves the network.
  */
-public class GOInternalClient extends Thread {
+class GOInternalClient extends Thread {
     private static final String TAG = GOInternalClient.class.getSimpleName();
     private final GroupOwnerActor groupOwnerActor;
     private final Socket socket;

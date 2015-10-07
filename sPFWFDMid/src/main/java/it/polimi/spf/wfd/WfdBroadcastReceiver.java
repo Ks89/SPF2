@@ -27,14 +27,12 @@ import android.content.IntentFilter;
 import android.net.NetworkInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 
-public class WfdBroadcastReceiver extends BroadcastReceiver {
+import it.polimi.spf.wfd.events.MidConnectionEvent;
+import it.polimi.spf.wfd.events.NineBus;
 
-    private final WifiDirectMiddleware mMid;
-    private Context mContext;
-
-    public WfdBroadcastReceiver(WifiDirectMiddleware wifiDirectMiddleware) {
-        mMid = wifiDirectMiddleware;
-    }
+class WfdBroadcastReceiver extends BroadcastReceiver {
+    static final String NETWORK_CONNECTED = "NETWORK_CONNECTED";
+    static final String NETWORK_DISCONNECTED = "NETWORK_DISCONNECTED";
 
     @Override
     public void onReceive(Context arg0, Intent arg1) {
@@ -46,17 +44,16 @@ public class WfdBroadcastReceiver extends BroadcastReceiver {
             NetworkInfo netInfo = arg1.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
             if (netInfo.isConnected()) {
                 // It's a connect
-                mMid.onNetworkConnected();
+                NineBus.get().post(new MidConnectionEvent(NETWORK_CONNECTED));
             } else {
                 // It's a disconnect
-                mMid.onNetworkDisconnected();
+                NineBus.get().post(new MidConnectionEvent(NETWORK_DISCONNECTED));
             }
 
         }
     }
 
     public void register(Context mContext) {
-        this.mContext = mContext;
         IntentFilter intentFilter = new IntentFilter();
 
         //  Indicates a change in the Wi-Fi P2P status.
@@ -71,7 +68,7 @@ public class WfdBroadcastReceiver extends BroadcastReceiver {
         mContext.registerReceiver(this, intentFilter);
     }
 
-    public void unregister() {
+    public void unregister(Context mContext) {
         mContext.unregisterReceiver(this);
     }
 }

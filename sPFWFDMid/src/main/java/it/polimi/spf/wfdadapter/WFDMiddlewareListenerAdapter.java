@@ -33,7 +33,7 @@ import it.polimi.spf.shared.model.InvocationResponse;
 import it.polimi.spf.shared.model.SPFActionSendNotification;
 import it.polimi.spf.shared.model.SPFActivity;
 import it.polimi.spf.wfd.WfdMessage;
-import it.polimi.spf.wfd.WfdMiddlewareListener;
+import it.polimi.spf.wfd.listeners.WfdMiddlewareListener;
 
 public class WFDMiddlewareListenerAdapter implements WfdMiddlewareListener {
     private static final String TAG = WFDMiddlewareListenerAdapter.class.getSimpleName();

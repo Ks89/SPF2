@@ -18,7 +18,10 @@
  * along with SPF.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package it.polimi.spf.wfd;
+package it.polimi.spf.wfd.listeners;
+
+import it.polimi.spf.wfd.WfdMessage;
+import it.polimi.spf.wfd.groups.GroupActor;
 
 /**
  * Interface implemented by {@link it.polimi.spf.wfdadapter.WFDMiddlewareListenerAdapter} and

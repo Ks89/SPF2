@@ -18,7 +18,7 @@
  *
  */
 
-package it.polimi.spf.wfd.actionlisteners;
+package it.polimi.spf.wfd.listeners;
 
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
@@ -26,7 +26,7 @@ import android.util.Log;
 
 import it.polimi.spf.wfd.Configuration;
 import it.polimi.spf.wfd.ServiceList;
-import it.polimi.spf.wfd.WfdLog;
+import it.polimi.spf.wfd.util.WfdLog;
 import it.polimi.spf.wfd.WiFiP2pService;
 import it.polimi.spf.wfd.WifiDirectMiddleware;
 

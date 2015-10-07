@@ -18,30 +18,31 @@
  * along with SPF.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package it.polimi.spf.wfd;
+package it.polimi.spf.wfd.groups.streams;
 
-import android.util.Log;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 
-public class WfdLog {
+import it.polimi.spf.wfd.WfdMessage;
 
-	private static final boolean ENABLED = Configuration.WFDLOG;
-
-	public static void d(String tag, String msg) {
-		if (ENABLED) {
-			Log.d(tag, msg);
-		}
+public class WfdOutputStream {
+	
+	private final PrintWriter writer;
+	
+	public WfdOutputStream(OutputStream outputStream) {
+		this.writer = new PrintWriter(outputStream);
+		
 	}
 
-	public static void d(String tag, String msg, Throwable tr) {
-		if (ENABLED) {
-			Log.d(tag, msg, tr);
+	public void writeMessage(WfdMessage msg) throws IOException {
+		String str = msg.toString();
+		writer.println(str);
+		writer.flush();
+		if(writer.checkError()){
+			throw new IOException();
 		}
-	}
-
-	public static void e(String tag, String msg, Throwable tr) {
-		if (ENABLED) {
-			Log.e(tag, msg, tr);
-		}
+		
 	}
 
 }

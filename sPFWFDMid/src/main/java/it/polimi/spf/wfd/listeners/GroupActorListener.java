@@ -19,10 +19,7 @@
  *
  */
 
-package it.polimi.spf.wfd;
+package it.polimi.spf.wfd.listeners;
 
-interface GroupActorListener extends WfdMiddlewareListener {
-
-	
-
+public interface GroupActorListener extends WfdMiddlewareListener {
 }

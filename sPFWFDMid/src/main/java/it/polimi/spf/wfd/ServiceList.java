@@ -21,11 +21,11 @@
 package it.polimi.spf.wfd;
 
 import android.net.wifi.p2p.WifiP2pDevice;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import it.polimi.spf.wfd.util.WfdLog;
 import lombok.Getter;
 
 /**

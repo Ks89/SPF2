@@ -19,7 +19,7 @@
  *
  */
 
-package it.polimi.spf.wfd;
+package it.polimi.spf.wfd.groups.streams;
 
 import android.util.Log;
 
@@ -28,7 +28,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-class WfdInputStream {
+import it.polimi.spf.wfd.WfdMessage;
+
+public class WfdInputStream {
     private static final String TAG = WfdInputStream.class.getSimpleName();
     private final BufferedReader reader;
 

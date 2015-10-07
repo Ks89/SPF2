@@ -18,7 +18,7 @@
  *
  */
 
-package it.polimi.spf.wfd.actionlisteners;
+package it.polimi.spf.wfd.listeners;
 
 import android.content.Context;
 import android.net.wifi.p2p.WifiP2pManager;
@@ -26,7 +26,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
-import it.polimi.spf.wfd.WfdLog;
+import it.polimi.spf.wfd.util.WfdLog;
 
 /**
  * Extremely customizable WifiP2pManager.ActionListener.

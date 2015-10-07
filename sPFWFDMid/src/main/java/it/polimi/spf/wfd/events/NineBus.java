@@ -1,4 +1,4 @@
-package it.polimi.spf.wfd.otto;
+package it.polimi.spf.wfd.events;
 
 import android.os.Handler;
 import android.os.Looper;

@@ -19,7 +19,7 @@
  *
  */
 
-package it.polimi.spf.wfd;
+package it.polimi.spf.wfd.groups;
 
 import android.util.Log;
 
@@ -38,16 +38,19 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
 
-import it.polimi.spf.wfd.otto.NineBus;
-import it.polimi.spf.wfd.otto.goEvent.GOErrorEvent;
-import it.polimi.spf.wfd.otto.goEvent.GOInternalClientEvent;
+import it.polimi.spf.wfd.listeners.GroupActorListener;
+import it.polimi.spf.wfd.util.WfdLog;
+import it.polimi.spf.wfd.WfdMessage;
+import it.polimi.spf.wfd.events.NineBus;
+import it.polimi.spf.wfd.events.goEvent.GOErrorEvent;
+import it.polimi.spf.wfd.events.goEvent.GOInternalClientEvent;
 
 /**
  * GroupOwnerActor class adds an additional layer over the socket
  * connection for handling the specific functions of a group owner, that include the group
  * management as well as the routing of messages within the group.
  */
-class GroupOwnerActor extends GroupActor {
+public class GroupOwnerActor extends GroupActor {
     private static final String TAG = GroupOwnerActor.class.getSimpleName();
 
     private final ServerSocket serverSocket;
@@ -71,7 +74,7 @@ class GroupOwnerActor extends GroupActor {
     }
 
     //called from GoInternalClient
-    public void onClientConnected(String identifier, GOInternalClient gOInternalClient) throws InterruptedException {
+    void onClientConnected(String identifier, GOInternalClient gOInternalClient) throws InterruptedException {
         WfdLog.d(TAG, "New client connected id : " + identifier);
         connectionSemaphore.acquire();
         Set<String> clients = new HashSet<>(goInternalClients.keySet());
@@ -86,7 +89,7 @@ class GroupOwnerActor extends GroupActor {
     }
 
     //called from GoInternalClient
-    public void onClientDisconnected(String identifier) throws InterruptedException {
+    void onClientDisconnected(String identifier) throws InterruptedException {
         connectionSemaphore.acquire();
         WfdLog.d(TAG, "Client lost id : " + identifier);
         GOInternalClient c = null;
@@ -134,7 +137,7 @@ class GroupOwnerActor extends GroupActor {
     }
 
     //called from the GOInternalClient
-    public void onMessageReceived(final WfdMessage msg) {
+    void onMessageReceived(final WfdMessage msg) {
         threadPool.execute(new Runnable() {
             @Override
             public void run() {
@@ -180,7 +183,7 @@ class GroupOwnerActor extends GroupActor {
     }
 
     @Override
-    public void connect() {
+    void connect() {
         this.start();
     }
 
@@ -190,7 +193,7 @@ class GroupOwnerActor extends GroupActor {
 
         Socket s = null;
         try {
-            while (!Thread.currentThread().isInterrupted()) {
+            while (!currentThread().isInterrupted()) {
                 WfdLog.d(TAG, "accept(): waiting for a new client");
                 s = serverSocket.accept();
                 WfdLog.d(TAG, "incoming connection");

@@ -34,6 +34,8 @@ import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
 import android.os.Looper;
 import android.util.Log;
 
+import com.squareup.otto.Subscribe;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -41,13 +43,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import it.polimi.spf.wfd.actionlisteners.CustomDnsSdTxtRecordListener;
-import it.polimi.spf.wfd.actionlisteners.CustomDnsServiceResponseListener;
-import it.polimi.spf.wfd.actionlisteners.CustomizableActionListener;
-import it.polimi.spf.wfd.otto.Event;
-import it.polimi.spf.wfd.otto.NineBus;
-import it.polimi.spf.wfd.otto.goEvent.GOConnectionEvent;
+import it.polimi.spf.wfd.events.Event;
+import it.polimi.spf.wfd.events.MidConnectionEvent;
+import it.polimi.spf.wfd.events.NineBus;
+import it.polimi.spf.wfd.events.goEvent.GOConnectionEvent;
+import it.polimi.spf.wfd.groups.GroupActor;
+import it.polimi.spf.wfd.groups.GroupClientActor;
+import it.polimi.spf.wfd.groups.GroupOwnerActor;
+import it.polimi.spf.wfd.listeners.CustomDnsSdTxtRecordListener;
+import it.polimi.spf.wfd.listeners.CustomDnsServiceResponseListener;
+import it.polimi.spf.wfd.listeners.CustomizableActionListener;
+import it.polimi.spf.wfd.listeners.GroupActorListener;
+import it.polimi.spf.wfd.listeners.WfdMiddlewareListener;
+import it.polimi.spf.wfd.util.WfdLog;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * WifiDirectMiddleware class provides a coordination layer that handles the discovery of peer,
@@ -63,7 +73,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
     private final Context mContext;
     private final WfdMiddlewareListener mListener;
-    private final WfdBroadcastReceiver mReceiver = new WfdBroadcastReceiver(this);
+    private final WfdBroadcastReceiver mReceiver;
 
     private WifiP2pManager mManager;
     private Channel mChannel;
@@ -74,6 +84,8 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
     private boolean connected = false;
     private boolean isGroupCreated = false;
     private final String myIdentifier;
+
+    @Setter
     private int goIntent;
     private boolean isAutonomous;
 
@@ -85,6 +97,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         WfdLog.d(TAG, "WifiDirectMiddleware (isAutonomous= " + isAutonomous +
                 ") with goIntentFromSPFApp: " + goIntentFromSPFApp);
         this.mContext = context;
+        this.mReceiver = new WfdBroadcastReceiver();
         this.mListener = listener;
         this.myIdentifier = identifier;
         this.goIntent = goIntentFromSPFApp;
@@ -99,7 +112,6 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
             return;
         }
 
-        mReceiver.register(mContext);
         mManager = (WifiP2pManager) mContext.getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = mManager.initialize(mContext, Looper.getMainLooper(), new WifiP2pManager.ChannelListener() {
             @Override
@@ -107,6 +119,9 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
                 WfdLog.d(TAG, "Channel disconnected");
             }
         });
+
+        mReceiver.register(mContext);
+        NineBus.get().register(this);
 
         this.startRegistration();
         this.discoverService();
@@ -186,7 +201,8 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
 
     public void disconnect() {
-        mReceiver.unregister();
+        mReceiver.unregister(mContext);
+        NineBus.get().unregister(this);
 
         mManager.removeServiceRequest(mChannel, mServiceRequest, new CustomizableActionListener(
                 this.mContext,
@@ -350,7 +366,9 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
     public void onNetworkConnected() {
         WfdLog.d(TAG, "onNetworkConnected(): requesting connection info");
-        mManager.requestConnectionInfo(mChannel, this);
+        if (mManager != null) {
+            mManager.requestConnectionInfo(mChannel, this);
+        }
 
     }
 
@@ -362,8 +380,10 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         }
         isGroupCreated = false;
         mGroupActor = null;
-        mManager.removeGroup(mChannel, null);
-        mManager.requestConnectionInfo(mChannel, this);
+        if (mManager != null) {
+            mManager.removeGroup(mChannel, null);
+            mManager.requestConnectionInfo(mChannel, this);
+        }
     }
 
     private final GroupActorListener actorListener = new GroupActorListener() {
@@ -460,13 +480,18 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         NineBus.get().post(event);
     }
 
-    /**
-     * Method to set goIntent in Wi-Fi Direct Middleware.
-     *
-     * @param goIntent
-     */
-    public void setGoIntent(int goIntent) {
-        this.goIntent = goIntent;
+    @Subscribe
+    public void onMidConnectionEvent(MidConnectionEvent e) {
+        switch (e.getType()) {
+            case WfdBroadcastReceiver.NETWORK_CONNECTED:
+                this.onNetworkConnected();
+                break;
+            case WfdBroadcastReceiver.NETWORK_DISCONNECTED:
+                this.onNetworkDisconnected();
+                break;
+            default:
+                WfdLog.d(TAG, "Unknown onMidConnectionEvent");
+        }
     }
 
 
