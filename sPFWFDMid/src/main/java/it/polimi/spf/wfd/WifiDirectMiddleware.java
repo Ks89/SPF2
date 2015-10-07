@@ -33,6 +33,7 @@ import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
 import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.squareup.otto.Subscribe;
 
@@ -46,6 +47,7 @@ import java.util.Map;
 import it.polimi.spf.wfd.events.Event;
 import it.polimi.spf.wfd.events.MidConnectionEvent;
 import it.polimi.spf.wfd.events.NineBus;
+import it.polimi.spf.wfd.events.goEvent.GOConnectActionEvent;
 import it.polimi.spf.wfd.events.goEvent.GOConnectionEvent;
 import it.polimi.spf.wfd.groups.GroupActor;
 import it.polimi.spf.wfd.groups.GroupClientActor;
@@ -244,7 +246,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         connected = false;
 
         if (mGroupActor != null) {
-            this.postEvent(new GOConnectionEvent(GOConnectionEvent.DISCONNECT_STRING));
+            this.postEvent(new GOConnectActionEvent(GOConnectActionEvent.DISCONNECT_STRING));
             mGroupActor = null;
         }
 
@@ -354,14 +356,14 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
     private void instantiateGroupClient(InetAddress groupOwnerAddress, int destPort) {
         WfdLog.d(TAG, "Instantiating group client's logic");
         mGroupActor = new GroupClientActor(groupOwnerAddress, destPort, actorListener, myIdentifier);
-        this.postEvent(new GOConnectionEvent(GOConnectionEvent.CONNECT_STRING));
+        this.postEvent(new GOConnectActionEvent(GOConnectActionEvent.CONNECT_STRING));
 
     }
 
     private void instantiateGroupOwner() throws IOException {
         WfdLog.d(TAG, "Instantiating group owner's logic");
         mGroupActor = new GroupOwnerActor(mPort, actorListener, myIdentifier);
-        this.postEvent(new GOConnectionEvent(GOConnectionEvent.CONNECT_STRING));
+        this.postEvent(new GOConnectActionEvent(GOConnectActionEvent.CONNECT_STRING));
     }
 
     public void onNetworkConnected() {
@@ -376,7 +378,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         WfdLog.d(TAG, "onNetworkDisconnected");
         if (mGroupActor != null) {
             WfdLog.d(TAG, "Disconnecting");
-            this.postEvent(new GOConnectionEvent(GOConnectionEvent.DISCONNECT_STRING));
+            this.postEvent(new GOConnectActionEvent(GOConnectActionEvent.DISCONNECT_STRING));
         }
         isGroupCreated = false;
         mGroupActor = null;
@@ -398,7 +400,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         public void onError() {
             Log.e(TAG, "GroupActorListener.onError");
             if (mGroupActor != null) {
-                postEvent(new GOConnectionEvent(GOConnectionEvent.DISCONNECT_STRING));
+                postEvent(new GOConnectActionEvent(GOConnectActionEvent.DISCONNECT_STRING));
             }
             isGroupCreated = false;
             mGroupActor = null;
@@ -491,6 +493,24 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
                 break;
             default:
                 WfdLog.d(TAG, "Unknown onMidConnectionEvent");
+        }
+    }
+
+    @Subscribe
+    public void onClientConnectedToGO(GOConnectionEvent e) {
+        switch (e.getType()) {
+            case GOConnectionEvent.CONNECTED:
+                if (mContext != null) {
+                    Toast.makeText(mContext, "Client connected", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case GOConnectionEvent.DISCONNECTED:
+                if (mContext != null) {
+                    Toast.makeText(mContext, "Client disconnected", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+                WfdLog.d(TAG, "Error, unknown GOConnectionEvent's state");
         }
     }
 

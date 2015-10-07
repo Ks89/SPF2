@@ -25,10 +25,10 @@ package it.polimi.spf.wfd.groups;
 import java.io.IOException;
 import java.net.Socket;
 
-import it.polimi.spf.wfd.util.WfdLog;
 import it.polimi.spf.wfd.WfdMessage;
 import it.polimi.spf.wfd.groups.streams.WfdInputStream;
 import it.polimi.spf.wfd.groups.streams.WfdOutputStream;
+import it.polimi.spf.wfd.util.WfdLog;
 
 /**
  * A GOInternalClient represents the server side connection of a GroupClientActor.

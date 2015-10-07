@@ -38,12 +38,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
 
-import it.polimi.spf.wfd.listeners.GroupActorListener;
-import it.polimi.spf.wfd.util.WfdLog;
 import it.polimi.spf.wfd.WfdMessage;
 import it.polimi.spf.wfd.events.NineBus;
+import it.polimi.spf.wfd.events.goEvent.GOConnectionEvent;
 import it.polimi.spf.wfd.events.goEvent.GOErrorEvent;
 import it.polimi.spf.wfd.events.goEvent.GOInternalClientEvent;
+import it.polimi.spf.wfd.listeners.GroupActorListener;
+import it.polimi.spf.wfd.util.WfdLog;
 
 /**
  * GroupOwnerActor class adds an additional layer over the socket
@@ -76,6 +77,7 @@ public class GroupOwnerActor extends GroupActor {
     //called from GoInternalClient
     void onClientConnected(String identifier, GOInternalClient gOInternalClient) throws InterruptedException {
         WfdLog.d(TAG, "New client connected id : " + identifier);
+        NineBus.get().post(new GOConnectionEvent(GOConnectionEvent.CONNECTED));
         connectionSemaphore.acquire();
         Set<String> clients = new HashSet<>(goInternalClients.keySet());
         clients.add(super.myIdentifier);
@@ -91,6 +93,7 @@ public class GroupOwnerActor extends GroupActor {
     //called from GoInternalClient
     void onClientDisconnected(String identifier) throws InterruptedException {
         connectionSemaphore.acquire();
+        NineBus.get().post(new GOConnectionEvent(GOConnectionEvent.DISCONNECTED));
         WfdLog.d(TAG, "Client lost id : " + identifier);
         GOInternalClient c = null;
         if (identifier != null) {
@@ -192,6 +195,7 @@ public class GroupOwnerActor extends GroupActor {
         WfdLog.d(TAG, "ServerSocketAcceptor's variable 'serverSocket' has port: " + serverSocket.getLocalPort());
 
         Socket s = null;
+
         try {
             while (!currentThread().isInterrupted()) {
                 WfdLog.d(TAG, "accept(): waiting for a new client");
@@ -201,8 +205,8 @@ public class GroupOwnerActor extends GroupActor {
                 NineBus.get().post(new GOInternalClientEvent("onStartGoInternalClient", s));
             }
         } catch (IOException e) {
-            WfdLog.e(TAG, "ServerSocketAcceptor IOException", e);
-            if (s != null) {
+            WfdLog.e(TAG, "serverSocket.accept - IOException", e);
+            if (s != null && !s.isClosed()) {
                 try {
                     s.close();
                 } catch (IOException e1) {
@@ -215,6 +219,7 @@ public class GroupOwnerActor extends GroupActor {
                 WfdLog.d(TAG, "signalling error to groupOwnerActor");
                 NineBus.get().post(new GOErrorEvent("onServerSocketError"));
             }
+
         }
     }
 

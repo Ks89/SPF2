@@ -26,11 +26,11 @@ import com.squareup.otto.Subscribe;
 import java.io.IOException;
 import java.util.concurrent.Semaphore;
 
-import it.polimi.spf.wfd.listeners.GroupActorListener;
-import it.polimi.spf.wfd.util.WfdLog;
 import it.polimi.spf.wfd.WfdMessage;
 import it.polimi.spf.wfd.events.NineBus;
-import it.polimi.spf.wfd.events.goEvent.GOConnectionEvent;
+import it.polimi.spf.wfd.events.goEvent.GOConnectActionEvent;
+import it.polimi.spf.wfd.listeners.GroupActorListener;
+import it.polimi.spf.wfd.util.WfdLog;
 
 /**
  * GroupActor is the abstract class that defines the interface in common to a group owners
@@ -59,18 +59,18 @@ public abstract class GroupActor extends Thread {
 
         busListener = new Object() {
             @Subscribe
-            public void onGOActorActionEvent(GOConnectionEvent event) {
+            public void onGOActorActionEvent(GOConnectActionEvent event) {
                 switch (event.getAction()) {
-                    case GOConnectionEvent.CONNECT_STRING:
+                    case GOConnectActionEvent.CONNECT_STRING:
                         WfdLog.d(TAG, "Connect event received");
                         connect();
                         break;
-                    case GOConnectionEvent.DISCONNECT_STRING:
+                    case GOConnectActionEvent.DISCONNECT_STRING:
                         WfdLog.d(TAG, "Disconnect event received");
                         disconnect(false); //normal  disconnection without errors
                         break;
                     default:
-                        WfdLog.d(TAG, "Unknown GOConnectionEvent");
+                        WfdLog.d(TAG, "Unknown GOConnectActionEvent");
                 }
             }
         };
