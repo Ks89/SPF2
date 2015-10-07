@@ -169,7 +169,10 @@ abstract class GroupActor extends Thread {
     }
 
     protected void disconnect(boolean withError) {
-        NineBus.get().unregister(busListener);
+        if (busListener != null) {
+            NineBus.get().unregister(busListener);
+        }
+        busListener = null;
     }
 
     abstract void sendMessage(WfdMessage msg) throws IOException;

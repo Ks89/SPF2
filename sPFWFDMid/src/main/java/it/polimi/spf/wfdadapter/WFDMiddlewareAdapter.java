@@ -47,17 +47,17 @@ public class WFDMiddlewareAdapter implements ProximityMiddleware, WFDRemoteInsta
     public static final ProximityMiddleware.Factory FACTORY = new Factory() {
 
         @Override
-        public ProximityMiddleware createMiddleware(int goIntentFromSPFApp, Context context, InboundProximityInterface iface, String identifier) {
+        public ProximityMiddleware createMiddleware(Context context, int goIntentFromSPFApp, boolean isAutonomous, InboundProximityInterface iface, String identifier) {
             Log.d(TAG, "ProximityMiddleware.Factory.createMiddleware with goIntentFromSPFApp: " + goIntentFromSPFApp);
-            return new WFDMiddlewareAdapter(goIntentFromSPFApp, context, iface, identifier);
+            return new WFDMiddlewareAdapter(context, goIntentFromSPFApp, isAutonomous, iface, identifier);
         }
     };
 
-    private WFDMiddlewareAdapter(int goIntentFromSPFApp, Context context, InboundProximityInterface proximityInterface, String identifier) {
+    private WFDMiddlewareAdapter(Context context, int goIntentFromSPFApp, boolean isAutonomous, InboundProximityInterface proximityInterface, String identifier) {
         Log.d(TAG, "WFDMiddlewareAdapter with goIntentFromSPFApp: " + goIntentFromSPFApp);
 
         WfdMiddlewareListener listener = new WFDMiddlewareListenerAdapter(proximityInterface, this);
-        mMiddleware = new WifiDirectMiddleware(goIntentFromSPFApp, context, identifier, listener);
+        mMiddleware = new WifiDirectMiddleware(context, goIntentFromSPFApp, isAutonomous, identifier, listener);
     }
 
     @Override

@@ -27,34 +27,36 @@ import android.content.Context;
  */
 public interface ProximityMiddleware {
 
-	/**
-	 * Factory to create instances of {@link ProximityMiddleware}
-	 */
-	interface Factory {
+    /**
+     * Factory to create instances of {@link ProximityMiddleware}
+     */
+    interface Factory {
 
-		/**
-		 * @param context - the application context
-		 * @param iface - the interface to use for incoming requests
-		 * @param identifier - the spf instance identifier to be used while advertising the service
-		 * @return ProximityMiddleware
-		 */
-		ProximityMiddleware createMiddleware(int goIntentFromSPFApp, Context context, InboundProximityInterface iface, String identifier);
+        /**
+         * @param context    - the application context
+         * @param iface      - the interface to use for incoming requests
+         * @param identifier - the spf instance identifier to be used while advertising the service
+         * @return ProximityMiddleware
+         */
+        ProximityMiddleware createMiddleware(Context context, int goIntentFromSPFApp,
+                                             boolean isAutonomousFromSPFApp,
+                                             InboundProximityInterface iface, String identifier);
 
-	}
+    }
 
-	void connect();
+    void connect();
 
-	void disconnect();
+    void disconnect();
 
-	boolean isConnected();
+    boolean isConnected();
 
-	void sendSearchResult(String queryId, String uniqueIdentifier, String baseInfo);
+    void sendSearchResult(String queryId, String uniqueIdentifier, String baseInfo);
 
-	void sendSearchSignal(String sender, String queryId, String query);
+    void sendSearchSignal(String sender, String queryId, String query);
 
-	void registerAdvertisement(String advertisedProfile, long sendPeriod);
+    void registerAdvertisement(String advertisedProfile, long sendPeriod);
 
-	void unregisterAdvertisement();
+    void unregisterAdvertisement();
 
-	boolean isAdvertising();
+    boolean isAdvertising();
 }

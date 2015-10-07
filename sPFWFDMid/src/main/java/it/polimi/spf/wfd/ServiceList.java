@@ -152,6 +152,18 @@ public class ServiceList {
         return validGoList;
     }
 
+    public List<WiFiP2pService> getValidClients(String myIdentifier) {
+        List<WiFiP2pService> validServiceList = this.selectValidServices(myIdentifier);
+        List<WiFiP2pService> validGoList = new ArrayList<>();
+        for (WiFiP2pService service : validServiceList) {
+            if (!service.getIdentifier().startsWith(AP_APPENDIX)) {
+                WfdLog.d(TAG, "--> ValidClientsList: --OK --: " + service.getIdentifier() + "," + service.getPeerAddress());
+                validGoList.add(service);
+            }
+        }
+        return validGoList;
+    }
+
     public boolean containsDevice(WifiP2pDevice device) {
         for (WiFiP2pService serv : serviceList) {
             if (serv.getDevice().deviceAddress.equals(device.deviceAddress)) {

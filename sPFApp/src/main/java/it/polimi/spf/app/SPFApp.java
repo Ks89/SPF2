@@ -92,7 +92,7 @@ public class SPFApp extends Application {
         // Initialize SPF
         //SPFContext.initialize(this, AlljoynProximityMiddleware.FACTORY);
         // Use this line to initialize SPF on Wi-Fi Direct
-        SPFContext.initialize(0, this, WFDMiddlewareAdapter.FACTORY);
+        SPFContext.initialize(this, 0, true, WFDMiddlewareAdapter.FACTORY);
         SPFContext.get().setAppRegistrationHandler(new PopupAppRegistrationHandler());
 
         SPFContext.get().setServiceNotification(notification);
@@ -102,12 +102,12 @@ public class SPFApp extends Application {
     }
 
 
-    public void initSPF(int goIntent) {
+    public void initSPF(int goIntent, boolean isAutonomous) {
         // Initialize SPF
         // Use this line to initialize SPF on Wi-Fi Direct
         SPF.get().disconnect();
 
-        SPFContext.initializeForcedNoSingleton(goIntent, this, WFDMiddlewareAdapter.FACTORY);
+        SPFContext.initializeForcedNoSingleton(this, goIntent, isAutonomous, WFDMiddlewareAdapter.FACTORY);
         SPFContext.get().setAppRegistrationHandler(new PopupAppRegistrationHandler());
 
         SPFContext.get().setServiceNotification(notification);

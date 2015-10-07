@@ -34,7 +34,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.Switch;
 
@@ -75,11 +74,14 @@ public class NavigationFragment extends Fragment {
     @Bind(R.id.navigation_entries)
     ListView mNavigationListView;
 
-    @Bind(R.id.connect_switch)
-    Switch connectSwitch;
-
     @Bind(R.id.groupOwner_switch)
     Switch groupOwnerSwitch;
+
+    @Bind(R.id.group_autonomous_switch)
+    Switch group_autonomous_switch;
+
+    @Bind(R.id.connect_switch)
+    Switch connectSwitch;
 
     private int mCurrentSelectedPosition = 0;
     private ItemSelectedListener mCallback;
@@ -124,7 +126,10 @@ public class NavigationFragment extends Fragment {
         mNavigationListView.setAdapter(new NavigationArrayAdapter(getActivity(), pageTitles));
         mNavigationListView.setItemChecked(mCurrentSelectedPosition, true);
 
-        //update switch status.
+        //update switches
+        groupOwnerSwitch.setChecked(false);
+        group_autonomous_switch.setChecked(true);
+        group_autonomous_switch.setVisibility(View.INVISIBLE);
         connectSwitch.setChecked(SPF.get().isConnected());
 
         return root;
@@ -164,8 +169,6 @@ public class NavigationFragment extends Fragment {
     }
 
     protected void selectItem(int position, boolean replace) {
-//		mNavigationListView.setItemChecked(mCurrentSelectedPosition, false);
-//		mNavigationListView.setItemChecked(position, true);
         mCurrentSelectedPosition = position;
 
         if (mNavigationListView == null || mCallback == null) {
@@ -203,34 +206,43 @@ public class NavigationFragment extends Fragment {
         }
     };
 
+    @OnCheckedChanged(R.id.groupOwner_switch)
+    public void onCheckChangedGOSwitch(boolean isChecked) {
+        if (isChecked) {
+            Log.d(TAG, "connectSwitch checked -> gointent=15");
+            group_autonomous_switch.setVisibility(View.VISIBLE);
+            ((SPFApp) getActivity().getApplication()).updateIdentifier(15);
+        } else {
+            Log.d(TAG, "connectSwitch unchecked -> gointent=0");
+            group_autonomous_switch.setVisibility(View.INVISIBLE);
+            ((SPFApp) getActivity().getApplication()).updateIdentifier(0);
+        }
+    }
+
+    @OnCheckedChanged(R.id.group_autonomous_switch)
+    public void onCheckChangedAutonomousSwitch(boolean isChecked) {
+        Log.d(TAG, "group_autonomous_switch status = " + isChecked);
+    }
+
     @OnCheckedChanged(R.id.connect_switch)
     public void onCheckChangedConnectSwitch(boolean isChecked) {
         if (isChecked) {
             if (groupOwnerSwitch.isChecked()) {
                 Log.d(TAG, "connectSwitch checked -> gointent=15");
-                ((SPFApp) getActivity().getApplication()).initSPF(15);
+                ((SPFApp) getActivity().getApplication()).initSPF(15, group_autonomous_switch.isChecked());
             } else {
-                ((SPFApp) getActivity().getApplication()).initSPF(0);
+                ((SPFApp) getActivity().getApplication()).initSPF(0, group_autonomous_switch.isChecked());
 
             }
             SPFService.startForeground(getActivity());
 
+            group_autonomous_switch.setEnabled(false);
             groupOwnerSwitch.setEnabled(false);
         } else {
             SPFService.stopForeground(getActivity());
 
+            group_autonomous_switch.setEnabled(true);
             groupOwnerSwitch.setEnabled(true);
-        }
-    }
-
-    @OnCheckedChanged(R.id.groupOwner_switch)
-    public void onCheckChangedGOSwitch(boolean isChecked) {
-        if (isChecked) {
-            Log.d(TAG, "connectSwitch checked -> gointent=15");
-            ((SPFApp) getActivity().getApplication()).updateIdentifier(15);
-        } else {
-            Log.d(TAG, "connectSwitch unchecked -> gointent=0");
-            ((SPFApp) getActivity().getApplication()).updateIdentifier(0);
         }
     }
 }

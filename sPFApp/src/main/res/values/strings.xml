@@ -105,5 +105,6 @@
     <string name="groupowner_toggle_label">GroupOwner</string>
     <string name="activities_supported_verbs">Supported verbs</string>
     <string name="activities_list_empty">No verb supported.</string>
+    <string name="autonomous_switch_label">Autonomous</string>
 
 </resources>

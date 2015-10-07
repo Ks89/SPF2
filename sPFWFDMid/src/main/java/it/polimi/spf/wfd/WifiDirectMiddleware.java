@@ -75,17 +75,20 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
     private boolean isGroupCreated = false;
     private final String myIdentifier;
     private int goIntent;
+    private boolean isAutonomous;
 
     private GroupActor mGroupActor;
 
     private int mPort;
 
-    public WifiDirectMiddleware(int goIntentFromSPFApp, Context context, String identifier, WfdMiddlewareListener listener) {
-        Log.d(TAG, "WifiDirectMiddleware with goIntentFromSPFApp: " + goIntentFromSPFApp);
+    public WifiDirectMiddleware(Context context, int goIntentFromSPFApp, boolean isAutonomous, String identifier, WfdMiddlewareListener listener) {
+        WfdLog.d(TAG, "WifiDirectMiddleware (isAutonomous= " + isAutonomous +
+                ") with goIntentFromSPFApp: " + goIntentFromSPFApp);
         this.mContext = context;
         this.mListener = listener;
         this.myIdentifier = identifier;
         this.goIntent = goIntentFromSPFApp;
+        this.isAutonomous = isAutonomous;
     }
 
     public void connect() {
@@ -101,7 +104,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         mChannel = mManager.initialize(mContext, Looper.getMainLooper(), new WifiP2pManager.ChannelListener() {
             @Override
             public void onChannelDisconnected() {
-                Log.d(TAG, "Channel disconnected");
+                WfdLog.d(TAG, "Channel disconnected");
             }
         });
 
@@ -232,6 +235,17 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         ServiceList.getInstance().getServiceList().clear();
     }
 
+    private void becomeStandardGroupOwner() {
+        List<WiFiP2pService> validClients = ServiceList.getInstance().getValidClients(myIdentifier);
+        if (validClients == null || validClients.size() == 0) {
+            WfdLog.d(TAG, "no device address eligible for connection");
+            return;
+        }
+
+        //TODO TODO FIXME FIXME FIXME in this first impl i choose the first element in the list
+        String deviceAddress = validClients.get(0).getPeerAddress();
+        this.establishStandardConnection(validClients, deviceAddress);
+    }
 
     private void becomeAutonomousGroupOwner() {
         mManager.createGroup(mChannel, new CustomizableActionListener(
@@ -255,11 +269,16 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         isGroupCreated = true;
 
         if (goIntent == THIS_DEVICE_IS_GO) {
-            Log.d(TAG, "This device want to be an autonomous GO, because has gointent: " + goIntent);
+            WfdLog.d(TAG, "This device want to be an autonomous GO, because has gointent: " + goIntent);
 
-            this.becomeAutonomousGroupOwner();
+            if (isAutonomous) {
+                this.becomeAutonomousGroupOwner();
+            } else {
+                this.becomeStandardGroupOwner();
+            }
+
         } else {
-            Log.d(TAG, "This device want to be a client, because has gointent: " + goIntent);
+            WfdLog.d(TAG, "This device want to be a client, because has gointent: " + goIntent);
 
             List<WiFiP2pService> validGroupOwners = ServiceList.getInstance().getValidGroupOwners(myIdentifier);
             if (validGroupOwners == null || validGroupOwners.size() == 0) {
@@ -270,24 +289,28 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
             //TODO TODO FIXME FIXME FIXME in this first impl i choose the first element in the list
             String deviceAddress = validGroupOwners.get(0).getPeerAddress();
 
-            WfdLog.d(TAG, "connect target device found, " +
-                    "device address: " + deviceAddress + " device name: " + validGroupOwners.get(0).getInstanceName() +
-                    " device id: " + validGroupOwners.get(0).getIdentifier());
-
-            WifiP2pConfig config = new WifiP2pConfig();
-            config.deviceAddress = deviceAddress;
-            config.wps.setup = WpsInfo.PBC;
-            config.groupOwnerIntent = this.goIntent;
-
-            mManager.connect(mChannel, config, new CustomizableActionListener(
-                    this.mContext,
-                    TAG,
-                    "Connect success",
-                    null,
-                    "Connect failure",
-                    "Connect failure",
-                    true)); //important: sets true to get detailed message when this method fails
+            this.establishStandardConnection(validGroupOwners, deviceAddress);
         }
+    }
+
+    private void establishStandardConnection(List<WiFiP2pService> servicesList, String destinationAddress) {
+        WfdLog.d(TAG, "connect target device found, " +
+                "device address: " + destinationAddress + " device name: " + servicesList.get(0).getInstanceName() +
+                " device id: " + servicesList.get(0).getIdentifier() + ", and goIntent: " + goIntent);
+
+        WifiP2pConfig config = new WifiP2pConfig();
+        config.deviceAddress = destinationAddress;
+        config.wps.setup = WpsInfo.PBC;
+        config.groupOwnerIntent = this.goIntent;
+
+        mManager.connect(mChannel, config, new CustomizableActionListener(
+                this.mContext,
+                TAG,
+                "Connect success",
+                null,
+                "Connect failure",
+                "Connect failure",
+                true)); //important: sets true to get detailed message when this method fails
     }
 
     @Override
@@ -365,13 +388,13 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
         @Override
         public WfdMessage onRequestMessageReceived(WfdMessage msg) {
-            Log.d(TAG, "GroupActorListener.onRequestMessageReceived - msg= " + msg);
+            WfdLog.d(TAG, "GroupActorListener.onRequestMessageReceived - msg= " + msg);
             return mListener.onRequestMessageReceived(msg);
         }
 
         @Override
         public void onInstanceFound(String identifier) {
-            Log.d(TAG, "GroupActorListener.onInstanceFound - identifier= " + identifier);
+            WfdLog.d(TAG, "GroupActorListener.onInstanceFound - identifier= " + identifier);
             mListener.onInstanceFound(identifier);
         }
 
@@ -465,11 +488,11 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
             }
             WifiP2pDevice groupOwnerDevice = group.getOwner();
 
-            Log.d(TAG, "requestGroupInfo - groupOwnerDeviceaddress: " + groupOwnerDevice.deviceAddress);
+            WfdLog.d(TAG, "requestGroupInfo - groupOwnerDeviceaddress: " + groupOwnerDevice.deviceAddress);
 
             WiFiP2pService service = ServiceList.getInstance().getServiceByDevice(groupOwnerDevice);
 
-            Log.d(TAG, "requestGroupInfo - service: " + service);
+            WfdLog.d(TAG, "requestGroupInfo - service: " + service);
 
             if (service == null) {
                 Log.e(TAG, "service is null");

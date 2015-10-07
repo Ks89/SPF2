@@ -51,10 +51,10 @@ import it.polimi.spf.shared.model.ProfileFieldContainer;
 @SuppressWarnings("unused")
 public class SPF {
     private static final String TAG = SPF.class.getSimpleName();
-    private static SPF singleton;
-
     private static final String AP_APPENDIX = "AP"; //or GO in case of Wifi direct
     private static final String SLAVE_APPENDIX = "U"; //or client in case of wifi direct
+
+    private static SPF singleton;
 
     /**
      * Initializes SPF with a {@link Context} reference. Called by
@@ -62,21 +62,19 @@ public class SPF {
      *
      * @param context - the context that will be used by SPF
      */
-    /* package */
-    synchronized static void initialize(int goIntent, Context context, ProximityMiddleware.Factory factory) {
+    synchronized static void initialize(Context context, int goIntent, boolean isAutonomous, ProximityMiddleware.Factory factory) {
         if (singleton == null) {
-            singleton = new SPF(goIntent, context, factory);
+            singleton = new SPF(context, goIntent, isAutonomous, factory);
         }
     }
 
-    /* package */
-    synchronized static void initializeForcedNoSingleton(int goIntent, Context context, ProximityMiddleware.Factory factory) {
-        singleton = new SPF(goIntent, context, factory);
+    synchronized static void initializeForcedNoSingleton(Context context, int goIntent, boolean isAutonomous, ProximityMiddleware.Factory factory) {
+        singleton = new SPF(context, goIntent, isAutonomous, factory);
     }
 
     /**
      * Obtains a reference to the SPF singleton. Call
-     * {@link SPFContext#initialize(Context, ProximityMiddleware.Factory)} before calling this method.
+     * {@link SPFContext#initialize(int, Context, ProximityMiddleware.Factory)} before calling this method.
      *
      * @return the SPF singleton.
      */
@@ -88,7 +86,7 @@ public class SPF {
 
     /**
      * Obtains a reference to the SPF singleton. Call
-     * {@link SPFContext#initializeForcedNoSingleton(Context, ProximityMiddleware.Factory)} before calling this method.
+     * {@link SPFContext#initializeForcedNoSingleton(int, Context, ProximityMiddleware.Factory)}  before calling this method.
      *
      * @return the SPF singleton.
      */
@@ -113,7 +111,7 @@ public class SPF {
     private SPFNotificationManager mNotificationManager;
     private SPFAdvertisingManager mAdvertiseManager;
 
-    private SPF(int goIntent, Context context, ProximityMiddleware.Factory factory) {
+    private SPF(Context context, int goIntent, boolean isAutonomous, ProximityMiddleware.Factory factory) {
         mContext = context;
 
         // Initialize components
@@ -133,7 +131,7 @@ public class SPF {
         //ATTENTION, NOW I'M USING goIntentFromSPFApp here, but in the future you should remove this
         //and move the logic to set the goIntent in the middleware in external application, like SPF Couponing Provider/client
         Log.d(TAG, "Creating middleware with goIntentFromSPFApp: " + goIntent);
-        mMiddleware = factory.createMiddleware(goIntent, mContext, proximityInterface, uniqueIdentifier);
+        mMiddleware = factory.createMiddleware(mContext, goIntent, isAutonomous, proximityInterface, uniqueIdentifier);
 
         mAdvertiseManager = new SPFAdvertisingManager(context, mMiddleware);
     }
