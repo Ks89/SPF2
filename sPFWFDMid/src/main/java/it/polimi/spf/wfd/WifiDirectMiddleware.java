@@ -71,13 +71,13 @@ import lombok.Setter;
 public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListener {
 
     private final static String TAG = WifiDirectMiddleware.class.getSimpleName();
-
     private static final int THIS_DEVICE_IS_GO = 15;
 
     private final Context mContext;
+    private final String myIdentifier;
+
     private final WfdMiddlewareListener mListener;
     private final WfdBroadcastReceiver mReceiver;
-
     private WifiP2pManager mManager;
     private Channel mChannel;
     private WifiP2pDnsSdServiceRequest mServiceRequest;
@@ -86,14 +86,12 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
     @Getter
     private boolean connected = false;
     private boolean isGroupCreated = false;
-    private final String myIdentifier;
 
     @Setter
     private int goIntent;
     private boolean isAutonomous;
 
     private GroupActor mGroupActor;
-
     private int mPort;
 
     public WifiDirectMiddleware(Context context, int goIntentFromSPFApp, boolean isAutonomous, String identifier, WfdMiddlewareListener listener) {
@@ -210,23 +208,22 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         mReceiver.unregister(mContext);
         NineBus.get().unregister(this);
 
-        mManager.removeServiceRequest(mChannel, mServiceRequest, new CustomizableActionListener(
+        mManager.clearServiceRequests(mChannel, new CustomizableActionListener(
                 this.mContext,
                 TAG,
-                "RemoveServiceRequest success",
+                "ClearServiceRequests success",
                 null,
-                "RemoveServiceRequest failure",
-                "RemoveServiceRequest failure",
+                "ClearServiceRequests failure",
+                "ClearServiceRequests failure",
                 false)); //important: sets false if you don't want detailed messages when this method fails
-
-
-        mManager.removeLocalService(mChannel, mInfo, new CustomizableActionListener(
+        
+        mManager.clearLocalServices(mChannel, new CustomizableActionListener(
                 this.mContext,
                 TAG,
-                "RemoveLocalService success",
+                "ClearLocalServices success",
                 null,
-                "RemoveLocalService failure",
-                "RemoveLocalService failure",
+                "ClearLocalServices failure",
+                "ClearLocalServices failure",
                 false)); //important: sets false if you don't want detailed messages when this method fails
 
         mManager.cancelConnect(mChannel, new CustomizableActionListener(
@@ -247,7 +244,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
                 "RemoveGroup failure",
                 true)); //important: sets true to get detailed message when this method fails
 
-        connected = false;
+        this.connected = false;
 
         if (mGroupActor != null) {
             this.postEvent(new GOConnectActionEvent(GOConnectActionEvent.DISCONNECT_STRING));
@@ -282,7 +279,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
     private void createGroup() {
         WfdLog.d(TAG, "createGroup()");
-        if (isGroupCreated || !connected) {
+        if (isGroupCreated || !this.connected) {
             WfdLog.d(TAG, "group already created or middleware not started");
             return;
         }

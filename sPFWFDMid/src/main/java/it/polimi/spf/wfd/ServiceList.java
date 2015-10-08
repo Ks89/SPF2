@@ -77,7 +77,7 @@ public class ServiceList {
 
         boolean add = true;
         for (WiFiP2pService element : serviceList) {
-            if (element.getDevice().equals(service.getDevice())
+            if (element != null && element.getDevice().equals(service.getDevice())
                     && element.getInstanceName().equals(service.getInstanceName())) {
                 add = false; //already in the list
             }
