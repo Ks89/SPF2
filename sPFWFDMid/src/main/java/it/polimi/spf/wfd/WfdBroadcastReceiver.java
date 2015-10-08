@@ -28,8 +28,8 @@ import android.net.NetworkInfo;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
 
-import de.greenrobot.event.EventBus;
 import it.polimi.spf.wfd.events.MidConnectionEvent;
+import it.polimi.spf.wfd.events.NineBus;
 import it.polimi.spf.wfd.util.WfdLog;
 
 class WfdBroadcastReceiver extends BroadcastReceiver {
@@ -65,16 +65,16 @@ class WfdBroadcastReceiver extends BroadcastReceiver {
         WfdLog.d(TAG, "P2P state changed - " + state);
         if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED) {
             WfdLog.d(TAG, "Wi-Fi Direct Enabled");
-            EventBus.getDefault().post(new MidConnectionEvent(P2P_ENABLED));
+            NineBus.get().post(new MidConnectionEvent(P2P_ENABLED));
         } else {
             WfdLog.e(TAG, "Wi-Fi Direct Disabled");
-            EventBus.getDefault().post(new MidConnectionEvent(P2P_DISABLED));
+            NineBus.get().post(new MidConnectionEvent(P2P_DISABLED));
         }
     }
 
     private void onPeersChanged(Intent intent) {
         WfdLog.d(TAG, "P2P peers changed");
-        EventBus.getDefault().post(new MidConnectionEvent(PEERS_CHANGED));
+        NineBus.get().post(new MidConnectionEvent(PEERS_CHANGED));
     }
 
     private void onConnectionChanged(Intent intent) {
@@ -82,10 +82,10 @@ class WfdBroadcastReceiver extends BroadcastReceiver {
         NetworkInfo netInfo = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
         if (netInfo.isConnected()) {
             // It's a connect
-            EventBus.getDefault().post(new MidConnectionEvent(NETWORK_CONNECTED));
+            NineBus.get().post(new MidConnectionEvent(NETWORK_CONNECTED));
         } else {
             // It's a disconnect
-            EventBus.getDefault().post(new MidConnectionEvent(NETWORK_DISCONNECTED));
+            NineBus.get().post(new MidConnectionEvent(NETWORK_DISCONNECTED));
         }
     }
 

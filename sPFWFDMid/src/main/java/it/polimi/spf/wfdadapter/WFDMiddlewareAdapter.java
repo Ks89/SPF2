@@ -34,8 +34,9 @@ import it.polimi.spf.framework.proximity.InboundProximityInterface;
 import it.polimi.spf.framework.proximity.ProximityMiddleware;
 import it.polimi.spf.framework.proximity.SPFRemoteInstance;
 import it.polimi.spf.wfd.WfdMessage;
-import it.polimi.spf.wfd.listeners.WfdMiddlewareListener;
 import it.polimi.spf.wfd.WifiDirectMiddleware;
+import it.polimi.spf.wfd.exceptions.GroupException;
+import it.polimi.spf.wfd.listeners.WfdMiddlewareListener;
 
 public class WFDMiddlewareAdapter implements ProximityMiddleware, WFDRemoteInstance.Factory {
     private final static String TAG = WFDMiddlewareAdapter.class.getSimpleName();
@@ -99,8 +100,10 @@ public class WFDMiddlewareAdapter implements ProximityMiddleware, WFDRemoteInsta
 
         try {
             mMiddleware.sendMessageBroadcast(message);
+        } catch (GroupException e) {
+            Log.e(TAG, "GroupException", e);
         } catch (IOException e) {
-            Log.e(TAG, "sendSearchResult Exception", e);
+            Log.e(TAG, "sendSearchResult IOException", e);
         }
     }
 
@@ -114,8 +117,10 @@ public class WFDMiddlewareAdapter implements ProximityMiddleware, WFDRemoteInsta
 
         try {
             mMiddleware.sendMessageBroadcast(message);
+        } catch (GroupException e) {
+            Log.e(TAG, "GroupException", e);
         } catch (IOException e) {
-            Log.e(TAG, "sendSearchSignal Exception", e);
+            Log.e(TAG, "sendSearchSignal IOException", e);
         }
     }
 
@@ -176,8 +181,10 @@ public class WFDMiddlewareAdapter implements ProximityMiddleware, WFDRemoteInsta
 
                     try {
                         mMiddlewareRef.sendMessageBroadcast(wfdMsg);
+                    } catch (GroupException e) {
+                        Log.e(TAG, "GroupException " + e.getMessage());
                     } catch (IOException e) {
-                        Log.e(TAG, "Exception handleMessage msg");
+                        Log.e(TAG, "handleMessage IOException", e);
                     }
 
                     Message msgNew = obtainMessage(SEND_ADVERTISING);

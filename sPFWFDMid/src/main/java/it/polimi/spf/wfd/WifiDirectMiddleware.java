@@ -49,6 +49,7 @@ import it.polimi.spf.wfd.events.MidConnectionEvent;
 import it.polimi.spf.wfd.events.NineBus;
 import it.polimi.spf.wfd.events.goEvent.GOConnectActionEvent;
 import it.polimi.spf.wfd.events.goEvent.GOConnectionEvent;
+import it.polimi.spf.wfd.exceptions.GroupException;
 import it.polimi.spf.wfd.groups.GroupActor;
 import it.polimi.spf.wfd.groups.GroupClientActor;
 import it.polimi.spf.wfd.groups.GroupOwnerActor;
@@ -106,6 +107,9 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         this.isAutonomous = isAutonomous;
     }
 
+    /**
+     * Method to connect. Called by {@link it.polimi.spf.wfdadapter.WFDMiddlewareAdapter#connect()}.
+     */
     public void connect() {
         try {
             mPort = this.requestAvailablePortFromOs();
@@ -305,6 +309,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
             }
 
             //TODO TODO FIXME FIXME FIXME in this first impl i choose the first element in the list
+            //TODO but i should check between all the GO in proximity and I should choose the correct one.
             String deviceAddress = validGroupOwners.get(0).getPeerAddress();
             this.establishStandardConnection(validGroupOwners, deviceAddress);
         }
@@ -439,12 +444,12 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
     }
 
-    public void sendMessageBroadcast(WfdMessage msg) throws IOException {
+    public void sendMessageBroadcast(WfdMessage msg) throws IOException, GroupException {
         msg.setSenderId(myIdentifier);
         msg.setReceiverId(WfdMessage.BROADCAST_RECEIVER_ID);
         GroupActor tmp = mGroupActor;
         if (tmp == null) {
-            throw new IOException("Group not yet instantiated");
+            throw new GroupException("Group not yet instantiated");
         }
         tmp.sendMessage(msg);
     }
@@ -491,6 +496,15 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
                 break;
             case WfdBroadcastReceiver.NETWORK_DISCONNECTED:
                 this.onNetworkDisconnected();
+                break;
+            case WfdBroadcastReceiver.P2P_ENABLED:
+                Log.d(TAG, "Wi-Fi Direct enabled");
+                break;
+            case WfdBroadcastReceiver.P2P_DISABLED:
+                Toast.makeText(mContext, "Wi-Fi Direct not enabled!", Toast.LENGTH_SHORT).show();
+                break;
+            case WfdBroadcastReceiver.PEERS_CHANGED:
+                //TODO if necessary
                 break;
             default:
                 WfdLog.d(TAG, "Unknown onMidConnectionEvent");
