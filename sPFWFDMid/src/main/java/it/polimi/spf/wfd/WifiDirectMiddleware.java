@@ -25,6 +25,7 @@ import android.content.Context;
 import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
+import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pGroup;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
@@ -35,8 +36,6 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.squareup.otto.Subscribe;
-
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -44,9 +43,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.greenrobot.event.EventBus;
 import it.polimi.spf.wfd.events.Event;
 import it.polimi.spf.wfd.events.MidConnectionEvent;
-import it.polimi.spf.wfd.events.NineBus;
 import it.polimi.spf.wfd.events.goEvent.GOConnectActionEvent;
 import it.polimi.spf.wfd.events.goEvent.GOConnectionEvent;
 import it.polimi.spf.wfd.groups.GroupActor;
@@ -123,7 +122,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         });
 
         mReceiver.register(mContext);
-        NineBus.get().register(this);
+        EventBus.getDefault().register(this);
 
         this.startRegistration();
         this.discoverService();
@@ -204,7 +203,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
     public void disconnect() {
         mReceiver.unregister(mContext);
-        NineBus.get().unregister(this);
+        EventBus.getDefault().unregister(this);
 
         mManager.removeServiceRequest(mChannel, mServiceRequest, new CustomizableActionListener(
                 this.mContext,
@@ -333,14 +332,19 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
     @Override
     public void onConnectionInfoAvailable(final WifiP2pInfo info) {
         if (mGroupActor != null) {
-            Log.e(TAG, "Error onConnectionInfoAvailable, returning...");
+            WfdLog.e(TAG, "Error onConnectionInfoAvailable, returning...");
             return;
         }
 
         if (info == null) {
-            Log.e(TAG, "Error onConnectionInfoAvailable, info==null, returning...");
+            WfdLog.e(TAG, "Error onConnectionInfoAvailable, info==null, returning...");
             return;
         }
+
+//        if (info.groupFormed) {
+//            Log.e(TAG, "Error onConnectionInfoAvailable, but the group isn't available...");
+//            return;
+//        }
 
         WfdLog.d(TAG, "connection info available, with info.isGroupOwner " + info.isGroupOwner);
 
@@ -399,7 +403,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
         @Override
         public void onError() {
-            Log.e(TAG, "GroupActorListener.onError");
+            WfdLog.e(TAG, "GroupActorListener.onError");
             if (mGroupActor != null) {
                 postEvent(new GOConnectActionEvent(GOConnectActionEvent.DISCONNECT_STRING));
             }
@@ -423,7 +427,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
         @Override
         public void onInstanceLost(String identifier) {
-            Log.e(TAG, "GroupActorListener.onInstanceLost - identifier= " + identifier);
+            WfdLog.e(TAG, "GroupActorListener.onInstanceLost - identifier= " + identifier);
             mListener.onInstanceLost(identifier);
         }
     };
@@ -479,42 +483,20 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         return assignedPort;
     }
 
+    private void requestPeers() {
+        WifiP2pManager.PeerListListener peerListListener = new WifiP2pManager.PeerListListener() {
+            public void onPeersAvailable(WifiP2pDeviceList peers) {
+                Log.d(TAG, "Discovered peers:");
+                for (WifiP2pDevice peer : peers.getDeviceList())
+                    Log.d(TAG, "\t" + peer.deviceAddress);
+            }
+        };
+        mManager.requestPeers(mChannel, peerListListener);
+    }
+
     private void postEvent(Event event) {
-        NineBus.get().post(event);
+        EventBus.getDefault().post(event);
     }
-
-    @Subscribe
-    public void onMidConnectionEvent(MidConnectionEvent e) {
-        switch (e.getType()) {
-            case WfdBroadcastReceiver.NETWORK_CONNECTED:
-                this.onNetworkConnected();
-                break;
-            case WfdBroadcastReceiver.NETWORK_DISCONNECTED:
-                this.onNetworkDisconnected();
-                break;
-            default:
-                WfdLog.d(TAG, "Unknown onMidConnectionEvent");
-        }
-    }
-
-    @Subscribe
-    public void onClientConnectedToGO(GOConnectionEvent e) {
-        switch (e.getType()) {
-            case GOConnectionEvent.CONNECTED:
-                if (mContext != null) {
-                    Toast.makeText(mContext, "Client connected", Toast.LENGTH_SHORT).show();
-                }
-                break;
-            case GOConnectionEvent.DISCONNECTED:
-                if (mContext != null) {
-                    Toast.makeText(mContext, "Client disconnected", Toast.LENGTH_SHORT).show();
-                }
-                break;
-            default:
-                WfdLog.d(TAG, "Error, unknown GOConnectionEvent's state");
-        }
-    }
-
 
     public class GroupClientInfoListener implements WifiP2pManager.GroupInfoListener {
         private WifiP2pInfo info;
@@ -541,7 +523,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
             WfdLog.d(TAG, "requestGroupInfo - service: " + service);
 
             if (service == null) {
-                Log.e(TAG, "service is null");
+                WfdLog.e(TAG, "service is null");
                 mManager.removeGroup(mChannel, null);
             } else {
                 int destPort = service.getPort();
@@ -584,4 +566,49 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
             createGroup();
         }
     }
+
+
+    //************************************************************************
+    //**************************EVENT BUS EVENTS******************************
+    //************************************************************************
+    public void onEvent(MidConnectionEvent e) {
+        switch (e.getType()) {
+            case WfdBroadcastReceiver.NETWORK_CONNECTED:
+                this.onNetworkConnected();
+                break;
+            case WfdBroadcastReceiver.NETWORK_DISCONNECTED:
+                this.onNetworkDisconnected();
+                break;
+            case WfdBroadcastReceiver.P2P_ENABLED:
+                //TODO FIXME implement this
+                break;
+            case WfdBroadcastReceiver.P2P_DISABLED:
+                //TODO FIXME implement this
+                break;
+            case WfdBroadcastReceiver.PEERS_CHANGED:
+                WfdLog.d(TAG, "Requesting peers...");
+                this.requestPeers();
+                break;
+            default:
+                WfdLog.d(TAG, "Unknown onMidConnectionEvent");
+        }
+    }
+
+    public void onEventMainThread(GOConnectionEvent e) {
+        switch (e.getType()) {
+            case GOConnectionEvent.CONNECTED:
+                if (mContext != null) {
+                    Toast.makeText(mContext, "Client connected", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case GOConnectionEvent.DISCONNECTED:
+                if (mContext != null) {
+                    Toast.makeText(mContext, "Client disconnected", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+                WfdLog.d(TAG, "Error, unknown GOConnectionEvent's state");
+        }
+    }
+
 }

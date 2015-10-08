@@ -34,6 +34,7 @@ import it.polimi.spf.wfd.WifiDirectMiddleware;
 import it.polimi.spf.shared.model.InvocationRequest;
 import it.polimi.spf.shared.model.InvocationResponse;
 import it.polimi.spf.shared.model.SPFActivity;
+import it.polimi.spf.wfd.util.WfdLog;
 
 class WFDRemoteInstance extends SPFRemoteInstance {
 
@@ -90,14 +91,14 @@ class WFDRemoteInstance extends SPFRemoteInstance {
 
 	@Override
 	public boolean setGoIntent(int goIntent) {
-		Log.d("WFDRemoteInstance", "gointent: " + goIntent);
+		WfdLog.d("WFDRemoteInstance", "gointent: " + goIntent);
 		mMiddleware.setGoIntent(goIntent);
 
 		return true;
 	}
 
 	private void logException(String methodName, IOException e) {
-		Log.e("WFDRemoteInstance", "Exception @ " + methodName, e);
+		WfdLog.e("WFDRemoteInstance", "Exception @ " + methodName, e);
 	}
 
 	@Override

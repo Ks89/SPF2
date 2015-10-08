@@ -21,13 +21,11 @@
 
 package it.polimi.spf.wfd.groups;
 
-import com.squareup.otto.Subscribe;
-
 import java.io.IOException;
 import java.util.concurrent.Semaphore;
 
+import de.greenrobot.event.EventBus;
 import it.polimi.spf.wfd.WfdMessage;
-import it.polimi.spf.wfd.events.NineBus;
 import it.polimi.spf.wfd.events.goEvent.GOConnectActionEvent;
 import it.polimi.spf.wfd.listeners.GroupActorListener;
 import it.polimi.spf.wfd.util.WfdLog;
@@ -47,35 +45,9 @@ public abstract class GroupActor extends Thread {
     private final Semaphore requestSemaphore = new Semaphore(1, true);
     private final ResponseHolder respHolder = new ResponseHolder(REQUEST_TIMEOUT);
 
-    /**
-     * Object to be registered on {@link it.polimi.spf.wfd.events.NineBus}.
-     * We need it to make extending classes inherit "@Subscribe" methods.
-     */
-    private Object busListener;
-
     GroupActor(GroupActorListener listener, String identifier) {
         this.myIdentifier = identifier;
         this.listener = listener;
-
-        busListener = new Object() {
-            @Subscribe
-            public void onGOActorActionEvent(GOConnectActionEvent event) {
-                switch (event.getAction()) {
-                    case GOConnectActionEvent.CONNECT_STRING:
-                        WfdLog.d(TAG, "Connect event received");
-                        connect();
-                        break;
-                    case GOConnectActionEvent.DISCONNECT_STRING:
-                        WfdLog.d(TAG, "Disconnect event received");
-                        disconnect(false); //normal  disconnection without errors
-                        break;
-                    default:
-                        WfdLog.d(TAG, "Unknown GOConnectActionEvent");
-                }
-            }
-        };
-
-        NineBus.get().register(busListener);
     }
 
     public WfdMessage sendRequestMessage(WfdMessage msg) throws IOException {
@@ -171,10 +143,6 @@ public abstract class GroupActor extends Thread {
     }
 
     protected void disconnect(boolean withError) {
-        if (busListener != null) {
-            NineBus.get().unregister(busListener);
-        }
-        busListener = null;
     }
 
     public abstract void sendMessage(WfdMessage msg) throws IOException;
@@ -182,4 +150,21 @@ public abstract class GroupActor extends Thread {
     abstract void connect();
 
     public abstract void run();
+
+
+    //Event registered with EventBus
+    public void onEvent(GOConnectActionEvent event) {
+        switch (event.getAction()) {
+            case GOConnectActionEvent.CONNECT_STRING:
+                WfdLog.d(TAG, "Connect event received");
+                connect();
+                break;
+            case GOConnectActionEvent.DISCONNECT_STRING:
+                WfdLog.d(TAG, "Disconnect event received");
+                disconnect(false); //normal  disconnection without errors
+                break;
+            default:
+                WfdLog.d(TAG, "Unknown GOConnectActionEvent");
+        }
+    }
 }

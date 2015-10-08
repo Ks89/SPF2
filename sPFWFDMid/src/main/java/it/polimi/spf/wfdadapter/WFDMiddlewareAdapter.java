@@ -34,8 +34,9 @@ import it.polimi.spf.framework.proximity.InboundProximityInterface;
 import it.polimi.spf.framework.proximity.ProximityMiddleware;
 import it.polimi.spf.framework.proximity.SPFRemoteInstance;
 import it.polimi.spf.wfd.WfdMessage;
-import it.polimi.spf.wfd.listeners.WfdMiddlewareListener;
 import it.polimi.spf.wfd.WifiDirectMiddleware;
+import it.polimi.spf.wfd.listeners.WfdMiddlewareListener;
+import it.polimi.spf.wfd.util.WfdLog;
 
 public class WFDMiddlewareAdapter implements ProximityMiddleware, WFDRemoteInstance.Factory {
     private final static String TAG = WFDMiddlewareAdapter.class.getSimpleName();
@@ -100,7 +101,7 @@ public class WFDMiddlewareAdapter implements ProximityMiddleware, WFDRemoteInsta
         try {
             mMiddleware.sendMessageBroadcast(message);
         } catch (IOException e) {
-            Log.e(TAG, "sendSearchResult Exception", e);
+            WfdLog.e(TAG, "sendSearchResult Exception", e);
         }
     }
 
@@ -115,7 +116,7 @@ public class WFDMiddlewareAdapter implements ProximityMiddleware, WFDRemoteInsta
         try {
             mMiddleware.sendMessageBroadcast(message);
         } catch (IOException e) {
-            Log.e(TAG, "sendSearchSignal Exception", e);
+            WfdLog.e(TAG, "sendSearchSignal Exception", e);
         }
     }
 
@@ -177,7 +178,7 @@ public class WFDMiddlewareAdapter implements ProximityMiddleware, WFDRemoteInsta
                     try {
                         mMiddlewareRef.sendMessageBroadcast(wfdMsg);
                     } catch (IOException e) {
-                        Log.e(TAG, "Exception handleMessage msg");
+                        WfdLog.e(TAG, "Exception handleMessage msg");
                     }
 
                     Message msgNew = obtainMessage(SEND_ADVERTISING);

@@ -34,6 +34,7 @@ import it.polimi.spf.shared.model.SPFActionSendNotification;
 import it.polimi.spf.shared.model.SPFActivity;
 import it.polimi.spf.wfd.WfdMessage;
 import it.polimi.spf.wfd.listeners.WfdMiddlewareListener;
+import it.polimi.spf.wfd.util.WfdLog;
 
 public class WFDMiddlewareListenerAdapter implements WfdMiddlewareListener {
     private static final String TAG = WFDMiddlewareListenerAdapter.class.getSimpleName();
@@ -136,6 +137,6 @@ public class WFDMiddlewareListenerAdapter implements WfdMiddlewareListener {
 
     @Override
     public void onError() {
-        Log.e("WFDMiddlewareListener", "Error from middleware");
+        WfdLog.e("WFDMiddlewareListener", "Error from middleware");
     }
 }

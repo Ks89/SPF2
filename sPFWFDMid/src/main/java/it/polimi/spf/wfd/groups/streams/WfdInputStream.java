@@ -21,14 +21,13 @@
 
 package it.polimi.spf.wfd.groups.streams;
 
-import android.util.Log;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import it.polimi.spf.wfd.WfdMessage;
+import it.polimi.spf.wfd.util.WfdLog;
 
 public class WfdInputStream {
     private static final String TAG = WfdInputStream.class.getSimpleName();
@@ -63,7 +62,7 @@ public class WfdInputStream {
                 str = WfdInputStream.this.reader.readLine();
 
             } catch (IOException e) {
-                Log.e(TAG, "IOException during readline in WfdInputStream", e);
+                WfdLog.e(TAG, "IOException during readline in WfdInputStream", e);
             } finally {
                 synchronized (this) {
                     notify();
