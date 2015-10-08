@@ -122,6 +122,26 @@ public class ServiceList {
         return null;
     }
 
+    public WiFiP2pService getServiceByAddress(String address) {
+        if (address == null) {
+            return null;
+        }
+
+        for (WiFiP2pService element : serviceList) {
+            WfdLog.d(TAG, "element in list: " + element.getDevice().deviceName + ", " + element.getDevice().deviceAddress);
+            WfdLog.d(TAG, "element passed : " + address);
+
+            if (element.getDevice().deviceAddress.equals(address)) {
+                WfdLog.d(TAG, "getServiceByDevice if satisfied : " + address + ", " + element.getDevice().deviceAddress);
+                return element;
+            }
+        }
+
+        WfdLog.d(TAG, "servicelist size: " + serviceList.size());
+
+        return null;
+    }
+
     public List<WiFiP2pService> selectValidServices(String myIdentifier) {
         List<WiFiP2pService> validServiceList = new ArrayList<>();
         for (WiFiP2pService service : ServiceList.getInstance().getServiceList()) {

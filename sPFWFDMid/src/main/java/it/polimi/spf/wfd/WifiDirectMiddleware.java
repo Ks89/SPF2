@@ -306,7 +306,6 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
             //TODO TODO FIXME FIXME FIXME in this first impl i choose the first element in the list
             String deviceAddress = validGroupOwners.get(0).getPeerAddress();
-
             this.establishStandardConnection(validGroupOwners, deviceAddress);
         }
     }
@@ -334,14 +333,16 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
     @Override
     public void onConnectionInfoAvailable(final WifiP2pInfo info) {
         if (mGroupActor != null) {
+            Log.e(TAG, "Error onConnectionInfoAvailable, returning...");
             return;
         }
 
         if (info == null) {
+            Log.e(TAG, "Error onConnectionInfoAvailable, info==null, returning...");
             return;
         }
 
-        WfdLog.d(TAG, "connection info available");
+        WfdLog.d(TAG, "connection info available, with info.isGroupOwner " + info.isGroupOwner);
 
         //here the connection info is available, but groups aren't created yet.
         //Groups are really available only in GroupOwnerInfoListener and GroupClientInfoListener

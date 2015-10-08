@@ -210,11 +210,11 @@ public class GroupOwnerActor extends GroupActor {
                 try {
                     s.close();
                 } catch (IOException e1) {
-                    WfdLog.e(TAG, "ServerSocketAcceptor IOException while closing socket 's' ", e1);
+                    WfdLog.e(TAG, "serverSocket.accept IOException while closing socket 's' ", e1);
                 }
             }
         } finally {
-            WfdLog.d(TAG, "ServerSocketAcceptor exiting while loop in run()");
+            WfdLog.d(TAG, "serverSocket.accept exiting while loop in run()");
             if (!serverSocket.isClosed()) {
                 WfdLog.d(TAG, "signalling error to groupOwnerActor");
                 NineBus.get().post(new GOErrorEvent("onServerSocketError"));
