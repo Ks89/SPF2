@@ -23,6 +23,7 @@ package it.polimi.spf.wfd.listeners;
 import android.content.Context;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.widget.Toast;
 
 import it.polimi.spf.wfd.util.WfdLog;
@@ -91,13 +92,13 @@ public class CustomizableActionListener implements WifiP2pManager.ActionListener
             // Command failed.  Check for P2P_UNSUPPORTED, ERROR, or BUSY
             switch (reason) {
                 case WifiP2pManager.P2P_UNSUPPORTED:
-                    WfdLog.e(tag, failLog + ", reason " + reason + " -> P2P isn't supported on this device.");
+                    Log.e(tag, failLog + ", reason " + reason + " -> P2P isn't supported on this device.");
                     break;
                 case WifiP2pManager.BUSY:
-                    WfdLog.e(tag, failLog + ", reason " + reason + " -> Busy");
+                    Log.e(tag, failLog + ", reason " + reason + " -> Busy");
                     break;
                 case WifiP2pManager.ERROR:
-                    WfdLog.e(tag, failLog + ", reason " + reason + " -> Error");
+                    Log.e(tag, failLog + ", reason " + reason + " -> Error");
                     break;
                 case WifiP2pManager.NO_SERVICE_REQUESTS:
                     /*
@@ -105,15 +106,15 @@ public class CustomizableActionListener implements WifiP2pManager.ActionListener
                      * requests are added. Use addServiceRequest in WifiP2pManager.java to add a service
                      * request.
                      */
-                    WfdLog.e(tag, failLog + ", reason " + reason + " -> No service request");
+                    Log.e(tag, failLog + ", reason " + reason + " -> No service request");
                     break;
                 default:
-                    WfdLog.e(tag, failLog + ", reason " + reason + " -> ERROR!!! Unknown reason code!!!!");
+                    Log.e(tag, failLog + ", reason " + reason + " -> ERROR!!! Unknown reason code!!!!");
                     break;
             }
         } else {
             if (failLog != null) {
-                WfdLog.e(tag, failLog + ", reason: " + reason);
+                Log.e(tag, failLog + ", reason: " + reason);
             }
             if (context != null && failToast != null) {
                 Toast.makeText(context, failToast, Toast.LENGTH_SHORT).show();

@@ -23,6 +23,8 @@ package it.polimi.spf.wfd.groups;
 
 import android.util.Log;
 
+import com.squareup.otto.Subscribe;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -36,8 +38,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
 
-import de.greenrobot.event.EventBus;
 import it.polimi.spf.wfd.WfdMessage;
+import it.polimi.spf.wfd.events.NineBus;
 import it.polimi.spf.wfd.events.goEvent.GOConnectionEvent;
 import it.polimi.spf.wfd.events.goEvent.GOErrorEvent;
 import it.polimi.spf.wfd.events.goEvent.GOInternalClientEvent;
@@ -68,14 +70,14 @@ public class GroupOwnerActor extends GroupActor {
         super(listener, myIdentifier);
         serverSocket = new ServerSocket(port);
 
-        EventBus.getDefault().register(this);
+        NineBus.get().register(this);
         this.setName("GroupOwnerActor");
     }
 
     //called from GoInternalClient
     void onClientConnected(String identifier, GOInternalClient gOInternalClient) throws InterruptedException {
         WfdLog.d(TAG, "New client connected id : " + identifier);
-        EventBus.getDefault().post(new GOConnectionEvent(GOConnectionEvent.CONNECTED));
+        NineBus.get().post(new GOConnectionEvent(GOConnectionEvent.CONNECTED));
         connectionSemaphore.acquire();
         Set<String> clients = new HashSet<>(goInternalClients.keySet());
         clients.add(super.myIdentifier);
@@ -91,7 +93,7 @@ public class GroupOwnerActor extends GroupActor {
     //called from GoInternalClient
     void onClientDisconnected(String identifier) throws InterruptedException {
         connectionSemaphore.acquire();
-        EventBus.getDefault().post(new GOConnectionEvent(GOConnectionEvent.DISCONNECTED));
+        NineBus.get().post(new GOConnectionEvent(GOConnectionEvent.DISCONNECTED));
         WfdLog.d(TAG, "Client lost id : " + identifier);
         GOInternalClient c = null;
         if (identifier != null) {
@@ -200,7 +202,7 @@ public class GroupOwnerActor extends GroupActor {
                 s = serverSocket.accept();
                 WfdLog.d(TAG, "incoming connection");
                 WfdLog.d(TAG, "IP Address: " + s.getInetAddress());
-                EventBus.getDefault().post(new GOInternalClientEvent("onStartGoInternalClient", s));
+                NineBus.get().post(new GOInternalClientEvent("onStartGoInternalClient", s));
             }
         } catch (IOException e) {
             WfdLog.e(TAG, "serverSocket.accept - IOException", e);
@@ -215,7 +217,7 @@ public class GroupOwnerActor extends GroupActor {
             WfdLog.d(TAG, "serverSocket.accept exiting while loop in run()");
             if (!serverSocket.isClosed()) {
                 WfdLog.d(TAG, "signalling error to groupOwnerActor");
-                EventBus.getDefault().post(new GOErrorEvent("onServerSocketError"));
+                NineBus.get().post(new GOErrorEvent("onServerSocketError"));
             }
 
         }
@@ -224,7 +226,7 @@ public class GroupOwnerActor extends GroupActor {
     @Override
     protected void disconnect(boolean withError) {
         super.disconnect(withError);
-        EventBus.getDefault().unregister(this);
+        NineBus.get().unregister(this);
 
         WfdLog.d(TAG, "GroupOwnerActor Disconnecting...");
         try {
@@ -253,14 +255,15 @@ public class GroupOwnerActor extends GroupActor {
         }
     }
 
-
-    public void onEvent(GOErrorEvent event) {
+    @Subscribe
+    public void onGOErrorEvent(GOErrorEvent event) {
         WfdLog.d(TAG, "GOErrorEvent received with type: " + event.getType());
         this.disconnect(true); //true = with errors
         super.onError();
     }
 
-    public void onEvent(GOInternalClientEvent event) {
+    @Subscribe
+    public void onGOInternalClientEvent(GOInternalClientEvent event) {
         WfdLog.d(TAG, "GOInternalClientEvent received with type: " + event.getType());
         new GOInternalClient(event.getSocket(), this).start();
     }
