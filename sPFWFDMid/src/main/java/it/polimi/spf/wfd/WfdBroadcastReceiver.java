@@ -25,32 +25,73 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.NetworkInfo;
+import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
 
+import de.greenrobot.event.EventBus;
 import it.polimi.spf.wfd.events.MidConnectionEvent;
-import it.polimi.spf.wfd.events.NineBus;
+import it.polimi.spf.wfd.util.WfdLog;
 
 class WfdBroadcastReceiver extends BroadcastReceiver {
+    private static final String TAG = WfdBroadcastReceiver.class.getSimpleName();
+    static final String P2P_ENABLED = "P2P_ENABLED";
+    static final String P2P_DISABLED = "P2P_DISABLED";
+    static final String PEERS_CHANGED = "PEERS_CHANGED";
     static final String NETWORK_CONNECTED = "NETWORK_CONNECTED";
     static final String NETWORK_DISCONNECTED = "NETWORK_DISCONNECTED";
 
     @Override
-    public void onReceive(Context arg0, Intent arg1) {
-        String action = arg1.getAction();
-
-        if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
-
-            //call on connection info received
-            NetworkInfo netInfo = arg1.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
-            if (netInfo.isConnected()) {
-                // It's a connect
-                NineBus.get().post(new MidConnectionEvent(NETWORK_CONNECTED));
-            } else {
-                // It's a disconnect
-                NineBus.get().post(new MidConnectionEvent(NETWORK_DISCONNECTED));
-            }
-
+    public void onReceive(Context context, Intent intent) {
+        switch (intent.getAction()) {
+            case WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION:
+                this.onP2pStateChanged(intent);
+                break;
+            case WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION:
+                this.onPeersChanged(intent);
+                break;
+            case WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION:
+                this.onConnectionChanged(intent);
+                break;
+            case WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION:
+                this.onThisDeviceChanged(intent);
+                break;
+            default:
+                break;
         }
+    }
+
+    private void onP2pStateChanged(Intent intent) {
+        int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
+        WfdLog.d(TAG, "P2P state changed - " + state);
+        if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED) {
+            WfdLog.d(TAG, "Wi-Fi Direct Enabled");
+            EventBus.getDefault().post(new MidConnectionEvent(P2P_ENABLED));
+        } else {
+            WfdLog.e(TAG, "Wi-Fi Direct Disabled");
+            EventBus.getDefault().post(new MidConnectionEvent(P2P_DISABLED));
+        }
+    }
+
+    private void onPeersChanged(Intent intent) {
+        WfdLog.d(TAG, "P2P peers changed");
+        EventBus.getDefault().post(new MidConnectionEvent(PEERS_CHANGED));
+    }
+
+    private void onConnectionChanged(Intent intent) {
+        //call on connection info received
+        NetworkInfo netInfo = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
+        if (netInfo.isConnected()) {
+            // It's a connect
+            EventBus.getDefault().post(new MidConnectionEvent(NETWORK_CONNECTED));
+        } else {
+            // It's a disconnect
+            EventBus.getDefault().post(new MidConnectionEvent(NETWORK_DISCONNECTED));
+        }
+    }
+
+    private void onThisDeviceChanged(Intent intent) {
+        WifiP2pDevice device = intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE);
+        WfdLog.d(TAG, "Device status - " + device.status);
     }
 
     public void register(Context mContext) {
@@ -58,6 +99,9 @@ class WfdBroadcastReceiver extends BroadcastReceiver {
 
         //  Indicates a change in the Wi-Fi P2P status.
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
+
+        // Indicates a change in the list of available peers.
+        intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
 
         // Indicates the state of Wi-Fi P2P connectivity has changed.
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
