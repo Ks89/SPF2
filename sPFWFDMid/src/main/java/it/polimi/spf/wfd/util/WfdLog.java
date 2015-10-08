@@ -26,24 +26,30 @@ import it.polimi.spf.wfd.Configuration;
 
 public class WfdLog {
 
-	private static final boolean ENABLED = Configuration.WFDLOG;
+    private static final boolean ENABLED = Configuration.WFDLOG;
 
-	public static void d(String tag, String msg) {
-		if (ENABLED) {
-			Log.d(tag, msg);
-		}
-	}
+    public static void d(String tag, String msg) {
+        if (ENABLED) {
+            Log.d(tag, msg);
+        }
+    }
 
-	public static void d(String tag, String msg, Throwable tr) {
-		if (ENABLED) {
-			Log.d(tag, msg, tr);
-		}
-	}
+    public static void d(String tag, String msg, Throwable tr) {
+        if (ENABLED) {
+            Log.d(tag, msg, tr);
+        }
+    }
 
-	public static void e(String tag, String msg, Throwable tr) {
-		if (ENABLED) {
-			Log.e(tag, msg, tr);
-		}
-	}
+    public static void e(String tag, String msg, Throwable tr) {
+        if (ENABLED) {
+            Log.e(tag, msg, tr);
+        }
+    }
+
+    public static void e(String tag, String msg) {
+        if (ENABLED) {
+            Log.e(tag, msg);
+        }
+    }
 
 }
