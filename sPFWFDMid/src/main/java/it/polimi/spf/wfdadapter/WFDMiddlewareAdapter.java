@@ -22,9 +22,6 @@
 package it.polimi.spf.wfdadapter;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
@@ -33,8 +30,10 @@ import java.io.IOException;
 import it.polimi.spf.framework.proximity.InboundProximityInterface;
 import it.polimi.spf.framework.proximity.ProximityMiddleware;
 import it.polimi.spf.framework.proximity.SPFRemoteInstance;
+import it.polimi.spf.wfd.WfdHandler;
 import it.polimi.spf.wfd.WfdMessage;
 import it.polimi.spf.wfd.WifiDirectMiddleware;
+import it.polimi.spf.wfd.events.NineBus;
 import it.polimi.spf.wfd.exceptions.GroupException;
 import it.polimi.spf.wfd.listeners.WfdMiddlewareListener;
 
@@ -42,8 +41,7 @@ public class WFDMiddlewareAdapter implements ProximityMiddleware, WFDRemoteInsta
     private final static String TAG = WFDMiddlewareAdapter.class.getSimpleName();
 
     private final WifiDirectMiddleware mMiddleware;
-    private HandlerThread handlerThread;
-    private WfdHandler handler;
+
 
     public static final ProximityMiddleware.Factory FACTORY = new Factory() {
 
@@ -59,30 +57,19 @@ public class WFDMiddlewareAdapter implements ProximityMiddleware, WFDRemoteInsta
 
         WfdMiddlewareListener listener = new WFDMiddlewareListenerAdapter(proximityInterface, this);
         mMiddleware = new WifiDirectMiddleware(context, goIntentFromSPFApp, isAutonomous, identifier, listener);
+
+        NineBus.get().register(this);
     }
 
     @Override
     public void connect() {
-        if (!isConnected()) {
-            handlerThread = new HandlerThread("wfd_middleware_adapter");
-            handlerThread.start();
-            handler = new WfdHandler(handlerThread.getLooper(), mMiddleware);
-            mMiddleware.connect();
-        } else {
-            Log.w(TAG, "connect called but isConnected() == true");
-        }
+        mMiddleware.init();
+        mMiddleware.connect();
     }
 
     @Override
     public void disconnect() {
-        if (isConnected()) {
-            handlerThread.quit();
-            handlerThread = null;
-            handler = null;
-            mMiddleware.disconnect();
-        } else {
-            Log.w(TAG, "disconnect called but isConnected() == false");
-        }
+        mMiddleware.disconnect();
     }
 
     @Override
@@ -131,71 +118,33 @@ public class WFDMiddlewareAdapter implements ProximityMiddleware, WFDRemoteInsta
 
     @Override
     public void registerAdvertisement(String profile, long period) {
-        if (handler == null) {
+        if (mMiddleware.getWfdHandler() == null) {
             return;
         }
         // Clear possible pending message
-        handler.removeMessages(WfdHandler.SEND_ADVERTISING);
+        mMiddleware.getWfdHandler().removeMessages(WfdHandler.SEND_ADVERTISING);
         // Queue message for next signal
-        Message msg = handler.obtainMessage(WfdHandler.SEND_ADVERTISING);
+        Message msg = mMiddleware.getWfdHandler().obtainMessage(WfdHandler.SEND_ADVERTISING);
         msg.getData().putString("profile", profile);
         msg.getData().putLong("period", period);
         // the first message is not delayed
-        handler.sendMessage(msg);
+        mMiddleware.getWfdHandler().sendMessage(msg);
 
     }
 
     @Override
     public void unregisterAdvertisement() {
-        if (handler == null) {
+        if (mMiddleware.getWfdHandler() == null) {
             return;
         }
-        handler.removeMessages(WfdHandler.SEND_ADVERTISING);
+        mMiddleware.getWfdHandler().removeMessages(WfdHandler.SEND_ADVERTISING);
     }
 
     @Override
     public boolean isAdvertising() {
-        return handler != null && handler.hasMessages(WfdHandler.SEND_ADVERTISING);
+        return mMiddleware.getWfdHandler() != null
+                && mMiddleware.getWfdHandler().hasMessages(WfdHandler.SEND_ADVERTISING);
     }
 
-    private static class WfdHandler extends Handler {
-        static final int SEND_ADVERTISING = 1;
-        private final WifiDirectMiddleware mMiddlewareRef;
-
-        public WfdHandler(Looper looper, WifiDirectMiddleware mMiddleware) {
-            super(looper);
-            mMiddlewareRef = mMiddleware;
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case SEND_ADVERTISING:
-                    Log.d(TAG, "sending SPFAdvertising signal handleMessage");
-                    long delay = msg.getData().getLong("period");
-                    String profile = msg.getData().getString("profile");
-
-                    WfdMessage wfdMsg = new WfdMessage();
-                    wfdMsg.put(WFDMessageContract.KEY_METHOD_ID, WFDMessageContract.ID_SEND_SPF_ADVERTISING);
-                    wfdMsg.put(WFDMessageContract.KEY_ADV_PROFILE, profile);
-
-                    try {
-                        mMiddlewareRef.sendMessageBroadcast(wfdMsg);
-                    } catch (GroupException e) {
-                        Log.e(TAG, "GroupException " + e.getMessage());
-                    } catch (IOException e) {
-                        Log.e(TAG, "handleMessage IOException", e);
-                    }
-
-                    Message msgNew = obtainMessage(SEND_ADVERTISING);
-                    msgNew.getData().putString("profile", profile);
-                    msgNew.getData().putLong("period", delay);
-                    sendMessageDelayed(msgNew, delay);
-                    break;
-                default:
-                    super.handleMessage(msg);
-            }
-        }
-    }
 
 }

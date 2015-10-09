@@ -20,7 +20,7 @@
  */
 package it.polimi.spf.wfdadapter;
 
-interface WFDMessageContract {
+public interface WFDMessageContract {
 
 	String KEY_METHOD_ID = "methodName";
 	String KEY_REQUEST = "request";

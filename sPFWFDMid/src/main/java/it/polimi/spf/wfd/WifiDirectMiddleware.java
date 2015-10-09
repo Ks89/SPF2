@@ -31,6 +31,7 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
+import android.os.HandlerThread;
 import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
@@ -45,6 +46,7 @@ import java.util.List;
 import java.util.Map;
 
 import it.polimi.spf.wfd.events.Event;
+import it.polimi.spf.wfd.events.HandlerSendBroadcastEvent;
 import it.polimi.spf.wfd.events.MidConnectionEvent;
 import it.polimi.spf.wfd.events.NineBus;
 import it.polimi.spf.wfd.events.goEvent.GOConnectActionEvent;
@@ -59,6 +61,7 @@ import it.polimi.spf.wfd.listeners.CustomizableActionListener;
 import it.polimi.spf.wfd.listeners.GroupActorListener;
 import it.polimi.spf.wfd.listeners.WfdMiddlewareListener;
 import it.polimi.spf.wfd.util.WfdLog;
+import it.polimi.spf.wfdadapter.WFDMiddlewareAdapter;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -69,7 +72,6 @@ import lombok.Setter;
  * Wi-Fi Direct middleware interface to the ones required by SPF.
  */
 public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListener {
-
     private final static String TAG = WifiDirectMiddleware.class.getSimpleName();
     private static final int THIS_DEVICE_IS_GO = 15;
 
@@ -80,8 +82,10 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
     private final WfdBroadcastReceiver mReceiver;
     private WifiP2pManager mManager;
     private Channel mChannel;
-    private WifiP2pDnsSdServiceRequest mServiceRequest;
-    private WifiP2pDnsSdServiceInfo mInfo;
+
+    private HandlerThread handlerThread;
+    @Getter
+    private WfdHandler wfdHandler;
 
     @Getter
     private boolean connected = false;
@@ -106,9 +110,14 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
     }
 
     /**
-     * Method to connect. Called by {@link it.polimi.spf.wfdadapter.WFDMiddlewareAdapter#connect()}.
+     * Method called by {@link WFDMiddlewareAdapter#connect()}
      */
-    public void connect() {
+    public void init() {
+
+        handlerThread = new HandlerThread("wfd_middleware_adapter");
+        handlerThread.start();
+        wfdHandler = new WfdHandler(handlerThread.getLooper(), this);
+
         try {
             mPort = this.requestAvailablePortFromOs();
         } catch (IOException e) {
@@ -126,6 +135,16 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
         mReceiver.register(mContext);
         NineBus.get().register(this);
+    }
+
+    /**
+     * Method to connect. Called by {@link it.polimi.spf.wfdadapter.WFDMiddlewareAdapter#connect()}.
+     */
+    public void connect() {
+        if (isConnected()) {
+            Log.w(TAG, "Connect called but isConnected() == true");
+            return;
+        }
 
         this.startRegistration();
         this.discoverService();
@@ -145,7 +164,8 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         // Service information.  Pass it an instance name, service type
         // Configuration.SERVICE_REG_TYPE , and the map containing
         // information other devices will want once they connect to this one.
-        mInfo = WifiP2pDnsSdServiceInfo.newInstance(Configuration.SERVICE_INSTANCE + myIdentifier,
+        WifiP2pDnsSdServiceInfo mInfo = WifiP2pDnsSdServiceInfo.newInstance(
+                Configuration.SERVICE_INSTANCE + myIdentifier,
                 Configuration.SERVICE_REG_TYPE, mRecordMap);
 
         // Add the local service, sending the service info, network channel,
@@ -178,7 +198,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
         // After attaching listeners, create a service request and initiate
         // discovery.
-        mServiceRequest = WifiP2pDnsSdServiceRequest.newInstance();
+        WifiP2pDnsSdServiceRequest mServiceRequest = WifiP2pDnsSdServiceRequest.newInstance();
 
         //initiates discovery
         mManager.addServiceRequest(mChannel, mServiceRequest,
@@ -205,6 +225,15 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
 
     public void disconnect() {
+        if (!isConnected()) {
+            Log.e(TAG, "disconnect called but isConnected() == false");
+            return;
+        }
+
+        handlerThread.quit();
+        handlerThread = null;
+        wfdHandler = null;
+
         mReceiver.unregister(mContext);
         NineBus.get().unregister(this);
 
@@ -216,7 +245,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
                 "ClearServiceRequests failure",
                 "ClearServiceRequests failure",
                 false)); //important: sets false if you don't want detailed messages when this method fails
-        
+
         mManager.clearLocalServices(mChannel, new CustomizableActionListener(
                 this.mContext,
                 TAG,
@@ -235,14 +264,17 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
                 "CancelConnect failure",
                 false)); //important: sets false if you don't want detailed messages when this method fails
 
-        mManager.removeGroup(mChannel, new CustomizableActionListener(
-                this.mContext,
-                TAG,
-                "RemoveGroup success",
-                null,
-                "RemoveGroup failure",
-                "RemoveGroup failure",
-                true)); //important: sets true to get detailed message when this method fails
+        mManager.removeGroup(mChannel, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+                WfdLog.d(TAG, "RemoveGroup success");
+            }
+
+            @Override
+            public void onFailure(int reason) {
+                WfdLog.e(TAG, "RemoveGroup failure, with reason: " + reason);
+            }
+        });
 
         this.connected = false;
 
@@ -361,6 +393,8 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         mGroupActor = new GroupClientActor(groupOwnerAddress, destPort, actorListener, myIdentifier);
         this.postEvent(new GOConnectActionEvent(GOConnectActionEvent.CONNECT_STRING));
 
+        //TODO add here
+
     }
 
     private void instantiateGroupOwner() throws IOException {
@@ -433,22 +467,20 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
     public void sendMessage(WfdMessage msg, String targetId) throws IOException {
         msg.setSenderId(myIdentifier);
         msg.setReceiverId(targetId);
-        GroupActor tmp = mGroupActor;
-        if (tmp == null) {
+        if (mGroupActor == null) {
             throw new IOException("Group not yet instantiated");
         }
-        tmp.sendMessage(msg);
+        mGroupActor.sendMessage(msg);
 
     }
 
     public void sendMessageBroadcast(WfdMessage msg) throws IOException, GroupException {
         msg.setSenderId(myIdentifier);
         msg.setReceiverId(WfdMessage.BROADCAST_RECEIVER_ID);
-        GroupActor tmp = mGroupActor;
-        if (tmp == null) {
+        if (mGroupActor == null) {
             throw new GroupException("Group not yet instantiated");
         }
-        tmp.sendMessage(msg);
+        mGroupActor.sendMessage(msg);
     }
 
     public WfdMessage sendRequestMessage(WfdMessage msg, String targetId) {
@@ -456,11 +488,10 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         msg.setReceiverId(targetId);
         msg.setType(WfdMessage.TYPE_REQUEST);
         try {
-            GroupActor tmp = mGroupActor;
-            if (tmp == null) {
+            if (mGroupActor == null) {
                 return null;
             }
-            return tmp.sendRequestMessage(msg);
+            return mGroupActor.sendRequestMessage(msg);
         } catch (IOException e) {
             WfdLog.d(TAG, "sendRequestMessage( ) error", e);
             return null;
@@ -523,6 +554,20 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
                 break;
             default:
                 WfdLog.d(TAG, "Error, unknown GOConnectionEvent's state");
+        }
+    }
+
+    /**
+     * subscribe to catch events posted by {@link WfdHandler}.
+     */
+    @Subscribe
+    public void onSendBroadcastMessage(HandlerSendBroadcastEvent e) {
+        try {
+            this.sendMessageBroadcast(e.getMessage());
+        } catch (GroupException e1) {
+            WfdLog.e(TAG, "GroupException " + e.getMessage());
+        } catch (IOException e1) {
+            WfdLog.e(TAG, "handleMessage IOException", e1);
         }
     }
 
