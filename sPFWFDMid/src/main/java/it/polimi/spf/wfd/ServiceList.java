@@ -72,12 +72,18 @@ public class ServiceList {
         WfdLog.d(TAG, "addServiceIfNotPresent BEGIN, with size = " + serviceList.size());
 
         if (service == null) {
+            WfdLog.e(TAG, "Service is null, returning...");
             return;
         }
 
+        //FIXME, remove this log
+        WfdLog.d(TAG, "Also, service.getDevice() is null?: " + (service.getDevice() == null)
+                + " and service.getInstanceName() is null?: " + (service.getInstanceName() == null));
+
         boolean add = true;
         for (WiFiP2pService element : serviceList) {
-            if (element != null && element.getDevice().equals(service.getDevice())
+            if (element != null
+                    && element.getDevice().equals(service.getDevice())
                     && element.getInstanceName().equals(service.getInstanceName())) {
                 add = false; //already in the list
             }
