@@ -43,12 +43,16 @@ import it.polimi.spf.app.fragments.personas.PersonasFragment;
 import it.polimi.spf.app.fragments.profile.ProfileFragment;
 import it.polimi.spf.app.navigation.NavigationDrawerFragment;
 import it.polimi.spf.app.navigation.NavigationFragment;
+import it.polimi.spf.app.permissiondisclaimer.PermissionDisclaimerDialogFragment;
 import lombok.Getter;
 
-public class MainActivity extends Activity implements NavigationFragment.ItemSelectedListener {
+public class MainActivity extends Activity implements
+        NavigationFragment.ItemSelectedListener,
+        PermissionDisclaimerDialogFragment.PermissionDisclaimerListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int OVERLAY_PERMISSION_REQ_CODE = 1234;
+    private static final String DIAG_TAG = "DIAG_TAG";
 
 
     /**
@@ -86,25 +90,62 @@ public class MainActivity extends Activity implements NavigationFragment.ItemSel
             ((NavigationDrawerFragment) mNavigationDrawerFragment).setUpDrawer(R.id.navigation, drawerLayout);
         }
 
+        /*
+         * Workaround to fix the crash:
+		 * android.view.WindowManager$BadTokenException: Unable to add window
+		 * android.view.ViewRootImpl$W@3d67307 -- permission denied for this window type
+		 * that appears only on Android 6.0 Marshmallow or greater.
+		 * Start a dialog fragment to explain the procedure to the user.
+		 * When the user accepts, onClickOnUnderstoodButton() will be called.
+		 */
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
+            PermissionDisclaimerDialogFragment diagFrag =
+                    (PermissionDisclaimerDialogFragment) getFragmentManager().findFragmentByTag(DIAG_TAG);
+            if (diagFrag == null) {
+                diagFrag = PermissionDisclaimerDialogFragment.newInstance();
+                diagFrag.show(getFragmentManager(), DIAG_TAG);
+                getFragmentManager().executePendingTransactions();
+            }
+        }
 
-		/*
+    }
+
+    /**
+     * Method defined in
+     * {@link it.polimi.spf.app.permissiondisclaimer.PermissionDisclaimerDialogFragment.PermissionDisclaimerListener}
+     * and called by
+     * {@link it.polimi.spf.app.permissiondisclaimer.PermissionDisclaimerDialogFragment}
+     */
+    @Override
+    public void onClickConfirmButton() {
+        /*
          * Workaround to fix the crash:
 		 * android.view.WindowManager$BadTokenException: Unable to add window
 		 * android.view.ViewRootImpl$W@3d67307 -- permission denied for this window type
 		 * that appears only on Android 6.0 Marshmallow or greater.
 		 * See onActivityResult in this class!!!
 		 * This solution comes from: TODO ADD LINK HERE
-		*/
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (!Settings.canDrawOverlays(this)) {
-                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                        Uri.parse("package:" + getPackageName()));
-                Log.d(TAG, "canDrawOverlay not enabled. Requesting... ");
-                startActivityForResult(intent, OVERLAY_PERMISSION_REQ_CODE);
-            }
+		 */
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
+            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:" + getPackageName()));
+            Log.d(TAG, "canDrawOverlay not enabled. Requesting... ");
+            startActivityForResult(intent, OVERLAY_PERMISSION_REQ_CODE);
         }
     }
 
+    /**
+     * Method defined in
+     * {@link it.polimi.spf.app.permissiondisclaimer.PermissionDisclaimerDialogFragment.PermissionDisclaimerListener}
+     * and called by
+     * {@link it.polimi.spf.app.permissiondisclaimer.PermissionDisclaimerDialogFragment}
+     */
+    @Override
+    public void onClickDenyButton() {
+        Toast.makeText(this, "You must confirm to activate SPF", Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "User clicked on DenyButton in Permission Disclaimer Dialog Fragment");
+        finish();
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -116,16 +157,14 @@ public class MainActivity extends Activity implements NavigationFragment.ItemSel
 		 * that appears only on Android 6.0 Marshmallow or greater.
 		 * This code will be executed at the end of the onCreate() in this activity!!!
 		 * This solution comes from: TODO ADD LINK HERE
-		*/
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (requestCode == OVERLAY_PERMISSION_REQ_CODE) {
-                if (!Settings.canDrawOverlays(this)) {
-                    Toast.makeText(this, "Required permission not enabled!", Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "Required permission not enabled!");
-                    finish();
-                } else {
-                    Log.e(TAG, "WOW!!! Required permission enabled! Thank you ;)");
-                }
+		 */
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && requestCode == OVERLAY_PERMISSION_REQ_CODE) {
+            if (!Settings.canDrawOverlays(this)) {
+                Toast.makeText(this, "Required permission not enabled!", Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "Required permission not enabled!");
+                finish();
+            } else {
+                Log.d(TAG, "WOW!!! Required permission enabled! Thank you ;)");
             }
         }
     }
