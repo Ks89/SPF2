@@ -76,10 +76,6 @@ public class ServiceList {
             return;
         }
 
-        //FIXME, remove this log
-        WfdLog.d(TAG, "Also, service.getDevice() is null?: " + (service.getDevice() == null)
-                + " and service.getInstanceName() is null?: " + (service.getInstanceName() == null));
-
         boolean add = true;
         for (WiFiP2pService element : serviceList) {
             if (element != null
