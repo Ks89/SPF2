@@ -33,7 +33,6 @@ import it.polimi.spf.framework.proximity.SPFRemoteInstance;
 import it.polimi.spf.wfd.WfdHandler;
 import it.polimi.spf.wfd.WfdMessage;
 import it.polimi.spf.wfd.WifiDirectMiddleware;
-import it.polimi.spf.wfd.events.NineBus;
 import it.polimi.spf.wfd.exceptions.GroupException;
 import it.polimi.spf.wfd.listeners.WfdMiddlewareListener;
 
@@ -57,8 +56,6 @@ public class WFDMiddlewareAdapter implements ProximityMiddleware, WFDRemoteInsta
 
         WfdMiddlewareListener listener = new WFDMiddlewareListenerAdapter(proximityInterface, this);
         mMiddleware = new WifiDirectMiddleware(context, goIntentFromSPFApp, isAutonomous, identifier, listener);
-
-        NineBus.get().register(this);
     }
 
     @Override
