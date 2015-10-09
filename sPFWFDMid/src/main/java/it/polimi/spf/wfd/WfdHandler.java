@@ -36,11 +36,8 @@ public class WfdHandler extends Handler {
     private static final String TAG = WfdHandler.class.getSimpleName();
     public static final int SEND_ADVERTISING = 1;
 
-    private final WifiDirectMiddleware mMiddlewareRef;
-
-    public WfdHandler(Looper looper, WifiDirectMiddleware mMiddleware) {
+    public WfdHandler(Looper looper) {
         super(looper);
-        mMiddlewareRef = mMiddleware;
     }
 
     @Override
