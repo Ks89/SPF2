@@ -12,4 +12,9 @@ public abstract class Event {
     public Event(String type) {
         this.type = type;
     }
+
+    @Override
+    public String toString() {
+        return this.getType() + "";
+    }
 }

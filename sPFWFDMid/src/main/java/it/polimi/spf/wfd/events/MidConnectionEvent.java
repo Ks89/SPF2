@@ -7,9 +7,4 @@ public class MidConnectionEvent extends Event {
     public MidConnectionEvent(String type) {
         super(type);
     }
-
-    @Override
-    public String toString() {
-        return super.getType() + "";
-    }
 }
