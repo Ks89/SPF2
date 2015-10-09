@@ -26,9 +26,9 @@ import android.util.Log;
 
 import it.polimi.spf.wfd.Configuration;
 import it.polimi.spf.wfd.ServiceList;
-import it.polimi.spf.wfd.util.WfdLog;
 import it.polimi.spf.wfd.WiFiP2pService;
 import it.polimi.spf.wfd.WifiDirectMiddleware;
+import it.polimi.spf.wfd.util.WfdLog;
 
 /**
  * A custom Bonjour's DnsSdServiceResponseListener used to update the UI when a service is available.
@@ -59,11 +59,12 @@ public class CustomDnsServiceResponseListener implements WifiP2pManager.DnsSdSer
             //and here are updated with device name and other informations.
             WiFiP2pService service = ServiceList.getInstance().getServiceByDeviceAddress(srcDevice.deviceAddress);
             //Indeed, Here i'm updating the device with the human-friendly version from the DnsTxtRecord, assuming one arrived.
-            service.setDevice(srcDevice);
-            //And i also update this additional informations
-            service.setInstanceName(instanceName);
-            service.setServiceRegistrationType(registrationType);
-
+            if (service != null) {
+                service.setDevice(srcDevice);
+                //And i also update this additional informations
+                service.setInstanceName(instanceName);
+                service.setServiceRegistrationType(registrationType);
+            }
             Log.d(TAG, "onDnsSdServiceAvailable " + instanceName);
 
             if (!wifiDirectMiddleware.getOnServiceDiscovered().onIsGroupCreated()) {
