@@ -1,6 +1,6 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="AppBaseTheme" parent="android:Theme.Holo.Light"/>
+    <style name="AppBaseTheme" parent="android:Theme.Holo.Light" />
 
     <style name="title">
         <item name="android:layout_width">wrap_content</item>
@@ -40,17 +40,30 @@
         <item name="android:gravity">center_vertical</item>
         <item name="android:textSize">@dimen/content_text_size</item>
     </style>
-    
+
     <style name="profileFieldVisibility">
-        
+
     </style>
 
-    <style name="SPFActionBar" parent="@android:style/Widget.Holo.Light.ActionBar.Solid"></style>
+    <style name="SPFActionBar" parent="@android:style/Widget.Holo.Light.ActionBar.Solid" />
 
     <style name="ActionBarSpinnerItem">
         <item name="android:textColor">#ffffff</item>
     </style>
 
-    <style name="AppTheme" parent="AppBaseTheme"></style>
+    <style name="AppTheme" parent="AppBaseTheme" />
+
+    <!-- Theme for custom dialog fragments with @color/transparent_diagfrag as background-->
+    <style name="MyDialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowBackground">@color/diagfrag</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowTitleStyle">@null</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+        <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
+        <item name="android:gravity">center</item>
+    </style>
 
 </resources>

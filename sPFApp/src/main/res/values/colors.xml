@@ -22,4 +22,6 @@
     <color name="gray">#737373</color>
     <color name="white">#FFFFFF</color>
 
+
+    <color name="diagfrag">#f5f5f5</color>
 </resources>
