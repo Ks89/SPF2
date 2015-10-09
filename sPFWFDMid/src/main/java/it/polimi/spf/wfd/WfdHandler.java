@@ -30,7 +30,7 @@ import it.polimi.spf.wfd.events.NineBus;
 import it.polimi.spf.wfdadapter.WFDMessageContract;
 
 /**
- * Created by Ks89 on 09/10/15.
+ * Created by Stefano Cappa on 09/10/15.
  */
 public class WfdHandler extends Handler {
     private static final String TAG = WfdHandler.class.getSimpleName();

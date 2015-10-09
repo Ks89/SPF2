@@ -24,7 +24,7 @@ import it.polimi.spf.wfd.WfdMessage;
 import lombok.Getter;
 
 /**
- * Created by Ks89 on 09/10/15.
+ * Created by Stefano Cappa on 09/10/15.
  */
 public class HandlerSendBroadcastEvent extends Event {
 
