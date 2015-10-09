@@ -77,7 +77,6 @@ public class PopupAppRegistrationHandler implements AppRegistrationHandler {
 		}
 
 		// See http://www.doubleencore.com/2013/05/layout-inflation-as-intended/
-		@SuppressLint("InflateParams")
 		public View getView() {
 			View v = LayoutInflater.from(mContext).inflate(R.layout.app_auth_dialog, null);
 			((TextView) v.findViewById(R.id.app_name_view)).setText(mDescriptor.getAppName());
@@ -97,7 +96,7 @@ public class PopupAppRegistrationHandler implements AppRegistrationHandler {
 
 			// Show persona list
 			List<SPFPersona> personas = SPF.get().getProfileManager().getAvailablePersonas();
-			ArrayAdapter<SPFPersona> personaAdapter = new ArrayAdapter<SPFPersona>(mContext, android.R.layout.simple_list_item_1, personas);
+			ArrayAdapter<SPFPersona> personaAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, personas);
 			Spinner personaSpinner = (Spinner) v.findViewById(R.id.app_persona);
 			personaSpinner.setOnItemSelectedListener(this);
 			personaSpinner.setAdapter(personaAdapter);

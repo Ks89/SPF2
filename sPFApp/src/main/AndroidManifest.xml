@@ -13,7 +13,6 @@
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
-
     <!-- Permission for app registration popup -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 

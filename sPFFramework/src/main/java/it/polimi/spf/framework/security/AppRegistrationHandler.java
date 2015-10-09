@@ -21,6 +21,7 @@ package it.polimi.spf.framework.security;
 
 import android.content.Context;
 import android.util.Log;
+
 import it.polimi.spf.framework.SPF;
 import it.polimi.spf.framework.profile.SPFPersona;
 import it.polimi.spf.shared.aidl.SPFAppRegistrationCallback;
@@ -29,72 +30,67 @@ import it.polimi.spf.shared.model.AppDescriptor;
 /**
  * Strategy to handle the registration requests coming from external apps, to be
  * plugged into {@link SPF}
- * 
+ *
  * @author darioarchetti
  * @see SPF#setAppRegistrationHandler(AppRegistrationHandler)
  */
 public interface AppRegistrationHandler {
 
-	/**
-	 * Callback to notify the framework of the outcome of the registration
-	 * procedure.
-	 * 
-	 * @author darioarchetti
-	 * @see #onRequestAccepted()
-	 * @see #onRequestRefused()
-	 */
-	≤interface Callback {
-		/**
-		 * Called when the request is refused
-		 * 
-		 * @param persona
-		 *            - the persona that is to be assigned to the registered app
-		 */
-		void onRequestAccepted(SPFPersona persona);
+    /**
+     * Callback to notify the framework of the outcome of the registration
+     * procedure.
+     *
+     * @author darioarchetti
+     * @see #onRequestAccepted()
+     * @see #onRequestRefused()
+     */
+    interface Callback {
+        /**
+         * Called when the request is refused
+         *
+         * @param persona - the persona that is to be assigned to the registered app
+         */
+        void onRequestAccepted(SPFPersona persona);
 
-		/**
-		 * Called when the request is accepted
-		 */
-		void onRequestRefused();
-	}
+        /**
+         * Called when the request is accepted
+         */
+        void onRequestRefused();
+    }
 
-	/**
-	 * Handle a registration request coming from the application described by
-	 * the given {@link AppDescriptor} and notify the outcome of the
-	 * registration to the given {@link SPFAppRegistrationCallback}. The call to
-	 * this method is performed on the main thread.
-	 * 
-	 * @param context
-	 *            - reference to the application context
-	 * @param descriptor
-	 *            - the descriptor of the app that wants to register
-	 * @param callback
-	 *            - the callback to notify of the outcome
-	 */
-	public void handleRegistrationRequest(Context context, AppDescriptor descriptor, AppRegistrationHandler.Callback callback);
+    /**
+     * Handle a registration request coming from the application described by
+     * the given {@link AppDescriptor} and notify the outcome of the
+     * registration to the given {@link SPFAppRegistrationCallback}. The call to
+     * this method is performed on the main thread.
+     *
+     * @param context    - reference to the application context
+     * @param descriptor - the descriptor of the app that wants to register
+     * @param callback   - the callback to notify of the outcome
+     */
+    public void handleRegistrationRequest(Context context, AppDescriptor descriptor, AppRegistrationHandler.Callback callback);
 
-	/**
-	 * Default implementation of {@link AppRegistrationHandler} that
-	 * automatically discards all requests.
-	 * 
-	 * @author darioarchetti
-	 * 
-	 */
-	class Default implements AppRegistrationHandler {
+    /**
+     * Default implementation of {@link AppRegistrationHandler} that
+     * automatically discards all requests.
+     *
+     * @author darioarchetti
+     */
+    class Default implements AppRegistrationHandler {
 
-		private final static String TAG = "DefaultAppRegistHandler";
+        private final static String TAG = "DefaultAppRegistHandler";
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see it.polimi.spf.framework.security.AppRegistrationHandler#
-		 * handleRegistrationRequest(it.polimi.spf.shared.model.AppDescriptor,
-		 * it.polimi.spf.shared.aidl.SPFAppRegistrationCallback)
-		 */
-		@Override
-		public void handleRegistrationRequest(Context context, AppDescriptor descriptor, AppRegistrationHandler.Callback callback) {
-			Log.v(TAG, "Request from" + descriptor.getAppName() + " refused by default handler");
-			callback.onRequestRefused();
-		}
-	}
+        /*
+         * (non-Javadoc)
+         *
+         * @see it.polimi.spf.framework.security.AppRegistrationHandler#
+         * handleRegistrationRequest(it.polimi.spf.shared.model.AppDescriptor,
+         * it.polimi.spf.shared.aidl.SPFAppRegistrationCallback)
+         */
+        @Override
+        public void handleRegistrationRequest(Context context, AppDescriptor descriptor, AppRegistrationHandler.Callback callback) {
+            Log.v(TAG, "Request from" + descriptor.getAppName() + " refused by default handler");
+            callback.onRequestRefused();
+        }
+    }
 }
