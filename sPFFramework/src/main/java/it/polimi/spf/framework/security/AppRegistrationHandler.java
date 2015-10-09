@@ -43,7 +43,7 @@ public interface AppRegistrationHandler {
 	 * @see #onRequestAccepted()
 	 * @see #onRequestRefused()
 	 */
-	public static interface Callback {
+	≤interface Callback {
 		/**
 		 * Called when the request is refused
 		 * 
@@ -80,9 +80,9 @@ public interface AppRegistrationHandler {
 	 * @author darioarchetti
 	 * 
 	 */
-	public static class Default implements AppRegistrationHandler {
+	class Default implements AppRegistrationHandler {
 
-		private final static String TAG = "DefaultAppRegistrationHandler";
+		private final static String TAG = "DefaultAppRegistHandler";
 
 		/*
 		 * (non-Javadoc)

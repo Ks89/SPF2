@@ -30,15 +30,15 @@ import it.polimi.spf.shared.model.Permission;
 /**
  * {@link AppRegistrationHandler} implementation that displays a popup to let
  * the user choose whether or not to accept the registration request.
- * 
+ *
  * @author darioarchetti
- * 
+ *
  */
 public class PopupAppRegistrationHandler implements AppRegistrationHandler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.polimi.spf.framework.security.AppRegistrationHandler#
 	 * handleRegistrationRequest(android.content.Context,
 	 * it.polimi.spf.shared.model.AppDescriptor,
