@@ -27,6 +27,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
@@ -47,7 +48,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.astuetz.PagerSlidingTabStrip;
 import com.soundcloud.android.crop.Crop;
 
 import java.io.File;
@@ -56,7 +56,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Locale;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polimi.spf.app.R;
 import it.polimi.spf.app.fragments.contacts.ContactConfirmDialogView;
@@ -68,6 +71,11 @@ import it.polimi.spf.shared.model.ProfileFieldContainer;
 
 public class ProfileFragment extends Fragment implements LoaderManager.LoaderCallbacks<ProfileFieldContainer>,
         OnItemSelectedListener, OnClickListener {
+
+    @Bind(R.id.profileedit_tabs)
+    TabLayout tabLayout;
+    @Bind(R.id.profileedit_pager)
+    ViewPager mViewPager;
 
     /**
      * Possible visualization modes of fields values.
@@ -155,7 +163,9 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.content_fragment_profile, container, false);
+        View root = inflater.inflate(R.layout.content_fragment_profile, container, false);
+        ButterKnife.bind(this, root);
+        return root;
     }
 
     @Override
@@ -271,15 +281,31 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         Log.d(TAG, "onProfileDataAvailable");
         mFactory = new ProfileFieldViewFactory(getActivity(), mMode, mCurrentPersona, mContainer);
 
-        // Populate field list
-        ProfilePagerAdapter mPagerAdapter = new ProfilePagerAdapter(getActivity(), getChildFragmentManager(), mMode);
-        ViewPager mViewPager = (ViewPager) getView().findViewById(R.id.profileedit_pager);
+        String[] mPageTitles = this.getResources().getStringArray(R.array.profileedit_fragments_titles);
+
+        tabLayout.addTab(tabLayout.newTab().setText(mPageTitles[0].toUpperCase(Locale.getDefault())));
+        tabLayout.addTab(tabLayout.newTab().setText(mPageTitles[1].toUpperCase(Locale.getDefault())));
+        tabLayout.addTab(tabLayout.newTab().setText(mPageTitles[2].toUpperCase(Locale.getDefault())));
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+
+        ProfilePagerAdapter mPagerAdapter = new ProfilePagerAdapter(getChildFragmentManager(), mMode, tabLayout.getTabCount());
 
         mViewPager.setAdapter(mPagerAdapter);
-        mViewPager.setOffscreenPageLimit(2);
+        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                mViewPager.setCurrentItem(tab.getPosition());
+            }
 
-        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) getView().findViewById(R.id.profileedit_tabs);
-        tabs.setViewPager(mViewPager);
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+            }
+        });
 
         showPicture(mContainer.getFieldValue(ProfileField.PHOTO));
 

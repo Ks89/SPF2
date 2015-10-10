@@ -19,32 +19,28 @@
  */
 package it.polimi.spf.app.fragments.profile;
 
-import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import it.polimi.spf.app.R;
 import it.polimi.spf.shared.model.ProfileField;
 
 public class ProfilePagerAdapter extends FragmentStatePagerAdapter {
-
-    private static final int PAGE_COUNT = 3;
-
     public static final ProfileField<?>[] DEFAULT_FIELDS = {ProfileField.IDENTIFIER, ProfileField.DISPLAY_NAME, ProfileField.GENDER, ProfileField.BIRTHDAY, ProfileField.LOCATION, ProfileField.EMAILS, ProfileField.ABOUT_ME, ProfileField.STATUS, ProfileField.PHOTO, ProfileField.INTERESTS};
     public static final ProfileField<?>[] PERSONAL_FIELDS = {ProfileField.IDENTIFIER, ProfileField.DISPLAY_NAME, ProfileField.GENDER, ProfileField.BIRTHDAY, ProfileField.LOCATION, ProfileField.EMAILS};
     public static final ProfileField<?>[] EDITABLE_PERSONAL_FIELDS = {ProfileField.DISPLAY_NAME, ProfileField.GENDER, ProfileField.BIRTHDAY, ProfileField.LOCATION, ProfileField.EMAILS};
     public static ProfileField<?>[] ABOUT_ME_FIELDS = {ProfileField.ABOUT_ME, ProfileField.STATUS};
     public static ProfileField<?>[] TAG_FIELDS = {ProfileField.INTERESTS};
 
-    private final String[] mPageTitles;
-    private ProfileFieldsFragment[] mCurrentFragments = new ProfileFieldsFragment[PAGE_COUNT];
+    private int mNumOfTabs;
+    private ProfileFieldsFragment[] mCurrentFragments;
     private ProfileFragment.Mode mMode;
 
-    public ProfilePagerAdapter(Context context, FragmentManager fm, ProfileFragment.Mode mode) {
+    public ProfilePagerAdapter(FragmentManager fm, ProfileFragment.Mode mode, int mNumOfTabs) {
         super(fm);
-        mPageTitles = context.getResources().getStringArray(R.array.profileedit_fragments_titles);
-        mMode = mode;
+        this.mMode = mode;
+        this.mNumOfTabs = mNumOfTabs;
+        this.mCurrentFragments = new ProfileFieldsFragment[this.mNumOfTabs];
     }
 
     @Override
@@ -62,7 +58,7 @@ public class ProfilePagerAdapter extends FragmentStatePagerAdapter {
                 fields = ABOUT_ME_FIELDS;
                 break;
             default:
-                throw new IndexOutOfBoundsException("Page " + arg0 + "/" + PAGE_COUNT);
+                throw new IndexOutOfBoundsException("Page " + arg0 + "/" + this.mNumOfTabs);
         }
 
         ProfileFieldsFragment fragment = ProfileFieldsFragment.newInstance(fields);
@@ -79,12 +75,7 @@ public class ProfilePagerAdapter extends FragmentStatePagerAdapter {
     }
 
     @Override
-    public CharSequence getPageTitle(int position) {
-        return mPageTitles[position];
-    }
-
-    @Override
     public int getCount() {
-        return PAGE_COUNT;
+        return this.mNumOfTabs;
     }
 }

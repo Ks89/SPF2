@@ -20,14 +20,14 @@
 package it.polimi.spf.app.fragments.appmanager;
 
 import android.app.AlertDialog;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v13.app.FragmentPagerAdapter;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -36,24 +36,37 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.astuetz.PagerSlidingTabStrip;
+import java.util.Locale;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import it.polimi.spf.app.R;
 import it.polimi.spf.framework.SPF;
 import it.polimi.spf.framework.security.AppAuth;
 
 public class AppDetailActivity extends AppCompatActivity {
-
     private static final String TAG = null;
-    public static String APP_AUTH_KEY = "app_auth";
+    public static final String APP_AUTH_KEY = "app_auth";
+
+    @Bind(R.id.app_detail_tabs)
+    TabLayout tabLayout;
+    @Bind(R.id.app_detail_pager)
+    ViewPager mViewPager;
+    @Bind(R.id.app_name_view)
+    TextView appNameTextView;
+    @Bind(R.id.app_identifier_view)
+    TextView appIdTextView;
+    @Bind(R.id.app_icon_view)
+    ImageView appIconImageView;
+
     private AppAuth mAppAuth;
-    private SectionsPagerAdapter mSectionsPagerAdapter;
-    private ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_app_detail);
+
+        ButterKnife.bind(this);
 
         if (savedInstanceState == null) {
             mAppAuth = getIntent().getParcelableExtra(APP_AUTH_KEY);
@@ -73,16 +86,33 @@ public class AppDetailActivity extends AppCompatActivity {
             return;
         }
 
-        ((TextView) findViewById(R.id.app_name_view)).setText(mAppAuth.getAppName());
-        ((TextView) findViewById(R.id.app_identifier_view)).setText(mAppAuth.getAppIdentifier());
-        ((ImageView) findViewById(R.id.app_icon_view)).setBackground(icon);
+        appNameTextView.setText(mAppAuth.getAppName());
+        appIdTextView.setText(mAppAuth.getAppIdentifier());
+        appIconImageView.setBackground(icon);
 
-        mSectionsPagerAdapter = new SectionsPagerAdapter(this, mAppAuth, getFragmentManager());
-        mViewPager = (ViewPager) findViewById(R.id.app_detail_pager);
+        String[] mPageTitles = getResources().getStringArray(R.array.appmanager_fragments_titles);
+        tabLayout.addTab(tabLayout.newTab().setText(mPageTitles[0].toUpperCase(Locale.getDefault())));
+        tabLayout.addTab(tabLayout.newTab().setText(mPageTitles[1].toUpperCase(Locale.getDefault())));
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+
+        SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(mAppAuth,
+                getSupportFragmentManager(), tabLayout.getTabCount());
         mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                mViewPager.setCurrentItem(tab.getPosition());
+            }
 
-        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.app_detail_tabs);
-        tabs.setViewPager(mViewPager);
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+            }
+        });
 
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -147,16 +177,13 @@ public class AppDetailActivity extends AppCompatActivity {
      * one of the sections/tabs/pages.
      */
     private static class SectionsPagerAdapter extends FragmentPagerAdapter {
-
-        private static final int NUM_OF_PAGES = 2;
-
         private AppAuth mappAuth;
-        private String[] mPageTitles;
+        private int mNumOfTabs;
 
-        public SectionsPagerAdapter(Context context, AppAuth appAuth, FragmentManager fm) {
+        public SectionsPagerAdapter(AppAuth appAuth, FragmentManager fm, int mNumOfTabs) {
             super(fm);
             this.mappAuth = appAuth;
-            mPageTitles = context.getResources().getStringArray(R.array.appmanager_fragments_titles);
+            this.mNumOfTabs = mNumOfTabs;
         }
 
         @Override
@@ -173,7 +200,7 @@ public class AppDetailActivity extends AppCompatActivity {
                     fragment = new AppServicesFragment();
                     break;
                 default:
-                    throw new IndexOutOfBoundsException("Pages count: " + NUM_OF_PAGES + ", requested: " + position);
+                    throw new IndexOutOfBoundsException("Pages count: " + mNumOfTabs + ", requested: " + position);
             }
 
             fragment.setArguments(bundle);
@@ -182,12 +209,7 @@ public class AppDetailActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return NUM_OF_PAGES;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mPageTitles[position];
+            return mNumOfTabs;
         }
     }
 }

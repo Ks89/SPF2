@@ -19,8 +19,8 @@
  */
 package it.polimi.spf.app.fragments.contacts;
 
-import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -29,39 +29,67 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.astuetz.PagerSlidingTabStrip;
+import java.util.Locale;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import it.polimi.spf.app.R;
 
 public class ContactsFragment extends Fragment {
 
+    @Bind(R.id.contacts_tabs)
+    TabLayout tabLayout;
+    @Bind(R.id.contacts_pager)
+    ViewPager mViewPager;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.content_fragment_contacts, container, false);
+        View root = inflater.inflate(R.layout.content_fragment_contacts, container, false);
+        ButterKnife.bind(this, root);
+        return root;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        ContactsPagerAdapter pagerAdapter = new ContactsPagerAdapter(getChildFragmentManager(), getActivity());
-        ViewPager viewPager = (ViewPager) getView().findViewById(R.id.contacts_pager);
+        String[] mPageTitles = getResources().getStringArray(R.array.contacts_fragments_titles);
+        tabLayout.addTab(tabLayout.newTab().setText(mPageTitles[0].toUpperCase(Locale.getDefault())));
+        tabLayout.addTab(tabLayout.newTab().setText(mPageTitles[1].toUpperCase(Locale.getDefault())));
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        viewPager.setAdapter(pagerAdapter);
-        viewPager.setOffscreenPageLimit(2);
+        ContactsPagerAdapter pagerAdapter = new ContactsPagerAdapter(getChildFragmentManager(), tabLayout.getTabCount());
 
-        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) getView().findViewById(R.id.contacts_tabs);
-        tabs.setViewPager(viewPager);
+        mViewPager.setAdapter(pagerAdapter);
+        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                mViewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+            }
+        });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
     }
 
     private static class ContactsPagerAdapter extends FragmentStatePagerAdapter {
+        private int mNumOfTabs;
 
-        private final static int PAGE_COUNT = 2;
-        private final String[] mPageTitles;
-
-        public ContactsPagerAdapter(FragmentManager fm, Context context) {
+        public ContactsPagerAdapter(FragmentManager fm, int numOfTabs) {
             super(fm);
-            mPageTitles = context.getResources().getStringArray(R.array.contacts_fragments_titles);
+            this.mNumOfTabs = numOfTabs;
         }
 
         @Override
@@ -78,12 +106,7 @@ public class ContactsFragment extends Fragment {
 
         @Override
         public int getCount() {
-            return PAGE_COUNT;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mPageTitles[position];
+            return mNumOfTabs;
         }
     }
 

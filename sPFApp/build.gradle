@@ -61,8 +61,6 @@ dependencies {
     compile project(':sPFWFDMid')
     provided 'org.projectlombok:lombok:1.16.6'
 
-    //TODO replace com.astuetz:pagerslidingtabstrip with the new design library by google
-    compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
     compile 'com.android.support:appcompat-v7:23.0.1'
     compile 'com.android.support:support-v13:23.0.1'
     compile 'com.android.support:support-v4:23.0.1'

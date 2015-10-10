@@ -19,16 +19,9 @@
  */
 package it.polimi.spf.app.fragments.appmanager;
 
-import java.util.Arrays;
-import java.util.List;
-
-import it.polimi.spf.app.R;
-import it.polimi.spf.framework.SPF;
-import it.polimi.spf.framework.security.AppAuth;
-import it.polimi.spf.shared.model.SPFServiceDescriptor;
-import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,78 +29,86 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.Arrays;
+import java.util.List;
+
+import it.polimi.spf.app.R;
+import it.polimi.spf.framework.SPF;
+import it.polimi.spf.framework.security.AppAuth;
+import it.polimi.spf.shared.model.SPFServiceDescriptor;
+
 public class AppServicesFragment extends Fragment {
 
-	private AppAuth mAppAuth;
+    private AppAuth mAppAuth;
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.appmanager_service_fragment, container, false);
-	}
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.appmanager_service_fragment, container, false);
+    }
 
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
-		ListView serviceList = (ListView) getView().findViewById(R.id.appmanager_service_list);
+        ListView serviceList = (ListView) getView().findViewById(R.id.appmanager_service_list);
 
-		if (savedInstanceState == null) {
-			mAppAuth = getArguments().getParcelable(AppDetailActivity.APP_AUTH_KEY);
-		} else {
-			mAppAuth = savedInstanceState.getParcelable(AppDetailActivity.APP_AUTH_KEY);
-		}
+        if (savedInstanceState == null) {
+            mAppAuth = getArguments().getParcelable(AppDetailActivity.APP_AUTH_KEY);
+        } else {
+            mAppAuth = savedInstanceState.getParcelable(AppDetailActivity.APP_AUTH_KEY);
+        }
 
-		if (mAppAuth == null) {
-			throw new IllegalStateException("AppAuth not found");
-		}
+        if (mAppAuth == null) {
+            throw new IllegalStateException("AppAuth not found");
+        }
 
-		SPFServiceDescriptor[] services = SPF.get().getServiceRegistry().getServicesOfApp(mAppAuth.getAppIdentifier());
-		serviceList.setAdapter(new ServiceAdapter(getActivity(), Arrays.asList(services)));
-		serviceList.setEmptyView(getView().findViewById(R.id.app_manager_services_list_emptyview));
-	}
+        SPFServiceDescriptor[] services = SPF.get().getServiceRegistry().getServicesOfApp(mAppAuth.getAppIdentifier());
+        serviceList.setAdapter(new ServiceAdapter(getActivity(), Arrays.asList(services)));
+        serviceList.setEmptyView(getView().findViewById(R.id.app_manager_services_list_emptyview));
+    }
 
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		outState.putParcelable(AppDetailActivity.APP_AUTH_KEY, mAppAuth);
-	}
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(AppDetailActivity.APP_AUTH_KEY, mAppAuth);
+    }
 
-	private static class ServiceAdapter extends ArrayAdapter<SPFServiceDescriptor> {
+    private static class ServiceAdapter extends ArrayAdapter<SPFServiceDescriptor> {
 
-		public ServiceAdapter(Context context, List<SPFServiceDescriptor> services) {
-			super(context, android.R.layout.simple_list_item_2, services);
-		}
+        public ServiceAdapter(Context context, List<SPFServiceDescriptor> services) {
+            super(context, android.R.layout.simple_list_item_2, services);
+        }
 
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			View v = convertView != null ? convertView : LayoutInflater.from(getContext()).inflate(R.layout.appmanager_service_entry, parent, false);
-			ViewHolder holder = ViewHolder.from(v);
-			SPFServiceDescriptor desc = getItem(position);
-			holder.name.setText(desc.getServiceName());
-			holder.desc.setText(desc.getDescription());
-			return v;
-		}
-	}
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View v = convertView != null ? convertView : LayoutInflater.from(getContext()).inflate(R.layout.appmanager_service_entry, parent, false);
+            ViewHolder holder = ViewHolder.from(v);
+            SPFServiceDescriptor desc = getItem(position);
+            holder.name.setText(desc.getServiceName());
+            holder.desc.setText(desc.getDescription());
+            return v;
+        }
+    }
 
-	private static class ViewHolder {
+    private static class ViewHolder {
 
-		public static ViewHolder from(View v) {
-			Object o = v.getTag();
-			if (o != null && o instanceof ViewHolder) {
-				return (ViewHolder) o;
-			}
+        public static ViewHolder from(View v) {
+            Object o = v.getTag();
+            if (o != null && o instanceof ViewHolder) {
+                return (ViewHolder) o;
+            }
 
-			ViewHolder holder = new ViewHolder(v);
-			v.setTag(holder);
-			return holder;
-		}
+            ViewHolder holder = new ViewHolder(v);
+            v.setTag(holder);
+            return holder;
+        }
 
-		public final TextView desc;
-		public final TextView name;
+        public final TextView desc;
+        public final TextView name;
 
-		private ViewHolder(View view) {
-			this.name = (TextView) view.findViewById(R.id.appmanager_service_name);
-			this.desc = (TextView) view.findViewById(R.id.appmanager_service_description);
-		}
-	}
+        private ViewHolder(View view) {
+            this.name = (TextView) view.findViewById(R.id.appmanager_service_name);
+            this.desc = (TextView) view.findViewById(R.id.appmanager_service_description);
+        }
+    }
 }

@@ -19,44 +19,45 @@
  */
 package it.polimi.spf.app.fragments.appmanager;
 
-import it.polimi.spf.app.R;
-import it.polimi.spf.framework.security.AppAuth;
-import it.polimi.spf.shared.model.Permission;
-import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import it.polimi.spf.app.R;
+import it.polimi.spf.framework.security.AppAuth;
+import it.polimi.spf.shared.model.Permission;
+
 public class AppPermissionsFragment extends Fragment {
 
-	private AppAuth mAppAuth;
+    private AppAuth mAppAuth;
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.appmanager_permission_fragment, container, false);
-	}
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.appmanager_permission_fragment, container, false);
+    }
 
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		
-		if (savedInstanceState == null) {
-			mAppAuth = getArguments().getParcelable(AppDetailActivity.APP_AUTH_KEY);
-		} else {
-			mAppAuth = savedInstanceState.getParcelable(AppDetailActivity.APP_AUTH_KEY);
-		}
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
-		ListView list = (ListView) getView().findViewById(R.id.appmanager_permission_list);
-		Permission[] permissionList = mAppAuth.getPermissions();
-		list.setAdapter(new PermissionArrayAdapter(getActivity(), permissionList));
-		list.setEmptyView(getView().findViewById(R.id.app_manager_permission_list_emptyview));
-	}
+        if (savedInstanceState == null) {
+            mAppAuth = getArguments().getParcelable(AppDetailActivity.APP_AUTH_KEY);
+        } else {
+            mAppAuth = savedInstanceState.getParcelable(AppDetailActivity.APP_AUTH_KEY);
+        }
 
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		outState.putParcelable(AppDetailActivity.APP_AUTH_KEY, mAppAuth);
-	}
+        ListView list = (ListView) getView().findViewById(R.id.appmanager_permission_list);
+        Permission[] permissionList = mAppAuth.getPermissions();
+        list.setAdapter(new PermissionArrayAdapter(getActivity(), permissionList));
+        list.setEmptyView(getView().findViewById(R.id.app_manager_permission_list_emptyview));
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(AppDetailActivity.APP_AUTH_KEY, mAppAuth);
+    }
 }
