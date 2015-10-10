@@ -19,6 +19,13 @@
  */
 package it.polimi.spf.app.fragments.personas;
 
+import android.app.Fragment;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -28,102 +35,98 @@ import it.polimi.spf.app.fragments.personas.ProfileFieldCirclePickerItem.OnChang
 import it.polimi.spf.framework.SPF;
 import it.polimi.spf.framework.profile.SPFPersona;
 import it.polimi.spf.shared.model.ProfileField;
-import android.app.Fragment;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 public class PersonasCirclesFragment extends Fragment {
 
-	private SPFPersona mPersona;
+    private SPFPersona mPersona;
 
-	private final ProfileField<?>[] mProfileFieldsToShow = {
-			ProfileField.GENDER,
-			ProfileField.BIRTHDAY,
-			ProfileField.LOCATION,
-			ProfileField.EMAILS,
-			ProfileField.ABOUT_ME,
-			ProfileField.STATUS,
-			ProfileField.PHOTO,
-			ProfileField.INTERESTS };
+    private final ProfileField<?>[] mProfileFieldsToShow = {
+            ProfileField.GENDER,
+            ProfileField.BIRTHDAY,
+            ProfileField.LOCATION,
+            ProfileField.EMAILS,
+            ProfileField.ABOUT_ME,
+            ProfileField.STATUS,
+            ProfileField.PHOTO,
+            ProfileField.INTERESTS};
 
-	public static ProfileField<?>[] TAG_FIELDS = { ProfileField.INTERESTS };
+    public static ProfileField<?>[] TAG_FIELDS = {ProfileField.INTERESTS};
 
-	public PersonasCirclesFragment() {
-		// use new instance to generate a new object
-	}
+    public PersonasCirclesFragment() {
+        // use new instance to generate a new object
+    }
 
-	public static PersonasCirclesFragment newInstance(SPFPersona persona) {
-		Bundle b = new Bundle();
-		b.putParcelable("persona", persona);
-		PersonasCirclesFragment fr = new PersonasCirclesFragment();
-		fr.setArguments(b);
-		return fr;
-	}
+    public static PersonasCirclesFragment newInstance(SPFPersona persona) {
+        Bundle b = new Bundle();
+        b.putParcelable("persona", persona);
+        PersonasCirclesFragment fr = new PersonasCirclesFragment();
+        fr.setArguments(b);
+        return fr;
+    }
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		Bundle data = savedInstanceState == null ? getArguments()
-				: savedInstanceState;
-		mPersona = data.getParcelable("persona");
-	}
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle data = savedInstanceState == null ? getArguments()
+                : savedInstanceState;
+        mPersona = data.getParcelable("persona");
+    }
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
 
-		View v = inflater.inflate(R.layout.personas_circle_fragment, container,
-				false);
-		LinearLayout layout = (LinearLayout) v
-				.findViewById(R.id.personas_circle_fragment_layout);
-		Collection<String> circles = SPF.get().getSecurityMonitor().getPersonRegistry().getGroups();
-		Bundle bc = SPF.get().getProfileManager().getGroupsOf(mPersona);
-		for (ProfileField<?> f : mProfileFieldsToShow) {
-			ProfileFieldCirclePickerItem item = new ProfileFieldCirclePickerItem(
-					getActivity());
-			item.setProfileField(f);
-			item.setOnChangeListener(listener);
-			// FIXME circles are string.... but what about translation of the
-			// default ones?
-			List<String> selected = bc.getStringArrayList(f.getIdentifier());
-			if (selected == null) {
-				selected = new ArrayList<String>(0);
-			}
-			List<String> selectable = new ArrayList<String>(circles);
-			selectable.removeAll(selected);
-			item.setCircles(selected, selectable);
-			layout.addView(item);
-		}
-		return v;
+        View v = inflater.inflate(R.layout.personas_circle_fragment, container,
+                false);
+        LinearLayout layout = (LinearLayout) v
+                .findViewById(R.id.personas_circle_fragment_layout);
+        Collection<String> circles = SPF.get().getSecurityMonitor().getPersonRegistry().getGroups();
+        Bundle bc = SPF.get().getProfileManager().getGroupsOf(mPersona);
+        for (ProfileField<?> f : mProfileFieldsToShow) {
+            ProfileFieldCirclePickerItem item = new ProfileFieldCirclePickerItem(
+                    getActivity());
+            item.setProfileField(f);
+            item.setOnChangeListener(listener);
+            // FIXME circles are string.... but what about translation of the
+            // default ones?
+            List<String> selected = bc.getStringArrayList(f.getIdentifier());
+            if (selected == null) {
+                selected = new ArrayList<String>(0);
+            }
+            List<String> selectable = new ArrayList<String>(circles);
+            selectable.removeAll(selected);
+            item.setCircles(selected, selectable);
+            layout.addView(item);
+        }
+        return v;
 
-	}
+    }
 
-	public void onViewCreated(View view, Bundle savedInstanceState) {
-		super.onViewCreated(view, savedInstanceState);
-		getActivity().getActionBar().setTitle(mPersona.getIdentifier());
-	};
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (getActivity().getActionBar() != null) {
+            getActivity().getActionBar().setTitle(mPersona.getIdentifier());
+        }
+    }
 
-	ProfileFieldCirclePickerItem.OnChangeListener listener = new OnChangeListener() {
+    ProfileFieldCirclePickerItem.OnChangeListener listener = new OnChangeListener() {
 
-		@Override
-		public void onRemove(ProfileField<?> f, String circle) {
-			SPF.get().getProfileManager()
-					.removeGroupFromField(f, circle, mPersona);
-		}
+        @Override
+        public void onRemove(ProfileField<?> f, String circle) {
+            SPF.get().getProfileManager()
+                    .removeGroupFromField(f, circle, mPersona);
+        }
 
-		@Override
-		public void onAdd(ProfileField<?> f, String circle) {
-			SPF.get().getProfileManager().addGroupToField(f, circle, mPersona);
-		}
-	};
+        @Override
+        public void onAdd(ProfileField<?> f, String circle) {
+            SPF.get().getProfileManager().addGroupToField(f, circle, mPersona);
+        }
+    };
 
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		outState.putParcelable("persona", mPersona);
-		super.onSaveInstanceState(outState);
-	}
-
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable("persona", mPersona);
+        super.onSaveInstanceState(outState);
+    }
 }

@@ -60,7 +60,6 @@ public class ActivityFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
         super.onActivityCreated(savedInstanceState);
 
         ListView activities = findView(R.id.activities_list);

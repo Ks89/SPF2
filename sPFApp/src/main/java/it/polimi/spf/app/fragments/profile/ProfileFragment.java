@@ -31,6 +31,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -434,21 +435,12 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        MenuItem personaSelector = menu.findItem(R.id.profileview_persona_selector);
-        if (personaSelector == null) {
-            return;
-        }
-
-//        Spinner spinner = (Spinner) personaSelector.getActionView().findViewById(R.id.profileview_persona_spinner);
-//        if (spinner == null) {
-//            return;
-//        }
-
+        MenuItem item = menu.findItem(R.id.profileview_persona_selector);
+        Spinner spinner = (Spinner) MenuItemCompat.getActionView(item);
         List<SPFPersona> personas = SPF.get().getProfileManager().getAvailablePersonas();
-//        spinner.setAdapter(new ArrayAdapter<>(getActivity().getActionBar().getThemedContext(), android.R.layout.simple_list_item_1, personas));
-//        spinner.setSelection(personas.indexOf(mCurrentPersona), false);
-//        spinner.setOnItemSelectedListener(this);
-
+        spinner.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, personas));
+        spinner.setSelection(personas.indexOf(mCurrentPersona), false);
+        spinner.setOnItemSelectedListener(this);
     }
 
     @Override

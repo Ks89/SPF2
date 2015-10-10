@@ -19,7 +19,6 @@
  */
 package it.polimi.spf.app.navigation;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -184,10 +183,6 @@ public class NavigationFragment extends Fragment {
         }
 
         mCallback.onItemSelect(position, replace);
-    }
-
-    protected ActionBar getActionBar() {
-        return getActivity().getActionBar();
     }
 
     private class NavigationArrayAdapter extends ArrayAdapter<String> {
