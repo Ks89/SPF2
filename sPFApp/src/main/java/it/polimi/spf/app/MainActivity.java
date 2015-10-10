@@ -19,16 +19,16 @@
  */
 package it.polimi.spf.app;
 
-import android.app.ActionBar;
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -46,7 +46,7 @@ import it.polimi.spf.app.navigation.NavigationFragment;
 import it.polimi.spf.app.permissiondisclaimer.PermissionDisclaimerDialogFragment;
 import lombok.Getter;
 
-public class MainActivity extends Activity implements
+public class MainActivity extends AppCompatActivity implements
         NavigationFragment.ItemSelectedListener,
         PermissionDisclaimerDialogFragment.PermissionDisclaimerListener {
 
@@ -80,9 +80,9 @@ public class MainActivity extends Activity implements
 
         mTitle = getTitle();
         mSectionNames = getResources().getStringArray(R.array.content_fragments_titles);
-        mNavigationDrawerFragment = (NavigationFragment) getFragmentManager().findFragmentById(R.id.navigation);
+        mNavigationDrawerFragment = (NavigationFragment) getSupportFragmentManager().findFragmentById(R.id.navigation);
 
-        getFragmentManager().executePendingTransactions();
+        getSupportFragmentManager().executePendingTransactions();
 
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawerLayout != null) {
@@ -100,11 +100,11 @@ public class MainActivity extends Activity implements
 		 */
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
             PermissionDisclaimerDialogFragment diagFrag =
-                    (PermissionDisclaimerDialogFragment) getFragmentManager().findFragmentByTag(DIAG_TAG);
+                    (PermissionDisclaimerDialogFragment) getSupportFragmentManager().findFragmentByTag(DIAG_TAG);
             if (diagFrag == null) {
                 diagFrag = PermissionDisclaimerDialogFragment.newInstance();
-                diagFrag.show(getFragmentManager(), DIAG_TAG);
-                getFragmentManager().executePendingTransactions();
+                diagFrag.show(getSupportFragmentManager(), DIAG_TAG);
+                getSupportFragmentManager().executePendingTransactions();
             }
         }
 
@@ -172,7 +172,7 @@ public class MainActivity extends Activity implements
     @Override
     public void onItemSelect(int position, boolean replace) {
         // update the main content by replacing fragments
-        FragmentManager fragmentManager = getFragmentManager();
+        FragmentManager fragmentManager = getSupportFragmentManager();
         mTitle = getPageTitle(position);
         if (replace) {
             fragmentManager.beginTransaction().replace(R.id.container, createFragment(position)).commit();
@@ -212,7 +212,7 @@ public class MainActivity extends Activity implements
     }
 
     public void restoreActionBar() {
-        ActionBar actionBar = getActionBar();
+        ActionBar actionBar = getSupportActionBar();
         //actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setTitle(mTitle);
@@ -232,8 +232,8 @@ public class MainActivity extends Activity implements
     }
 
     private Fragment getCurrentFragment() {
-        getFragmentManager().executePendingTransactions();
-        return getFragmentManager().findFragmentById(R.id.container);
+        getSupportFragmentManager().executePendingTransactions();
+        return getSupportFragmentManager().findFragmentById(R.id.container);
     }
 
     @Override

@@ -19,23 +19,14 @@
  */
 package it.polimi.spf.app.fragments;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
-import it.polimi.spf.app.R;
-import it.polimi.spf.framework.SPF;
-import it.polimi.spf.framework.services.ActivityVerb;
-import it.polimi.spf.framework.services.ServiceIdentifier;
-import android.app.Fragment;
-import android.app.LoaderManager;
-import android.content.AsyncTaskLoader;
 import android.content.Context;
-import android.content.Loader;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,174 +37,184 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+import it.polimi.spf.app.R;
+import it.polimi.spf.framework.SPF;
+import it.polimi.spf.framework.services.ActivityVerb;
+import it.polimi.spf.framework.services.ServiceIdentifier;
+
 public class ActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Collection<ActivityVerb>> {
 
-	private static final int LOAD_LIST_LOADER_ID = 0;
+    private static final int LOAD_LIST_LOADER_ID = 0;
 
-	private ActivityVerbAdapter mAdapter;
+    private ActivityVerbAdapter mAdapter;
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.content_fragment_activities, container, false);
-	}
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.content_fragment_activities, container, false);
+    }
 
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
-		super.onActivityCreated(savedInstanceState);
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        // TODO Auto-generated method stub
+        super.onActivityCreated(savedInstanceState);
 
-		ListView activities = findView(R.id.activities_list);
-		activities.setEmptyView(findView(R.id.activities_list_emptyview));
-		mAdapter = new ActivityVerbAdapter(getActivity());
-		activities.setAdapter(mAdapter);
+        ListView activities = findView(R.id.activities_list);
+        activities.setEmptyView(findView(R.id.activities_list_emptyview));
+        mAdapter = new ActivityVerbAdapter(getActivity());
+        activities.setAdapter(mAdapter);
 
-		getLoaderManager().initLoader(LOAD_LIST_LOADER_ID, null, this).forceLoad();
-	}
+        getLoaderManager().initLoader(LOAD_LIST_LOADER_ID, null, this).forceLoad();
+    }
 
-	@SuppressWarnings("unchecked")
-	private <V extends View> V findView(int id) {
-		return (V) getView().findViewById(id);
-	}
+    @SuppressWarnings("unchecked")
+    private <V extends View> V findView(int id) {
+        return (V) getView().findViewById(id);
+    }
 
-	@Override
-	public Loader<Collection<ActivityVerb>> onCreateLoader(int id, Bundle args) {
-		switch (id) {
-		case LOAD_LIST_LOADER_ID:
-			return new AsyncTaskLoader<Collection<ActivityVerb>>(getActivity()) {
+    @Override
+    public Loader<Collection<ActivityVerb>> onCreateLoader(int id, Bundle args) {
+        switch (id) {
+            case LOAD_LIST_LOADER_ID:
+                return new AsyncTaskLoader<Collection<ActivityVerb>>(getActivity()) {
 
-				@Override
-				public Collection<ActivityVerb> loadInBackground() {
-					return SPF.get().getServiceRegistry().getSupportedVerbs();
-				}
+                    @Override
+                    public Collection<ActivityVerb> loadInBackground() {
+                        return SPF.get().getServiceRegistry().getSupportedVerbs();
+                    }
 
-			};
+                };
 
-		default:
-			return null;
-		}
-	}
+            default:
+                return null;
+        }
+    }
 
-	@Override
-	public void onLoadFinished(Loader<Collection<ActivityVerb>> loader, Collection<ActivityVerb> data) {
-		switch (loader.getId()) {
-		case LOAD_LIST_LOADER_ID:
-			mAdapter.clear();
-			mAdapter.addAll(data);
-			break;
+    @Override
+    public void onLoadFinished(Loader<Collection<ActivityVerb>> loader, Collection<ActivityVerb> data) {
+        switch (loader.getId()) {
+            case LOAD_LIST_LOADER_ID:
+                mAdapter.clear();
+                mAdapter.addAll(data);
+                break;
 
-		default:
-			break;
-		}
-	}
+            default:
+                break;
+        }
+    }
 
-	@Override
-	public void onLoaderReset(Loader<Collection<ActivityVerb>> loader) {
-		// Do nothing
-	}
+    @Override
+    public void onLoaderReset(Loader<Collection<ActivityVerb>> loader) {
+        // Do nothing
+    }
 
-	private static class ActivityVerbAdapter extends ArrayAdapter<ActivityVerb> implements OnItemSelectedListener {
+    private static class ActivityVerbAdapter extends ArrayAdapter<ActivityVerb> implements OnItemSelectedListener {
 
-		public ActivityVerbAdapter(Context c) {
-			super(c, android.R.layout.simple_list_item_1);
-		}
+        public ActivityVerbAdapter(Context c) {
+            super(c, android.R.layout.simple_list_item_1);
+        }
 
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			View view = convertView != null ? convertView : LayoutInflater.from(getContext()).inflate(R.layout.activities_listelement, parent, false);
-			ViewHolder holder = ViewHolder.from(view);
-			ActivityVerb item = getItem(position);
-			ServiceIdentifierAdapter adapter = new ServiceIdentifierAdapter(getContext(), item.getSupportingServices());
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View view = convertView != null ? convertView : LayoutInflater.from(getContext()).inflate(R.layout.activities_listelement, parent, false);
+            ViewHolder holder = ViewHolder.from(view);
+            ActivityVerb item = getItem(position);
+            ServiceIdentifierAdapter adapter = new ServiceIdentifierAdapter(getContext(), item.getSupportingServices());
 
-			holder.verb.setText(item.getVerb());
-			holder.appSelect.setAdapter(adapter);
-			holder.appSelect.setTag(item.getVerb());
-			holder.appSelect.setSelection(adapter.getPosition(item.getDefaultService()), false);
-			holder.appSelect.setOnItemSelectedListener(this);
-			return view;
-		}
+            holder.verb.setText(item.getVerb());
+            holder.appSelect.setAdapter(adapter);
+            holder.appSelect.setTag(item.getVerb());
+            holder.appSelect.setSelection(adapter.getPosition(item.getDefaultService()), false);
+            holder.appSelect.setOnItemSelectedListener(this);
+            return view;
+        }
 
-		@Override
-		public boolean isEnabled(int position) {
-			return false;
-		}
+        @Override
+        public boolean isEnabled(int position) {
+            return false;
+        }
 
-		@Override
-		public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-			ServiceIdentifier identifier = (ServiceIdentifier) view.getTag();
-			String verb = (String) parent.getTag();
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            ServiceIdentifier identifier = (ServiceIdentifier) view.getTag();
+            String verb = (String) parent.getTag();
 
-			SPF.get().getServiceRegistry().setDefaultConsumerForVerb(verb, identifier);
-		}
+            SPF.get().getServiceRegistry().setDefaultConsumerForVerb(verb, identifier);
+        }
 
-		@Override
-		public void onNothingSelected(AdapterView<?> parent) {
-			// Do nothing
-		}
-	}
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+            // Do nothing
+        }
+    }
 
-	private static class ServiceIdentifierAdapter extends ArrayAdapter<ServiceIdentifier> {
-		private Map<String, String> mAppNames;
+    private static class ServiceIdentifierAdapter extends ArrayAdapter<ServiceIdentifier> {
+        private Map<String, String> mAppNames;
 
-		public ServiceIdentifierAdapter(Context c, Set<ServiceIdentifier> apps) {
-			super(c, android.R.layout.simple_list_item_2);
-			mAppNames = new HashMap<String, String>();
-			addAll(apps);
-		}
+        public ServiceIdentifierAdapter(Context c, Set<ServiceIdentifier> apps) {
+            super(c, android.R.layout.simple_list_item_2);
+            mAppNames = new HashMap<String, String>();
+            addAll(apps);
+        }
 
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			View v = convertView != null ? convertView : LayoutInflater.from(getContext()).inflate(android.R.layout.simple_list_item_2, parent, false);
-			ServiceIdentifier id = getItem(position);
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View v = convertView != null ? convertView : LayoutInflater.from(getContext()).inflate(android.R.layout.simple_list_item_2, parent, false);
+            ServiceIdentifier id = getItem(position);
 
-			((TextView) v.findViewById(android.R.id.text1)).setText(id.getServiceName());
-			((TextView) v.findViewById(android.R.id.text2)).setText(getAppName(id.getAppId()));
-			v.setTag(id);
+            ((TextView) v.findViewById(android.R.id.text1)).setText(id.getServiceName());
+            ((TextView) v.findViewById(android.R.id.text2)).setText(getAppName(id.getAppId()));
+            v.setTag(id);
 
-			return v;
-		}
-		
-		@Override
-		public View getDropDownView(int position, View convertView, ViewGroup parent) {
-			return getView(position, convertView, parent);
-		}
+            return v;
+        }
 
-		private String getAppName(String appId) {
-			if (mAppNames.containsKey(appId)) {
-				return mAppNames.get(appId);
-			}
+        @Override
+        public View getDropDownView(int position, View convertView, ViewGroup parent) {
+            return getView(position, convertView, parent);
+        }
 
-			try {
-				PackageManager pm = getContext().getPackageManager();
-				String name = pm.getApplicationLabel(pm.getApplicationInfo(appId, 0)).toString();
-				mAppNames.put(appId, name);
-				return name;
-			} catch (NameNotFoundException e) {
-				// This won't happen
-				return null;
-			}
+        private String getAppName(String appId) {
+            if (mAppNames.containsKey(appId)) {
+                return mAppNames.get(appId);
+            }
 
-		}
-	}
+            try {
+                PackageManager pm = getContext().getPackageManager();
+                String name = pm.getApplicationLabel(pm.getApplicationInfo(appId, 0)).toString();
+                mAppNames.put(appId, name);
+                return name;
+            } catch (NameNotFoundException e) {
+                // This won't happen
+                return null;
+            }
 
-	private static class ViewHolder {
-		public TextView verb;
-		public Spinner appSelect;
+        }
+    }
 
-		public static ViewHolder from(View view) {
-			Object o = view.getTag();
-			if (o != null && (o instanceof ViewHolder)) {
-				return (ViewHolder) o;
-			}
+    private static class ViewHolder {
+        public TextView verb;
+        public Spinner appSelect;
 
-			ViewHolder holder = new ViewHolder();
-			view.setTag(holder);
+        public static ViewHolder from(View view) {
+            Object o = view.getTag();
+            if (o != null && (o instanceof ViewHolder)) {
+                return (ViewHolder) o;
+            }
 
-			holder.verb = (TextView) view.findViewById(R.id.activities_verb_name);
-			holder.appSelect = (Spinner) view.findViewById(R.id.activities_verb_apps);
+            ViewHolder holder = new ViewHolder();
+            view.setTag(holder);
 
-			return holder;
-		}
+            holder.verb = (TextView) view.findViewById(R.id.activities_verb_name);
+            holder.appSelect = (Spinner) view.findViewById(R.id.activities_verb_apps);
 
-	}
+            return holder;
+        }
+
+    }
 
 }

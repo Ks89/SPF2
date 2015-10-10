@@ -19,11 +19,11 @@
  */
 package it.polimi.spf.app.fragments.profile;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,7 +33,7 @@ import com.soundcloud.android.crop.Crop;
 import it.polimi.spf.app.R;
 import it.polimi.spf.framework.profile.SPFPersona;
 
-public class ProfileEditActivity extends Activity {
+public class ProfileEditActivity extends AppCompatActivity {
 
     public static final String EXTRA_PERSONA = "persona";
 
@@ -48,12 +48,12 @@ public class ProfileEditActivity extends Activity {
             //received from ProfileFragment - onOptionsItemSelected - case R.id.profileview_edit
             SPFPersona persona = getIntent().getExtras().getParcelable(EXTRA_PERSONA);
             mFragment = ProfileFragment.createEditSelfProfileFragment(persona);
-            getFragmentManager().beginTransaction().replace(R.id.container, mFragment).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.container, mFragment).commit();
         } else {
-            mFragment = (ProfileFragment) getFragmentManager().findFragmentById(R.id.container);
+            mFragment = (ProfileFragment) getSupportFragmentManager().findFragmentById(R.id.container);
         }
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override

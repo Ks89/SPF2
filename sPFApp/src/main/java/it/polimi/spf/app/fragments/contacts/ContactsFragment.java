@@ -19,71 +19,72 @@
  */
 package it.polimi.spf.app.fragments.contacts;
 
-import com.astuetz.PagerSlidingTabStrip;
-
-import it.polimi.spf.app.R;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v13.app.FragmentStatePagerAdapter;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.astuetz.PagerSlidingTabStrip;
+
+import it.polimi.spf.app.R;
+
 public class ContactsFragment extends Fragment {
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.content_fragment_contacts, container, false);
-	}
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.content_fragment_contacts, container, false);
+    }
 
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		
-		ContactsPagerAdapter pagerAdapter = new ContactsPagerAdapter(getChildFragmentManager(), getActivity());
-		ViewPager viewPager = (ViewPager) getView().findViewById(R.id.contacts_pager);
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
-		viewPager.setAdapter(pagerAdapter);
-		viewPager.setOffscreenPageLimit(2);
+        ContactsPagerAdapter pagerAdapter = new ContactsPagerAdapter(getChildFragmentManager(), getActivity());
+        ViewPager viewPager = (ViewPager) getView().findViewById(R.id.contacts_pager);
 
-		PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) getView().findViewById(R.id.contacts_tabs);
-		tabs.setViewPager(viewPager);
-	}
+        viewPager.setAdapter(pagerAdapter);
+        viewPager.setOffscreenPageLimit(2);
 
-	private static class ContactsPagerAdapter extends FragmentStatePagerAdapter {
+        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) getView().findViewById(R.id.contacts_tabs);
+        tabs.setViewPager(viewPager);
+    }
 
-		private final static int PAGE_COUNT = 2;
-		private final String[] mPageTitles;
+    private static class ContactsPagerAdapter extends FragmentStatePagerAdapter {
 
-		public ContactsPagerAdapter(FragmentManager fm, Context context) {
-			super(fm);
-			mPageTitles = context.getResources().getStringArray(R.array.contacts_fragments_titles);
-		}
+        private final static int PAGE_COUNT = 2;
+        private final String[] mPageTitles;
 
-		@Override
-		public Fragment getItem(int position) {
-			switch (position) {
-			case 0:
-				return new PeopleFragment();
-			case 1:
-				return new CircleFragment();
-			default:
-				throw new IllegalArgumentException("Requested page outside boundaries");
-			}
-		}
+        public ContactsPagerAdapter(FragmentManager fm, Context context) {
+            super(fm);
+            mPageTitles = context.getResources().getStringArray(R.array.contacts_fragments_titles);
+        }
 
-		@Override
-		public int getCount() {
-			return PAGE_COUNT;
-		}
+        @Override
+        public Fragment getItem(int position) {
+            switch (position) {
+                case 0:
+                    return new PeopleFragment();
+                case 1:
+                    return new CircleFragment();
+                default:
+                    throw new IllegalArgumentException("Requested page outside boundaries");
+            }
+        }
 
-		@Override
-		public CharSequence getPageTitle(int position) {
-			return mPageTitles[position];
-		}
-	}
+        @Override
+        public int getCount() {
+            return PAGE_COUNT;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mPageTitles[position];
+        }
+    }
 
 }

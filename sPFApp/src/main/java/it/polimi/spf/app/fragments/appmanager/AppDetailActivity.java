@@ -19,7 +19,6 @@
  */
 package it.polimi.spf.app.fragments.appmanager;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -30,6 +29,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,7 +42,7 @@ import it.polimi.spf.app.R;
 import it.polimi.spf.framework.SPF;
 import it.polimi.spf.framework.security.AppAuth;
 
-public class AppDetailActivity extends Activity {
+public class AppDetailActivity extends AppCompatActivity {
 
     private static final String TAG = null;
     public static String APP_AUTH_KEY = "app_auth";
@@ -84,8 +84,8 @@ public class AppDetailActivity extends Activity {
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.app_detail_tabs);
         tabs.setViewPager(mViewPager);
 
-        getActionBar().setHomeButtonEnabled(true);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override

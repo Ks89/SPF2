@@ -19,17 +19,17 @@
  */
 package it.polimi.spf.app.fragments.profile;
 
-import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import it.polimi.spf.app.R;
 
-public class ProfileViewActivity extends Activity {
+public class ProfileViewActivity extends AppCompatActivity {
 
     private static final String PERSON_IDENTIFIER_KEY = "personIdentifier";
 
@@ -57,7 +57,7 @@ public class ProfileViewActivity extends Activity {
             mFragment = ProfileFragment.createRemoteProfileFragment(identifier);
         }
 
-        getFragmentManager().beginTransaction().add(R.id.container, mFragment).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.container, mFragment).commit();
     }
 
     @Override

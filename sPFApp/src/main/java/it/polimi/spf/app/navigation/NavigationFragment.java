@@ -21,12 +21,12 @@ package it.polimi.spf.app.navigation;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -171,8 +171,9 @@ public class NavigationFragment extends Fragment {
         outState.putInt(STATE_SELECTED_POSITION, mCurrentSelectedPosition);
     }
 
-    public boolean hasOptionsMenu() {
-        return false;
+    @Override
+    public void setHasOptionsMenu(boolean hasMenu) {
+        super.setHasOptionsMenu(false);
     }
 
     protected void selectItem(int position, boolean replace) {

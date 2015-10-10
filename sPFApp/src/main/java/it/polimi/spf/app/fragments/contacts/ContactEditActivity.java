@@ -19,10 +19,10 @@
  */
 package it.polimi.spf.app.fragments.contacts;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -36,7 +36,7 @@ import it.polimi.spf.framework.SPF;
 import it.polimi.spf.framework.security.PersonInfo;
 import it.polimi.spf.framework.security.PersonRegistry;
 
-public class ContactEditActivity extends Activity implements CirclePicker.ChangeListener {
+public class ContactEditActivity extends AppCompatActivity implements CirclePicker.ChangeListener {
 
     public static final String PERSON_IDENTIFER_EXTRA = "personIdentifier";
     private PersonRegistry mPersonRegistry;

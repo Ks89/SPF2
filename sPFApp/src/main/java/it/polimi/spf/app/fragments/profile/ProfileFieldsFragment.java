@@ -19,15 +19,16 @@
  */
 package it.polimi.spf.app.fragments.profile;
 
-import it.polimi.spf.app.R;
-import it.polimi.spf.app.fragments.profile.ProfileFragment.Mode;
-import it.polimi.spf.shared.model.ProfileField;
-import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+
+import it.polimi.spf.app.R;
+import it.polimi.spf.app.fragments.profile.ProfileFragment.Mode;
+import it.polimi.spf.shared.model.ProfileField;
 
 /**
  * Fragment that displays a list of {@link ProfileField} together with their
@@ -36,80 +37,78 @@ import android.widget.LinearLayout;
  * {@link ProfileFragment#createViewFor(ProfileField, ViewGroup)}. The
  * possibility of editing the values of fields depend on the {@link Mode} of the
  * parent.
- * 
+ * <p/>
  * Instances of {@link ProfileFieldsFragment} can be created using {@link
  * ProfileFieldsFragment#new}
- * 
+ *
  * @author darioarchetti
- * 
  */
 public class ProfileFieldsFragment extends Fragment {
 
-	/**
-	 * Key for the list of fields to show that should be put in the arguments
-	 * passed to this fragment.
-	 */
-	private static final String EXTRA_FIELDS_TO_SHOW = "fields";
+    /**
+     * Key for the list of fields to show that should be put in the arguments
+     * passed to this fragment.
+     */
+    private static final String EXTRA_FIELDS_TO_SHOW = "fields";
 
-	/**
-	 * Creates a new instance of {@link ProfileFieldsFragment} to show the given
-	 * list of profile fields.
-	 * 
-	 * @param fieldsToShow
-	 *            - the fields to show;
-	 * @return an instance of {@link ProfileFieldsFragment};
-	 */
-	public static ProfileFieldsFragment newInstance(ProfileField<?>[] fieldsToShow) {
-		if (fieldsToShow == null) {
-			throw new NullPointerException();
-		}
+    /**
+     * Creates a new instance of {@link ProfileFieldsFragment} to show the given
+     * list of profile fields.
+     *
+     * @param fieldsToShow - the fields to show;
+     * @return an instance of {@link ProfileFieldsFragment};
+     */
+    public static ProfileFieldsFragment newInstance(ProfileField<?>[] fieldsToShow) {
+        if (fieldsToShow == null) {
+            throw new NullPointerException();
+        }
 
-		Bundle b = new Bundle();
-		b.putStringArray(EXTRA_FIELDS_TO_SHOW, ProfileField.toIdentifierList(fieldsToShow));
-		ProfileFieldsFragment instance = new ProfileFieldsFragment();
-		instance.setArguments(b);
-		return instance;
-	}
+        Bundle b = new Bundle();
+        b.putStringArray(EXTRA_FIELDS_TO_SHOW, ProfileField.toIdentifierList(fieldsToShow));
+        ProfileFieldsFragment instance = new ProfileFieldsFragment();
+        instance.setArguments(b);
+        return instance;
+    }
 
-	private ProfileField<?>[] mFieldsToShow;
-	private LinearLayout mViewContainer;
-	private ProfileFragment mParent;
+    private ProfileField<?>[] mFieldsToShow;
+    private LinearLayout mViewContainer;
+    private ProfileFragment mParent;
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.profileedit_fragment, container, false);
-	}
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.profileedit_fragment, container, false);
+    }
 
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
-		Bundle b = savedInstanceState == null ? getArguments() : savedInstanceState;
+        Bundle b = savedInstanceState == null ? getArguments() : savedInstanceState;
 
-		if (b == null) {
-			throw new IllegalArgumentException("No bundle to read data from");
-		}
+        if (b == null) {
+            throw new IllegalArgumentException("No bundle to read data from");
+        }
 
-		mFieldsToShow = ProfileField.fromIdentifierList(b.getStringArray(EXTRA_FIELDS_TO_SHOW));
-		mViewContainer = (LinearLayout) getView().findViewById(R.id.profileedit_field_container);
-		mParent = (ProfileFragment) getParentFragment();
-		onRefresh();
-	}
+        mFieldsToShow = ProfileField.fromIdentifierList(b.getStringArray(EXTRA_FIELDS_TO_SHOW));
+        mViewContainer = (LinearLayout) getView().findViewById(R.id.profileedit_field_container);
+        mParent = (ProfileFragment) getParentFragment();
+        onRefresh();
+    }
 
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		outState.putStringArray(EXTRA_FIELDS_TO_SHOW, ProfileField.toIdentifierList(mFieldsToShow));
-	}
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putStringArray(EXTRA_FIELDS_TO_SHOW, ProfileField.toIdentifierList(mFieldsToShow));
+    }
 
-	/**
-	 * Refreshes the values of displayed fields.
-	 */
-	public void onRefresh() {
-		mViewContainer.removeAllViews();
-		for (ProfileField<?> field : mFieldsToShow) {
-			View child = mParent.createViewFor(field, mViewContainer);
-			mViewContainer.addView(child);
-		}
-	}
+    /**
+     * Refreshes the values of displayed fields.
+     */
+    public void onRefresh() {
+        mViewContainer.removeAllViews();
+        for (ProfileField<?> field : mFieldsToShow) {
+            View child = mParent.createViewFor(field, mViewContainer);
+            mViewContainer.addView(child);
+        }
+    }
 }

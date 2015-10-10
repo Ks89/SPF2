@@ -22,12 +22,13 @@ package it.polimi.spf.app.fragments.personas;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import it.polimi.spf.app.R;
 import it.polimi.spf.framework.profile.SPFPersona;
 
-public class PersonasCirclesActivity extends Activity {
+public class PersonasCirclesActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +38,7 @@ public class PersonasCirclesActivity extends Activity {
         PersonasCirclesFragment fragment = PersonasCirclesFragment.newInstance(persona);
         getFragmentManager().beginTransaction().replace(R.id.activity_persona_circles_container, fragment).commit();
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     public static void start(Activity callingActivity, SPFPersona persona) {

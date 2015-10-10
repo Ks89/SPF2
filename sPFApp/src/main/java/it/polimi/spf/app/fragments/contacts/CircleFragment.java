@@ -19,19 +19,12 @@
  */
 package it.polimi.spf.app.fragments.contacts;
 
-import java.util.Collection;
-
-import it.polimi.spf.app.R;
-import it.polimi.spf.app.R.id;
-import it.polimi.spf.framework.SPF;
-import it.polimi.spf.framework.security.DefaultCircles;
-import it.polimi.spf.framework.security.PersonRegistry;
-import android.app.Fragment;
-import android.app.LoaderManager;
-import android.content.AsyncTaskLoader;
 import android.content.Context;
-import android.content.Loader;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -43,179 +36,187 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Collection;
+
+import it.polimi.spf.app.R;
+import it.polimi.spf.app.R.id;
+import it.polimi.spf.framework.SPF;
+import it.polimi.spf.framework.security.DefaultCircles;
+import it.polimi.spf.framework.security.PersonRegistry;
+
 public class CircleFragment extends Fragment implements OnClickListener, LoaderManager.LoaderCallbacks<Collection<String>> {
 
-	private static final int LOAD_CIRCLE_LOADER = 0;
-	private static final int ADD_CIRCLE_LOADER = 1;
-	private static final int DELETE_CIRCLE_LOADER = 2;
-	protected static final String EXTRA_CIRCLE = "circle";
+    private static final int LOAD_CIRCLE_LOADER = 0;
+    private static final int ADD_CIRCLE_LOADER = 1;
+    private static final int DELETE_CIRCLE_LOADER = 2;
+    protected static final String EXTRA_CIRCLE = "circle";
 
-	private CircleArrayAdapter mAdapter;
-	private EditText mNewCircleName;
+    private CircleArrayAdapter mAdapter;
+    private EditText mNewCircleName;
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.contacts_circle_page, container, false);
-	}
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.contacts_circle_page, container, false);
+    }
 
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
-		ListView circleList = (ListView) getView().findViewById(R.id.contacts_circle_list);
-		circleList.setEmptyView(getView().findViewById(R.id.contacts_circle_emptyview));
+        ListView circleList = (ListView) getView().findViewById(R.id.contacts_circle_list);
+        circleList.setEmptyView(getView().findViewById(R.id.contacts_circle_emptyview));
 
-		mAdapter = new CircleArrayAdapter(getActivity());
-		circleList.setAdapter(mAdapter);
+        mAdapter = new CircleArrayAdapter(getActivity());
+        circleList.setAdapter(mAdapter);
 
-		mNewCircleName = (EditText) getView().findViewById(R.id.contacts_circle_add_name);
-		ImageButton addButton = (ImageButton) getView().findViewById(R.id.contacts_circle_add_button);
-		addButton.setOnClickListener(this);
-		
-		startLoader(LOAD_CIRCLE_LOADER, null, false);
-	}
+        mNewCircleName = (EditText) getView().findViewById(R.id.contacts_circle_add_name);
+        ImageButton addButton = (ImageButton) getView().findViewById(R.id.contacts_circle_add_button);
+        addButton.setOnClickListener(this);
 
-	private class CircleArrayAdapter extends ArrayAdapter<String> {
+        startLoader(LOAD_CIRCLE_LOADER, null, false);
+    }
 
-		public CircleArrayAdapter(Context context) {
-			super(context, android.R.layout.simple_list_item_1);
-		}
+    private class CircleArrayAdapter extends ArrayAdapter<String> {
 
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			View view = convertView != null ? convertView : LayoutInflater.from(getContext()).inflate(R.layout.personas_listelement, parent, false);
-			ViewHolder holder = ViewHolder.from(view);
+        public CircleArrayAdapter(Context context) {
+            super(context, android.R.layout.simple_list_item_1);
+        }
 
-			String item = getItem(position);
-			holder.name.setText(item);
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View view = convertView != null ? convertView : LayoutInflater.from(getContext()).inflate(R.layout.personas_listelement, parent, false);
+            ViewHolder holder = ViewHolder.from(view);
 
-			if (DefaultCircles.isDefault(item)) {
-				holder.deletebutton.setVisibility(View.GONE);
-			} else {
-				holder.deletebutton.setVisibility(View.VISIBLE);
-				holder.deletebutton.setOnClickListener(CircleFragment.this);
-				holder.deletebutton.setTag(item);
-			}
-			return view;
-		}
+            String item = getItem(position);
+            holder.name.setText(item);
 
-		@Override
-		public boolean isEnabled(int position) {
-			return false; // Prevent click on item
-		}
+            if (DefaultCircles.isDefault(item)) {
+                holder.deletebutton.setVisibility(View.GONE);
+            } else {
+                holder.deletebutton.setVisibility(View.VISIBLE);
+                holder.deletebutton.setOnClickListener(CircleFragment.this);
+                holder.deletebutton.setTag(item);
+            }
+            return view;
+        }
 
-	}
+        @Override
+        public boolean isEnabled(int position) {
+            return false; // Prevent click on item
+        }
 
-	private static class ViewHolder {
+    }
 
-		public static ViewHolder from(View view) {
-			Object o = view.getTag();
-			if (o != null & (o instanceof ViewHolder)) {
-				return (ViewHolder) o;
-			}
+    private static class ViewHolder {
 
-			ViewHolder holder = new ViewHolder();
-			view.setTag(holder);
+        public static ViewHolder from(View view) {
+            Object o = view.getTag();
+            if (o != null & (o instanceof ViewHolder)) {
+                return (ViewHolder) o;
+            }
 
-			holder.name = (TextView) view.findViewById(R.id.personas_entry_name);
-			holder.deletebutton = (ImageButton) view.findViewById(id.personas_entry_delete);
+            ViewHolder holder = new ViewHolder();
+            view.setTag(holder);
 
-			return holder;
-		}
+            holder.name = (TextView) view.findViewById(R.id.personas_entry_name);
+            holder.deletebutton = (ImageButton) view.findViewById(id.personas_entry_delete);
 
-		public TextView name;
-		public ImageButton deletebutton;
+            return holder;
+        }
 
-	}
+        public TextView name;
+        public ImageButton deletebutton;
 
-	@Override
-	public void onClick(View v) {
-		switch (v.getId()) {
-		case R.id.contacts_circle_add_button: {
-			String newCircleName = mNewCircleName.getText().toString();
-			if (newCircleName.length() == 0) {
-				makeToast("Circle name must not be empty");
-				return;
-			}
+    }
 
-			if (mAdapter.getPosition(newCircleName) > -1) {
-				makeToast("A circle with this name already exists");
-				return;
-			}
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.contacts_circle_add_button: {
+                String newCircleName = mNewCircleName.getText().toString();
+                if (newCircleName.length() == 0) {
+                    makeToast("Circle name must not be empty");
+                    return;
+                }
 
-			mNewCircleName.setText("");
+                if (mAdapter.getPosition(newCircleName) > -1) {
+                    makeToast("A circle with this name already exists");
+                    return;
+                }
 
-			Bundle args = new Bundle();
-			args.putString(EXTRA_CIRCLE, newCircleName);
-			startLoader(ADD_CIRCLE_LOADER, args, true);
-			return;
-		}
-		case R.id.personas_entry_delete: {
-			Bundle args = new Bundle();
-			args.putString(EXTRA_CIRCLE, (String) v.getTag());
-			startLoader(DELETE_CIRCLE_LOADER, args, true);
-			return;
-		}
-		}
-	}
+                mNewCircleName.setText("");
 
-	private void makeToast(String string) {
-		Toast.makeText(getActivity(), string, Toast.LENGTH_SHORT).show();
-	}
+                Bundle args = new Bundle();
+                args.putString(EXTRA_CIRCLE, newCircleName);
+                startLoader(ADD_CIRCLE_LOADER, args, true);
+                return;
+            }
+            case R.id.personas_entry_delete: {
+                Bundle args = new Bundle();
+                args.putString(EXTRA_CIRCLE, (String) v.getTag());
+                startLoader(DELETE_CIRCLE_LOADER, args, true);
+                return;
+            }
+        }
+    }
 
-	@Override
-	public Loader<Collection<String>> onCreateLoader(int id, final Bundle args) {
-		final PersonRegistry registry = SPF.get().getSecurityMonitor().getPersonRegistry();
-		switch (id) {
-		case LOAD_CIRCLE_LOADER:
-			return new AsyncTaskLoader<Collection<String>>(getActivity()) {
+    private void makeToast(String string) {
+        Toast.makeText(getActivity(), string, Toast.LENGTH_SHORT).show();
+    }
 
-				@Override
-				public Collection<String> loadInBackground() {
-					return registry.getGroups();
-				}
-			};
-		case ADD_CIRCLE_LOADER:
-			return new AsyncTaskLoader<Collection<String>>(getActivity()) {
+    @Override
+    public Loader<Collection<String>> onCreateLoader(int id, final Bundle args) {
+        final PersonRegistry registry = SPF.get().getSecurityMonitor().getPersonRegistry();
+        switch (id) {
+            case LOAD_CIRCLE_LOADER:
+                return new AsyncTaskLoader<Collection<String>>(getActivity()) {
 
-				@Override
-				public Collection<String> loadInBackground() {
-					String group = args.getString(EXTRA_CIRCLE);
-					registry.addGroup(group);
-					return registry.getGroups();
-				}
-			};
-		case DELETE_CIRCLE_LOADER:
-			return new AsyncTaskLoader<Collection<String>>(getActivity()) {
+                    @Override
+                    public Collection<String> loadInBackground() {
+                        return registry.getGroups();
+                    }
+                };
+            case ADD_CIRCLE_LOADER:
+                return new AsyncTaskLoader<Collection<String>>(getActivity()) {
 
-				@Override
-				public Collection<String> loadInBackground() {
-					String group = args.getString(EXTRA_CIRCLE);
-					registry.removeGroup(group);
-					return registry.getGroups();
-				}
-			};
+                    @Override
+                    public Collection<String> loadInBackground() {
+                        String group = args.getString(EXTRA_CIRCLE);
+                        registry.addGroup(group);
+                        return registry.getGroups();
+                    }
+                };
+            case DELETE_CIRCLE_LOADER:
+                return new AsyncTaskLoader<Collection<String>>(getActivity()) {
 
-		default:
-			return null;
-		}
-	}
+                    @Override
+                    public Collection<String> loadInBackground() {
+                        String group = args.getString(EXTRA_CIRCLE);
+                        registry.removeGroup(group);
+                        return registry.getGroups();
+                    }
+                };
 
-	private void startLoader(int id, Bundle args, boolean destroyPrevious){
-		if(destroyPrevious){
-			getLoaderManager().destroyLoader(id);
-		}
-		getLoaderManager().initLoader(id, args, this).forceLoad();
-	}
-	
-	@Override
-	public void onLoadFinished(Loader<Collection<String>> loader, Collection<String> data) {
-		mAdapter.clear();
-		mAdapter.addAll(data);
-	}
+            default:
+                return null;
+        }
+    }
 
-	@Override
-	public void onLoaderReset(Loader<Collection<String>> loader) {
-		// Do nothing
-	}
+    private void startLoader(int id, Bundle args, boolean destroyPrevious) {
+        if (destroyPrevious) {
+            getLoaderManager().destroyLoader(id);
+        }
+        getLoaderManager().initLoader(id, args, this).forceLoad();
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Collection<String>> loader, Collection<String> data) {
+        mAdapter.clear();
+        mAdapter.addAll(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Collection<String>> loader) {
+        // Do nothing
+    }
 }

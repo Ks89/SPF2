@@ -19,36 +19,18 @@
  */
 package it.polimi.spf.app.fragments.profile;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-
-import com.astuetz.PagerSlidingTabStrip;
-import com.soundcloud.android.crop.Crop;
-
-import de.hdodenhof.circleimageview.CircleImageView;
-import it.polimi.spf.app.R;
-import it.polimi.spf.app.fragments.contacts.ContactConfirmDialogView;
-import it.polimi.spf.framework.SPF;
-import it.polimi.spf.framework.profile.SPFPersona;
-import it.polimi.spf.framework.proximity.SPFRemoteInstance;
-import it.polimi.spf.shared.model.ProfileField;
-import it.polimi.spf.shared.model.ProfileFieldContainer;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Fragment;
-import android.app.LoaderManager;
-import android.content.AsyncTaskLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.Loader;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -64,479 +46,498 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.astuetz.PagerSlidingTabStrip;
+import com.soundcloud.android.crop.Crop;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+import it.polimi.spf.app.R;
+import it.polimi.spf.app.fragments.contacts.ContactConfirmDialogView;
+import it.polimi.spf.framework.SPF;
+import it.polimi.spf.framework.profile.SPFPersona;
+import it.polimi.spf.framework.proximity.SPFRemoteInstance;
+import it.polimi.spf.shared.model.ProfileField;
+import it.polimi.spf.shared.model.ProfileFieldContainer;
+
 public class ProfileFragment extends Fragment implements LoaderManager.LoaderCallbacks<ProfileFieldContainer>,
-		OnItemSelectedListener, OnClickListener {
+        OnItemSelectedListener, OnClickListener {
 
-	/**
-	 * Possible visualization modes of fields values.
-	 * 
-	 * @author darioarchetti
-	 */
-	public enum Mode {
-		/**
-		 * Shows the profile of the local user
-		 */
-		SELF,
+    /**
+     * Possible visualization modes of fields values.
+     *
+     * @author darioarchetti
+     */
+    public enum Mode {
+        /**
+         * Shows the profile of the local user
+         */
+        SELF,
 
-		/**
-		 * Shows the profile of a remote user
-		 */
-		REMOTE,
+        /**
+         * Shows the profile of a remote user
+         */
+        REMOTE,
 
-		/**
-		 * Shows the profile of the local user and allows modifications
-		 */
-		EDIT;
-	}
+        /**
+         * Shows the profile of the local user and allows modifications
+         */
+        EDIT;
+    }
 
-	/**
-	 * Creates a new instance of {@link ProfileFragment} to show the profile of
-	 * a remote user. The fragment will allow only to view the fields and not to
-	 * modify them.
-	 * 
-	 * @param personIdentifer
-	 *            - the identifier of the person whose profile to show
-	 * @return an instance of ProfileFragment
-	 */
-	public static ProfileFragment createRemoteProfileFragment(String personIdentifer) {
-		Bundle b = new Bundle();
-		b.putInt(EXTRA_VIEW_MODE, Mode.REMOTE.ordinal());
-		b.putString(EXTRA_PERSON_IDENTIFIER, personIdentifer);
-		ProfileFragment fragment = new ProfileFragment();
-		fragment.setArguments(b);
-		return fragment;
-	}
+    /**
+     * Creates a new instance of {@link ProfileFragment} to show the profile of
+     * a remote user. The fragment will allow only to view the fields and not to
+     * modify them.
+     *
+     * @param personIdentifer - the identifier of the person whose profile to show
+     * @return an instance of ProfileFragment
+     */
+    public static ProfileFragment createRemoteProfileFragment(String personIdentifer) {
+        Bundle b = new Bundle();
+        b.putInt(EXTRA_VIEW_MODE, Mode.REMOTE.ordinal());
+        b.putString(EXTRA_PERSON_IDENTIFIER, personIdentifer);
+        ProfileFragment fragment = new ProfileFragment();
+        fragment.setArguments(b);
+        return fragment;
+    }
 
-	/**
-	 * Creates a new instance of ProfileFragment to show the local profile.
-	 * @return an instance of ProfileFragment
-	 */
-	public static ProfileFragment createViewSelfProfileFragment() {
-		Bundle b = new Bundle();
-		b.putInt(EXTRA_VIEW_MODE, Mode.SELF.ordinal());
-		ProfileFragment fragment = new ProfileFragment();
-		fragment.setArguments(b);
-		return fragment;
-	}
+    /**
+     * Creates a new instance of ProfileFragment to show the local profile.
+     *
+     * @return an instance of ProfileFragment
+     */
+    public static ProfileFragment createViewSelfProfileFragment() {
+        Bundle b = new Bundle();
+        b.putInt(EXTRA_VIEW_MODE, Mode.SELF.ordinal());
+        ProfileFragment fragment = new ProfileFragment();
+        fragment.setArguments(b);
+        return fragment;
+    }
 
-	public static ProfileFragment createEditSelfProfileFragment(SPFPersona persona) {
-		Bundle b = new Bundle();
-		b.putInt(EXTRA_VIEW_MODE, Mode.EDIT.ordinal());
-		b.putParcelable(EXTRA_CURRENT_PERSONA, persona);
-		ProfileFragment fragment = new ProfileFragment();
-		fragment.setArguments(b);
-		return fragment;
-	}
+    public static ProfileFragment createEditSelfProfileFragment(SPFPersona persona) {
+        Bundle b = new Bundle();
+        b.putInt(EXTRA_VIEW_MODE, Mode.EDIT.ordinal());
+        b.putParcelable(EXTRA_CURRENT_PERSONA, persona);
+        ProfileFragment fragment = new ProfileFragment();
+        fragment.setArguments(b);
+        return fragment;
+    }
 
-	private static final String EXTRA_PERSON_IDENTIFIER = "personIdentifier";
-	private static final String EXTRA_PROFILE_CONTAINER = "profileContainer";
-	private static final String EXTRA_CURRENT_PERSONA = "persona";
-	private static final String EXTRA_VIEW_MODE = "viewMode";
+    private static final String EXTRA_PERSON_IDENTIFIER = "personIdentifier";
+    private static final String EXTRA_PROFILE_CONTAINER = "profileContainer";
+    private static final String EXTRA_CURRENT_PERSONA = "persona";
+    private static final String EXTRA_VIEW_MODE = "viewMode";
 
-	private static final int LOAD_PROFILE_LOADER_ID = 0;
-	private static final int SAVE_PROFILE_LOADER_ID = 1;
+    private static final int LOAD_PROFILE_LOADER_ID = 0;
+    private static final int SAVE_PROFILE_LOADER_ID = 1;
 
-	private static final int ACTIVITY_EDIT_PROFILE_CODE = 0;
-	private static final String TAG = "ProfileFragment";
+    private static final int ACTIVITY_EDIT_PROFILE_CODE = 0;
+    private static final String TAG = "ProfileFragment";
 
-	private String mPersonIdentifier;
-	private SPFPersona mCurrentPersona;
-	private Mode mMode;
-	private ProfileFieldContainer mContainer;
+    private String mPersonIdentifier;
+    private SPFPersona mCurrentPersona;
+    private Mode mMode;
+    private ProfileFieldContainer mContainer;
 
-	private CircleImageView resultView;
+    private CircleImageView resultView;
 
-	private ProfileFieldViewFactory mFactory;
-	private boolean mModifiedAtLeastOnce = false;
+    private ProfileFieldViewFactory mFactory;
+    private boolean mModifiedAtLeastOnce = false;
 
-	// Lifecycle management methods
+    // Lifecycle management methods
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.content_fragment_profile, container, false);
-	}
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.content_fragment_profile, container, false);
+    }
 
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
-		if (savedInstanceState == null) {
-			mMode = Mode.values()[getArguments().getInt(EXTRA_VIEW_MODE)];
-			switch (mMode) {
-			case SELF:
-				String callerApp = getActivity().getCallingPackage();
-				if (callerApp == null) {
-					mCurrentPersona = SPFPersona.DEFAULT;
-				} else {
-					mCurrentPersona = SPF.get().getSecurityMonitor().getPersonaOf(callerApp);
-				}
-				break;
-			case REMOTE:
-				mPersonIdentifier = getArguments().getString(EXTRA_PERSON_IDENTIFIER);
-				break;
-			case EDIT:
-				mCurrentPersona = getArguments().getParcelable(EXTRA_CURRENT_PERSONA);
-			}
+        if (savedInstanceState == null) {
+            mMode = Mode.values()[getArguments().getInt(EXTRA_VIEW_MODE)];
+            switch (mMode) {
+                case SELF:
+                    String callerApp = getActivity().getCallingPackage();
+                    if (callerApp == null) {
+                        mCurrentPersona = SPFPersona.DEFAULT;
+                    } else {
+                        mCurrentPersona = SPF.get().getSecurityMonitor().getPersonaOf(callerApp);
+                    }
+                    break;
+                case REMOTE:
+                    mPersonIdentifier = getArguments().getString(EXTRA_PERSON_IDENTIFIER);
+                    break;
+                case EDIT:
+                    mCurrentPersona = getArguments().getParcelable(EXTRA_CURRENT_PERSONA);
+            }
 
-			// Initialize the loader of profile information
-			startLoader(LOAD_PROFILE_LOADER_ID);
-		} else {
-			mPersonIdentifier = savedInstanceState.getString(EXTRA_PERSON_IDENTIFIER);
-			mCurrentPersona = savedInstanceState.getParcelable(EXTRA_CURRENT_PERSONA);
-			mMode = Mode.values()[savedInstanceState.getInt(EXTRA_VIEW_MODE)];
-			mContainer = savedInstanceState.getParcelable(EXTRA_PROFILE_CONTAINER);
+            // Initialize the loader of profile information
+            startLoader(LOAD_PROFILE_LOADER_ID);
+        } else {
+            mPersonIdentifier = savedInstanceState.getString(EXTRA_PERSON_IDENTIFIER);
+            mCurrentPersona = savedInstanceState.getParcelable(EXTRA_CURRENT_PERSONA);
+            mMode = Mode.values()[savedInstanceState.getInt(EXTRA_VIEW_MODE)];
+            mContainer = savedInstanceState.getParcelable(EXTRA_PROFILE_CONTAINER);
 
-			onProfileDataAvailable();
-		}
-	}
+            onProfileDataAvailable();
+        }
+    }
 
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		outState.putString(EXTRA_PERSON_IDENTIFIER, mPersonIdentifier);
-		outState.putParcelable(EXTRA_CURRENT_PERSONA, mCurrentPersona);
-		outState.putInt(EXTRA_VIEW_MODE, mMode.ordinal());
-		outState.putParcelable(EXTRA_PROFILE_CONTAINER, mContainer);
-	}
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(EXTRA_PERSON_IDENTIFIER, mPersonIdentifier);
+        outState.putParcelable(EXTRA_CURRENT_PERSONA, mCurrentPersona);
+        outState.putInt(EXTRA_VIEW_MODE, mMode.ordinal());
+        outState.putParcelable(EXTRA_PROFILE_CONTAINER, mContainer);
+    }
 
-	/*
-	 * LOADERS - Used to load and save profile data.
-	 */
-	@Override
-	public Loader<ProfileFieldContainer> onCreateLoader(int id, Bundle args) {
-		switch (id) {
-		case LOAD_PROFILE_LOADER_ID:
-			return new AsyncTaskLoader<ProfileFieldContainer>(getActivity()) {
+    /*
+     * LOADERS - Used to load and save profile data.
+     */
+    @Override
+    public Loader<ProfileFieldContainer> onCreateLoader(int id, Bundle args) {
+        switch (id) {
+            case LOAD_PROFILE_LOADER_ID:
+                return new AsyncTaskLoader<ProfileFieldContainer>(getActivity()) {
 
-				@Override
-				public ProfileFieldContainer loadInBackground() {
-					if (mMode == Mode.SELF || mMode == Mode.EDIT) {
-						return SPF.get().getProfileManager().getProfileFieldBulk(mCurrentPersona, ProfilePagerAdapter.DEFAULT_FIELDS);
-					} else {
-						SPFRemoteInstance instance = SPF.get().getPeopleManager().getPerson(mPersonIdentifier);
-						if (instance == null) {
-							throw new IllegalStateException("Person " + mPersonIdentifier + " not found in proximity");
-						} else {
-							String app = getActivity().getCallingPackage();
-							app = app == null ? "it.polimi.spf.app" : app;
-							return instance.getProfileBulk(ProfileField.toIdentifierList(ProfilePagerAdapter.DEFAULT_FIELDS), app);
-						}
-					}
-				}
-			};
+                    @Override
+                    public ProfileFieldContainer loadInBackground() {
+                        if (mMode == Mode.SELF || mMode == Mode.EDIT) {
+                            return SPF.get().getProfileManager().getProfileFieldBulk(mCurrentPersona, ProfilePagerAdapter.DEFAULT_FIELDS);
+                        } else {
+                            SPFRemoteInstance instance = SPF.get().getPeopleManager().getPerson(mPersonIdentifier);
+                            if (instance == null) {
+                                throw new IllegalStateException("Person " + mPersonIdentifier + " not found in proximity");
+                            } else {
+                                String app = getActivity().getCallingPackage();
+                                app = app == null ? "it.polimi.spf.app" : app;
+                                return instance.getProfileBulk(ProfileField.toIdentifierList(ProfilePagerAdapter.DEFAULT_FIELDS), app);
+                            }
+                        }
+                    }
+                };
 
-		case SAVE_PROFILE_LOADER_ID:
-			if (mMode != Mode.EDIT) {
-				Log.e(TAG, "SAVE_PROFILE_LOADER initialized in mode " + mMode);
-			}
+            case SAVE_PROFILE_LOADER_ID:
+                if (mMode != Mode.EDIT) {
+                    Log.e(TAG, "SAVE_PROFILE_LOADER initialized in mode " + mMode);
+                }
 
-			return new AsyncTaskLoader<ProfileFieldContainer>(getActivity()) {
+                return new AsyncTaskLoader<ProfileFieldContainer>(getActivity()) {
 
-				@Override
-				public ProfileFieldContainer loadInBackground() {
-					SPF.get().getProfileManager().setProfileFieldBulk(mContainer, mCurrentPersona);
-					return null;
-				}
-			};
+                    @Override
+                    public ProfileFieldContainer loadInBackground() {
+                        SPF.get().getProfileManager().setProfileFieldBulk(mContainer, mCurrentPersona);
+                        return null;
+                    }
+                };
 
-		default:
-			throw new IllegalArgumentException("No loader for id " + id);
-		}
-	}
+            default:
+                throw new IllegalArgumentException("No loader for id " + id);
+        }
+    }
 
-	@Override
-	public void onLoadFinished(Loader<ProfileFieldContainer> loader, ProfileFieldContainer data) {
-		switch (loader.getId()) {
-		case LOAD_PROFILE_LOADER_ID:
-			mContainer = data;
-			onProfileDataAvailable();
-			break;
-		case SAVE_PROFILE_LOADER_ID:
-			mContainer.clearModified();
-			mModifiedAtLeastOnce = true;
-			getActivity().finish();
-			break;
-		}
-	}
+    @Override
+    public void onLoadFinished(Loader<ProfileFieldContainer> loader, ProfileFieldContainer data) {
+        switch (loader.getId()) {
+            case LOAD_PROFILE_LOADER_ID:
+                mContainer = data;
+                onProfileDataAvailable();
+                break;
+            case SAVE_PROFILE_LOADER_ID:
+                mContainer.clearModified();
+                mModifiedAtLeastOnce = true;
+                getActivity().finish();
+                break;
+        }
+    }
 
-	@Override
-	public void onLoaderReset(Loader<ProfileFieldContainer> loader) {
-		// Do nothing
-	}
+    @Override
+    public void onLoaderReset(Loader<ProfileFieldContainer> loader) {
+        // Do nothing
+    }
 
-	// Called when the profile data is available, thus we can set up the view
-	private void onProfileDataAvailable() {
-		Log.d(TAG, "onProfileDataAvailable");
-		mFactory = new ProfileFieldViewFactory(getActivity(), mMode, mCurrentPersona, mContainer);
+    // Called when the profile data is available, thus we can set up the view
+    private void onProfileDataAvailable() {
+        Log.d(TAG, "onProfileDataAvailable");
+        mFactory = new ProfileFieldViewFactory(getActivity(), mMode, mCurrentPersona, mContainer);
 
-		// Populate field list
-		ProfilePagerAdapter mPagerAdapter = new ProfilePagerAdapter(getActivity(), getChildFragmentManager(), mMode);
-		ViewPager mViewPager = (ViewPager) getView().findViewById(R.id.profileedit_pager);
+        // Populate field list
+        ProfilePagerAdapter mPagerAdapter = new ProfilePagerAdapter(getActivity(), getChildFragmentManager(), mMode);
+        ViewPager mViewPager = (ViewPager) getView().findViewById(R.id.profileedit_pager);
 
-		mViewPager.setAdapter(mPagerAdapter);
-		mViewPager.setOffscreenPageLimit(2);
+        mViewPager.setAdapter(mPagerAdapter);
+        mViewPager.setOffscreenPageLimit(2);
 
-		PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) getView().findViewById(R.id.profileedit_tabs);
-		tabs.setViewPager(mViewPager);
+        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) getView().findViewById(R.id.profileedit_tabs);
+        tabs.setViewPager(mViewPager);
 
-		showPicture(mContainer.getFieldValue(ProfileField.PHOTO));
+        showPicture(mContainer.getFieldValue(ProfileField.PHOTO));
 
-		// Refresh field fragments
-		mPagerAdapter.onRefresh();
-	}
+        // Refresh field fragments
+        mPagerAdapter.onRefresh();
+    }
 
-	private void showPicture(Bitmap photo) {
-		// Show picture
-		this.resultView = (CircleImageView) getView().findViewById(R.id.profile_picture);
-		if (mMode == Mode.EDIT) {
-			this.resultView.setOnClickListener(this);
-		}
+    private void showPicture(Bitmap photo) {
+        // Show picture
+        this.resultView = (CircleImageView) getView().findViewById(R.id.profile_picture);
+        if (mMode == Mode.EDIT) {
+            this.resultView.setOnClickListener(this);
+        }
 
-		this.resultView.setImageBitmap(photo);
-		this.resultView.invalidate();
-	}
+        this.resultView.setImageBitmap(photo);
+        this.resultView.invalidate();
+    }
 
-	// Methods to be called from child ProfileFieldsFragment to obtain views and
-	// to notify of
-	// changes in values of circles
+    // Methods to be called from child ProfileFieldsFragment to obtain views and
+    // to notify of
+    // changes in values of circles
 
-	/**
-	 * Creates a view for the given profile field. Depending on the {@link Mode}
-	 * of visualization, the view may allow the modification of the value. This
-	 * method will not attach the view to the provided {@link ViewGroup}
-	 * 
-	 * @param field
-	 *            - the field for which to create the view.
-	 * @param container
-	 *            - the container to which the view will be attached, needed by
-	 *            {@link LayoutInflater#inflate(int, ViewGroup, boolean)} to
-	 *            evaluate layout params.
-	 * @return
-	 */
-	public <E> View createViewFor(ProfileField<E> field, ViewGroup container) {
-		switch (mMode) {
-		case SELF:
-		case REMOTE:
-			return mFactory.createViewForField(field, container, null);
-		case EDIT:
-			return mFactory.createViewForField(field, container, new ProfileFieldViewFactory.FieldValueListener<E>() {
+    /**
+     * Creates a view for the given profile field. Depending on the {@link Mode}
+     * of visualization, the view may allow the modification of the value. This
+     * method will not attach the view to the provided {@link ViewGroup}
+     *
+     * @param field     - the field for which to create the view.
+     * @param container - the container to which the view will be attached, needed by
+     *                  {@link LayoutInflater#inflate(int, ViewGroup, boolean)} to
+     *                  evaluate layout params.
+     * @return
+     */
+    public <E> View createViewFor(ProfileField<E> field, ViewGroup container) {
+        switch (mMode) {
+            case SELF:
+            case REMOTE:
+                return mFactory.createViewForField(field, container, null);
+            case EDIT:
+                return mFactory.createViewForField(field, container, new ProfileFieldViewFactory.FieldValueListener<E>() {
 
-				@Override
-				public void onFieldValueChanged(ProfileField<E> field, E value) {
-					mContainer.setFieldValue(field, value);
-				}
+                    @Override
+                    public void onFieldValueChanged(ProfileField<E> field, E value) {
+                        mContainer.setFieldValue(field, value);
+                    }
 
-				@Override
-				public void onInvalidFieldValue(ProfileField<E> field, String fieldFriendlyName) {
-					Toast.makeText(getActivity(), "Invalid value for field " + fieldFriendlyName, Toast.LENGTH_SHORT).show();
-				}
+                    @Override
+                    public void onInvalidFieldValue(ProfileField<E> field, String fieldFriendlyName) {
+                        Toast.makeText(getActivity(), "Invalid value for field " + fieldFriendlyName, Toast.LENGTH_SHORT).show();
+                    }
 
-				@Override
-				public void onCircleAdded(ProfileField<E> field, String circle) {
-					Log.d(TAG, "Circle " + circle + " added to field " + field + " of persona " + mCurrentPersona);
-					SPF.get().getProfileManager().addGroupToField(field, circle, mCurrentPersona);
-				}
+                    @Override
+                    public void onCircleAdded(ProfileField<E> field, String circle) {
+                        Log.d(TAG, "Circle " + circle + " added to field " + field + " of persona " + mCurrentPersona);
+                        SPF.get().getProfileManager().addGroupToField(field, circle, mCurrentPersona);
+                    }
 
-				@Override
-				public void onCircleRemoved(ProfileField<E> field, String circle) {
-					Log.d(TAG, "Circle " + circle + " removed from field " + field + " of persona " + mCurrentPersona);
-					SPF.get().getProfileManager().removeGroupFromField(field, circle, mCurrentPersona);
-				}
-			});
-		default:
-			return null;
-		}
-	}
+                    @Override
+                    public void onCircleRemoved(ProfileField<E> field, String circle) {
+                        Log.d(TAG, "Circle " + circle + " removed from field " + field + " of persona " + mCurrentPersona);
+                        SPF.get().getProfileManager().removeGroupFromField(field, circle, mCurrentPersona);
+                    }
+                });
+            default:
+                return null;
+        }
+    }
 
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-		switch (requestCode) {
-			case ACTIVITY_EDIT_PROFILE_CODE:
-				// Profile may have changed, reload it
-				if (resultCode == Activity.RESULT_CANCELED) {
-					Log.d(TAG, "Edit finished but no data was modified");
-				}
+        switch (requestCode) {
+            case ACTIVITY_EDIT_PROFILE_CODE:
+                // Profile may have changed, reload it
+                if (resultCode == Activity.RESULT_CANCELED) {
+                    Log.d(TAG, "Edit finished but no data was modified");
+                }
 
-				onProfileDataSaved();
-				startLoader(LOAD_PROFILE_LOADER_ID);
-				break;
-		}
-	}
+                onProfileDataSaved();
+                startLoader(LOAD_PROFILE_LOADER_ID);
+                break;
+        }
+    }
 
 
-	/**
-	 * Method to start the activity to crop an image.
-	 * @param source
-	 */
-	public void beginCrop(Uri source) {
-		Uri destination = Uri.fromFile(new File(this.getActivity().getCacheDir(), "cropped"));
-		Crop.of(source, destination).asSquare().start(this.getActivity());
-	}
+    /**
+     * Method to start the activity to crop an image.
+     *
+     * @param source
+     */
+    public void beginCrop(Uri source) {
+        Uri destination = Uri.fromFile(new File(this.getActivity().getCacheDir(), "cropped"));
+        Crop.of(source, destination).asSquare().start(this.getActivity());
+    }
 
-	/**
-	 * Method to set an show a cropped imaged.
-	 * @param resultCode
-	 * @param result
-	 */
-	public void handleCrop(int resultCode, Intent result) {
-		if (resultCode == Activity.RESULT_OK) {
-			Uri uri = Crop.getOutput(result);
-			resultView.setImageURI(uri);
+    /**
+     * Method to set an show a cropped imaged.
+     *
+     * @param resultCode
+     * @param result
+     */
+    public void handleCrop(int resultCode, Intent result) {
+        if (resultCode == Activity.RESULT_OK) {
+            Uri uri = Crop.getOutput(result);
+            resultView.setImageURI(uri);
 
-			InputStream inputStream = null;
-			try {
-				inputStream = new FileInputStream(uri.getPath());
-				Bitmap myBitmap = BitmapFactory.decodeStream(inputStream);
-				myBitmap = Bitmap.createScaledBitmap(myBitmap,130,130,false);
+            InputStream inputStream = null;
+            try {
+                inputStream = new FileInputStream(uri.getPath());
+                Bitmap myBitmap = BitmapFactory.decodeStream(inputStream);
+                myBitmap = Bitmap.createScaledBitmap(myBitmap, 130, 130, false);
 
-				mContainer.setFieldValue(ProfileField.PHOTO, myBitmap);
-				showPicture(myBitmap);
+                mContainer.setFieldValue(ProfileField.PHOTO, myBitmap);
+                showPicture(myBitmap);
 
-			} catch (FileNotFoundException e) {
-				Log.e(TAG, "handleCrop FileInputStream-file not found from uri.getpath", e);
-			} finally {
-				if(inputStream!=null) {
-					try {
-						inputStream.close();
-					} catch (IOException e) {
-						Log.e(TAG, "handleCrop closing input stream error", e);
-					}
-				}
-			}
-		} else if (resultCode == Crop.RESULT_ERROR) {
-			Toast.makeText(this.getActivity(), Crop.getError(result).getMessage(), Toast.LENGTH_SHORT).show();
-		}
-	}
+            } catch (FileNotFoundException e) {
+                Log.e(TAG, "handleCrop FileInputStream-file not found from uri.getpath", e);
+            } finally {
+                if (inputStream != null) {
+                    try {
+                        inputStream.close();
+                    } catch (IOException e) {
+                        Log.e(TAG, "handleCrop closing input stream error", e);
+                    }
+                }
+            }
+        } else if (resultCode == Crop.RESULT_ERROR) {
+            Toast.makeText(this.getActivity(), Crop.getError(result).getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
 
-	/*
-	 * MENU
-	 */
-	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		switch (mMode) {
-		case SELF:
-			inflater.inflate(R.menu.menu_view_self_profile, menu);
-			break;
-		case REMOTE:
-			if (SPF.get().getSecurityMonitor().getPersonRegistry().lookup(mPersonIdentifier) == null) {
-				inflater.inflate(R.menu.menu_view_other_profile, menu);
-			}
-			break;
-		case EDIT:
-			inflater.inflate(R.menu.menu_edit_profile, menu);
-			break;
-		}
-	}
+    /*
+     * MENU
+     */
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        switch (mMode) {
+            case SELF:
+                inflater.inflate(R.menu.menu_view_self_profile, menu);
+                break;
+            case REMOTE:
+                if (SPF.get().getSecurityMonitor().getPersonRegistry().lookup(mPersonIdentifier) == null) {
+                    inflater.inflate(R.menu.menu_view_other_profile, menu);
+                }
+                break;
+            case EDIT:
+                inflater.inflate(R.menu.menu_edit_profile, menu);
+                break;
+        }
+    }
 
-	@Override
-	public void onPrepareOptionsMenu(Menu menu) {
-		super.onPrepareOptionsMenu(menu);
-		MenuItem personaSelector = menu.findItem(R.id.profileview_persona_selector);
-		if (personaSelector == null) {
-			return;
-		}
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        MenuItem personaSelector = menu.findItem(R.id.profileview_persona_selector);
+        if (personaSelector == null) {
+            return;
+        }
 
-		Spinner spinner = (Spinner) personaSelector.getActionView().findViewById(R.id.profileview_persona_spinner);
-		if (spinner == null) {
-			return;
-		}
+//        Spinner spinner = (Spinner) personaSelector.getActionView().findViewById(R.id.profileview_persona_spinner);
+//        if (spinner == null) {
+//            return;
+//        }
 
-		List<SPFPersona> personas = SPF.get().getProfileManager().getAvailablePersonas();
-		spinner.setAdapter(new ArrayAdapter<>(getActivity().getActionBar().getThemedContext(), android.R.layout.simple_list_item_1, personas));
-		spinner.setSelection(personas.indexOf(mCurrentPersona), false);
-		spinner.setOnItemSelectedListener(this);
+        List<SPFPersona> personas = SPF.get().getProfileManager().getAvailablePersonas();
+//        spinner.setAdapter(new ArrayAdapter<>(getActivity().getActionBar().getThemedContext(), android.R.layout.simple_list_item_1, personas));
+//        spinner.setSelection(personas.indexOf(mCurrentPersona), false);
+//        spinner.setOnItemSelectedListener(this);
 
-	}
+    }
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.profileview_edit:
-			Intent i = new Intent(getActivity(), ProfileEditActivity.class);
-			i.putExtra(ProfileEditActivity.EXTRA_PERSONA, mCurrentPersona);
-			startActivityForResult(i, ACTIVITY_EDIT_PROFILE_CODE);
-			return true;
-		case R.id.profileview_send_contact_request:
-			final String displayName = mContainer.getFieldValue(ProfileField.DISPLAY_NAME);
-			final Bitmap picture = mContainer.getFieldValue(ProfileField.PHOTO);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.profileview_edit:
+                Intent i = new Intent(getActivity(), ProfileEditActivity.class);
+                i.putExtra(ProfileEditActivity.EXTRA_PERSONA, mCurrentPersona);
+                startActivityForResult(i, ACTIVITY_EDIT_PROFILE_CODE);
+                return true;
+            case R.id.profileview_send_contact_request:
+                final String displayName = mContainer.getFieldValue(ProfileField.DISPLAY_NAME);
+                final Bitmap picture = mContainer.getFieldValue(ProfileField.PHOTO);
 
-			final ContactConfirmDialogView view = new ContactConfirmDialogView(getActivity(), displayName, picture);
-			new AlertDialog.Builder(getActivity()).setTitle("Send contact request?").setView(view).setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                final ContactConfirmDialogView view = new ContactConfirmDialogView(getActivity(), displayName, picture);
+                new AlertDialog.Builder(getActivity()).setTitle("Send contact request?").setView(view).setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					SPF.get().getSecurityMonitor().getPersonRegistry().sendContactRequestTo(mPersonIdentifier, view.getPassphrase(), displayName, picture, view.getSelectedCircles());
-				}
-			}).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        SPF.get().getSecurityMonitor().getPersonRegistry().sendContactRequestTo(mPersonIdentifier, view.getPassphrase(), displayName, picture, view.getSelectedCircles());
+                    }
+                }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
 
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.dismiss();
-				}
-			}).show();
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).show();
 
-			return true;
-		case R.id.profileedit_save:
-			if (mContainer.isModified()) {
-				startLoader(SAVE_PROFILE_LOADER_ID);
-			} else {
-				onSaveNotNecessary();
-			}
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
-		}
-	}
+                return true;
+            case R.id.profileedit_save:
+                if (mContainer.isModified()) {
+                    startLoader(SAVE_PROFILE_LOADER_ID);
+                } else {
+                    onSaveNotNecessary();
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
-	/*
+    /*
         * Click on the profile picture in edit mode starts an activity to change
         * the profile picture
         */
-	@Override
-	public void onClick(View v) {
-		Crop.pickImage(this.getActivity());
-	}
+    @Override
+    public void onClick(View v) {
+        Crop.pickImage(this.getActivity());
+    }
 
 
-	/*
-	 * ItemSelectListener for Persona spinner in actionbar
-	 */
-	@Override
-	public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-		SPFPersona persona = (SPFPersona) parent.getItemAtPosition(position);
-		if (mCurrentPersona.equals(persona)) {
-			return;
-		}
+    /*
+     * ItemSelectListener for Persona spinner in actionbar
+     */
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        SPFPersona persona = (SPFPersona) parent.getItemAtPosition(position);
+        if (mCurrentPersona.equals(persona)) {
+            return;
+        }
 
-		mCurrentPersona = persona;
-		startLoader(LOAD_PROFILE_LOADER_ID);
-	}
+        mCurrentPersona = persona;
+        startLoader(LOAD_PROFILE_LOADER_ID);
+    }
 
-	@Override
-	public void onNothingSelected(AdapterView<?> parent) {
-		// Do nothing
-	}
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        // Do nothing
+    }
 
-	private void startLoader(int id) {
-		getLoaderManager().destroyLoader(id);
-		getLoaderManager().initLoader(id, null, this).forceLoad();
-	}
+    private void startLoader(int id) {
+        getLoaderManager().destroyLoader(id);
+        getLoaderManager().initLoader(id, null, this).forceLoad();
+    }
 
-	private void onProfileDataSaved() {
-		Toast.makeText(getActivity(), "Profile data saved", Toast.LENGTH_SHORT).show();
-	}
+    private void onProfileDataSaved() {
+        Toast.makeText(getActivity(), "Profile data saved", Toast.LENGTH_SHORT).show();
+    }
 
-	private void onSaveNotNecessary() {
-		Toast.makeText(getActivity(), "No field modified", Toast.LENGTH_SHORT).show();
-	}
+    private void onSaveNotNecessary() {
+        Toast.makeText(getActivity(), "No field modified", Toast.LENGTH_SHORT).show();
+    }
 
-	public boolean isContainerModified() {
-		return mContainer.isModified();
-	}
+    public boolean isContainerModified() {
+        return mContainer.isModified();
+    }
 
-	public boolean isContainerModifiedAtLeastOnce() {
-		return mModifiedAtLeastOnce;
-	}
+    public boolean isContainerModifiedAtLeastOnce() {
+        return mModifiedAtLeastOnce;
+    }
 }

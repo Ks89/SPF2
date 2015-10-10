@@ -19,75 +19,76 @@
  */
 package it.polimi.spf.framework.notification;
 
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
 public class NotificationMessage implements Parcelable {
-	//TODO add picture and display name
-	private final long mId;
-	private final String mSenderId;
-	private final String mTitle;
-	private final String mMessage;
+    //TODO add picture and display name
+    private final long mId;
+    private final String mSenderId;
+    private final String mTitle;
+    private final String mMessage;
 
-	public NotificationMessage(long id, String sender, String title, String message) {
-		this.mId = id;
-		this.mSenderId = sender;
-		this.mTitle = title;
-		this.mMessage = message;
-	}
+    public NotificationMessage(long id, String sender, String title, String message) {
+        this.mId = id;
+        this.mSenderId = sender;
+        this.mTitle = title;
+        this.mMessage = message;
+    }
 
-	public NotificationMessage(String sender, String title, String message) {
-		this(-1, sender, title, message);
-	}
+    public NotificationMessage(String sender, String title, String message) {
+        this(-1, sender, title, message);
+    }
 
-	private NotificationMessage(Parcel source) {
-		mId = source.readLong();
-		mSenderId = source.readString();
-		mTitle = source.readString();
-		mMessage = source.readString();
-	}
+    private NotificationMessage(Parcel source) {
+        mId = source.readLong();
+        mSenderId = source.readString();
+        mTitle = source.readString();
+        mMessage = source.readString();
+    }
 
-	public long getId() {
-		return mId;
-	}
+    public long getId() {
+        return mId;
+    }
 
-	public String getSenderId() {
-		return mSenderId;
-	}
+    public String getSenderId() {
+        return mSenderId;
+    }
 
-	public String getTitle() {
-		return mTitle;
-	}
+    public String getTitle() {
+        return mTitle;
+    }
 
-	public String getMessage() {
-		return mMessage;
-	}
+    public String getMessage() {
+        return mMessage;
+    }
 
-	@Override
-	public int describeContents() {
-		return 0;
-	}
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeLong(mId);
-		dest.writeString(mSenderId);
-		dest.writeString(mTitle);
-		dest.writeString(mSenderId);
-	}
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(mId);
+        dest.writeString(mSenderId);
+        dest.writeString(mTitle);
+        dest.writeString(mSenderId);
+    }
 
-	public static final Parcelable.Creator<NotificationMessage> CREATOR = new Creator<NotificationMessage>() {
+    public static final Parcelable.Creator<NotificationMessage> CREATOR = new Creator<NotificationMessage>() {
 
-		@Override
-		public NotificationMessage[] newArray(int size) {
-			return new NotificationMessage[size];
-		}
+        @Override
+        public NotificationMessage[] newArray(int size) {
+            return new NotificationMessage[size];
+        }
 
-		@Override
-		public NotificationMessage createFromParcel(Parcel source) {
-			return new NotificationMessage(source);
+        @Override
+        public NotificationMessage createFromParcel(Parcel source) {
+            return new NotificationMessage(source);
 
-		}
-	};
+        }
+    };
 
 }
