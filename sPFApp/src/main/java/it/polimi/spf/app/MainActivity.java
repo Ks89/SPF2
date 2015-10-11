@@ -27,7 +27,6 @@ import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -212,15 +211,15 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void restoreActionBar() {
-        ActionBar actionBar = getSupportActionBar();
-        //actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setTitle(mTitle);
+//        ActionBar actionBar = getSupportActionBar();
+//        //actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+//        actionBar.setDisplayShowTitleEnabled(true);
+//        actionBar.setTitle(mTitle);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        restoreActionBar();
+//        restoreActionBar();
         if (mNavigationDrawerFragment.hasOptionsMenu()) {
             mNavigationDrawerFragment.onCreateOptionsMenu(menu, getMenuInflater());
             return true;

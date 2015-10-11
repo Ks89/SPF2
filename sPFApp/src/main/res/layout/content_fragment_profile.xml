@@ -6,6 +6,8 @@
     android:background="@color/darker_background"
     android:orientation="vertical">
 
+    <include layout="@layout/toolbar" />
+
     <!-- this lib hdodenhofCircleImageView has a limitation: never
     change/declare android:scaleType="centerInside" -->
     <de.hdodenhof.circleimageview.CircleImageView

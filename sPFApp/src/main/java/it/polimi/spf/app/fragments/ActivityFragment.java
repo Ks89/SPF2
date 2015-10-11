@@ -22,11 +22,14 @@ package it.polimi.spf.app.fragments;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,25 +45,33 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import it.polimi.spf.app.R;
 import it.polimi.spf.framework.SPF;
 import it.polimi.spf.framework.services.ActivityVerb;
 import it.polimi.spf.framework.services.ServiceIdentifier;
 
 public class ActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Collection<ActivityVerb>> {
-
     private static final int LOAD_LIST_LOADER_ID = 0;
+
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
 
     private ActivityVerbAdapter mAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.content_fragment_activities, container, false);
+        View root = inflater.inflate(R.layout.content_fragment_activities, container, false);
+        ButterKnife.bind(this, root);
+        return root;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        this.setupToolBar();
 
         ListView activities = findView(R.id.activities_list);
         activities.setEmptyView(findView(R.id.activities_list_emptyview));
@@ -68,6 +79,15 @@ public class ActivityFragment extends Fragment implements LoaderManager.LoaderCa
         activities.setAdapter(mAdapter);
 
         getLoaderManager().initLoader(LOAD_LIST_LOADER_ID, null, this).forceLoad();
+    }
+
+    private void setupToolBar() {
+        if (toolbar != null) {
+            toolbar.setTitle("SPF");
+            toolbar.setTitleTextColor(Color.BLACK);
+            toolbar.inflateMenu(R.menu.menu_view_self_profile);
+            ((AppCompatActivity) this.getActivity()).setSupportActionBar(toolbar);
+        }
     }
 
     @SuppressWarnings("unchecked")

@@ -25,6 +25,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -34,6 +35,8 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -78,6 +81,8 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     ViewPager mViewPager;
     @Bind(R.id.profile_picture)
     CircleImageView resultView;
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
 
     /**
      * Possible visualization modes of fields values.
@@ -172,6 +177,8 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        this.setupToolBar();
+
         if (savedInstanceState == null) {
             mMode = Mode.values()[getArguments().getInt(EXTRA_VIEW_MODE)];
             switch (mMode) {
@@ -199,6 +206,15 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
             mContainer = savedInstanceState.getParcelable(EXTRA_PROFILE_CONTAINER);
 
             onProfileDataAvailable();
+        }
+    }
+
+    private void setupToolBar() {
+        if (toolbar != null) {
+            toolbar.setTitle("SPF");
+            toolbar.setTitleTextColor(Color.BLACK);
+            toolbar.inflateMenu(R.menu.menu_view_self_profile);
+            ((AppCompatActivity)this.getActivity()).setSupportActionBar(toolbar);
         }
     }
 

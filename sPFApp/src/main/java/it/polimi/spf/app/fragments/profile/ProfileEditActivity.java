@@ -30,6 +30,7 @@ import android.view.MenuItem;
 
 import com.soundcloud.android.crop.Crop;
 
+import butterknife.ButterKnife;
 import it.polimi.spf.app.R;
 import it.polimi.spf.framework.profile.SPFPersona;
 
@@ -53,7 +54,7 @@ public class ProfileEditActivity extends AppCompatActivity {
             mFragment = (ProfileFragment) getSupportFragmentManager().findFragmentById(R.id.container);
         }
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override

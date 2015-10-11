@@ -19,11 +19,14 @@
  */
 package it.polimi.spf.app.fragments.personas;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -37,29 +40,37 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import it.polimi.spf.app.R;
 import it.polimi.spf.framework.SPF;
 import it.polimi.spf.framework.profile.SPFPersona;
 import it.polimi.spf.framework.profile.SPFProfileManager;
 
 public class PersonasFragment extends Fragment implements PersonasArrayAdapter.OnPersonaDeletedListener, OnClickListener, LoaderManager.LoaderCallbacks<List<SPFPersona>> {
-
     private static final int CREATE_PERSONA_LOADER = 0;
     private static final int LOAD_PERSONAS_LOADER = 1;
     private static final int DELETE_PERSONA_LOADER = 2;
     protected static final String EXTRA_PERSONA = "persona";
+
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
 
     private PersonasArrayAdapter mAdapter;
     private EditText mNewPersonaName;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.content_fragment_personas, container, false);
+        View root = inflater.inflate(R.layout.content_fragment_personas, container, false);
+        ButterKnife.bind(this, root);
+        return root;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        this.setupToolBar();
 
         mAdapter = new PersonasArrayAdapter(getActivity(), this);
         ListView list = (ListView) getView().findViewById(R.id.personas_container);
@@ -70,6 +81,15 @@ public class PersonasFragment extends Fragment implements PersonasArrayAdapter.O
         addButton.setOnClickListener(this);
         getLoaderManager().destroyLoader(LOAD_PERSONAS_LOADER);
         getLoaderManager().initLoader(LOAD_PERSONAS_LOADER, null, this).forceLoad();
+    }
+
+    private void setupToolBar() {
+        if (toolbar != null) {
+            toolbar.setTitle("SPF");
+            toolbar.setTitleTextColor(Color.BLACK);
+            toolbar.inflateMenu(R.menu.menu_view_self_profile);
+            ((AppCompatActivity) this.getActivity()).setSupportActionBar(toolbar);
+        }
     }
 
     private OnItemClickListener itemClickListener = new OnItemClickListener() {

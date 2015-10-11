@@ -5,6 +5,8 @@
     android:background="@color/darker_background"
     android:orientation="vertical">
 
+    <include layout="@layout/toolbar" />
+
     <android.support.design.widget.TabLayout
         android:id="@+id/contacts_tabs"
         android:layout_width="match_parent"

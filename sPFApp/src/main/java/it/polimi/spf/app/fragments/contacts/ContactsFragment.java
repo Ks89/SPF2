@@ -19,12 +19,15 @@
  */
 package it.polimi.spf.app.fragments.contacts;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +44,8 @@ public class ContactsFragment extends Fragment {
     TabLayout tabLayout;
     @Bind(R.id.contacts_pager)
     ViewPager mViewPager;
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -52,6 +57,8 @@ public class ContactsFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        this.setupToolBar();
 
         String[] mPageTitles = getResources().getStringArray(R.array.contacts_fragments_titles);
         tabLayout.addTab(tabLayout.newTab().setText(mPageTitles[0].toUpperCase(Locale.getDefault())));
@@ -76,6 +83,15 @@ public class ContactsFragment extends Fragment {
             public void onTabReselected(TabLayout.Tab tab) {
             }
         });
+    }
+
+    private void setupToolBar() {
+        if (toolbar != null) {
+            toolbar.setTitle("SPF");
+            toolbar.setTitleTextColor(Color.BLACK);
+            toolbar.inflateMenu(R.menu.menu_view_self_profile);
+            ((AppCompatActivity) this.getActivity()).setSupportActionBar(toolbar);
+        }
     }
 
     @Override

@@ -21,15 +21,20 @@ package it.polimi.spf.app.fragments.appmanager;
 
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import it.polimi.spf.app.R;
 import it.polimi.spf.framework.SPF;
 import it.polimi.spf.framework.security.AppAuth;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,25 +42,40 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 public class AppManagerFragment extends Fragment implements ListView.OnItemClickListener, LoaderManager.LoaderCallbacks<List<AppAuth>> {
-
-	
 	private static final int APP_LOADER = 0;
+
+	@Bind(R.id.toolbar)
+	Toolbar toolbar;
+
 	private AppManagerListAdapter mAdapter;
 	private ListView mAppList;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.content_fragment_appmanager, container, false);
+		View root = inflater.inflate(R.layout.content_fragment_appmanager, container, false);
+		ButterKnife.bind(this, root);
+		return root;
 	}
 
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+
+		this.setupToolBar();
 
 		mAdapter = new AppManagerListAdapter(getActivity());
 		mAppList = (ListView) getView().findViewById(R.id.app_manager_list);
 		mAppList.setAdapter(mAdapter);
 		mAppList.setEmptyView(getView().findViewById(R.id.app_manager_list_emptyview));
 		mAppList.setOnItemClickListener(this);
+	}
+
+	private void setupToolBar() {
+		if (toolbar != null) {
+			toolbar.setTitle("SPF");
+			toolbar.setTitleTextColor(Color.BLACK);
+			toolbar.inflateMenu(R.menu.menu_view_self_profile);
+			((AppCompatActivity) this.getActivity()).setSupportActionBar(toolbar);
+		}
 	}
 
 	@Override

@@ -19,8 +19,11 @@
  */
 package it.polimi.spf.app.fragments.advertising;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +40,8 @@ import android.widget.Switch;
 
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import it.polimi.spf.app.R;
 import it.polimi.spf.framework.SPF;
 import it.polimi.spf.framework.notification.SPFAdvProfile;
@@ -46,17 +51,24 @@ import it.polimi.spf.shared.model.ProfileField;
 
 public class AdvertisingFragment extends Fragment {
 
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
+
     private SPFAdvertisingManager mAdvertiseManager = SPF.get().getAdvertiseManager();
     private boolean mSpinnerEnabled = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.content_fragment_advertising, container, false);
+        View root = inflater.inflate(R.layout.content_fragment_advertising, container, false);
+        ButterKnife.bind(this, root);
+        return root;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        this.setupToolBar();
 
         // Set up switch
         Switch advSwitch = (Switch) getView().findViewById(R.id.advertising_switch);
@@ -95,6 +107,15 @@ public class AdvertisingFragment extends Fragment {
         };
 
         list.setAdapter(new ProfileFieldSelectAdapter(getActivity(), choiches));
+    }
+
+    private void setupToolBar() {
+        if (toolbar != null) {
+            toolbar.setTitle("SPF");
+            toolbar.setTitleTextColor(Color.BLACK);
+            toolbar.inflateMenu(R.menu.menu_view_self_profile);
+            ((AppCompatActivity) this.getActivity()).setSupportActionBar(toolbar);
+        }
     }
 
     private final OnCheckedChangeListener mAdvertisingToggleListener = new OnCheckedChangeListener() {
