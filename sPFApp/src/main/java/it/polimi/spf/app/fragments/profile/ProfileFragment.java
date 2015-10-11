@@ -76,6 +76,8 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     TabLayout tabLayout;
     @Bind(R.id.profileedit_pager)
     ViewPager mViewPager;
+    @Bind(R.id.profile_picture)
+    CircleImageView resultView;
 
     /**
      * Possible visualization modes of fields values.
@@ -153,8 +155,6 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     private SPFPersona mCurrentPersona;
     private Mode mMode;
     private ProfileFieldContainer mContainer;
-
-    private CircleImageView resultView;
 
     private ProfileFieldViewFactory mFactory;
     private boolean mModifiedAtLeastOnce = false;
@@ -315,7 +315,6 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 
     private void showPicture(Bitmap photo) {
         // Show picture
-        this.resultView = (CircleImageView) getView().findViewById(R.id.profile_picture);
         if (mMode == Mode.EDIT) {
             this.resultView.setOnClickListener(this);
         }
