@@ -116,7 +116,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
         handlerThread = new HandlerThread("wfd_middleware_adapter");
         handlerThread.start();
-        wfdHandler = new WfdHandler(handlerThread.getLooper(), this);
+        wfdHandler = new WfdHandler(handlerThread.getLooper());
 
         try {
             mPort = this.requestAvailablePortFromOs();
@@ -408,7 +408,6 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         if (mManager != null) {
             mManager.requestConnectionInfo(mChannel, this);
         }
-
     }
 
     public void onNetworkDisconnected() {
