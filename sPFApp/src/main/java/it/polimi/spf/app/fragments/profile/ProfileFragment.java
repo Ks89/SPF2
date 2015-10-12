@@ -71,6 +71,7 @@ import it.polimi.spf.framework.profile.SPFPersona;
 import it.polimi.spf.framework.proximity.SPFRemoteInstance;
 import it.polimi.spf.shared.model.ProfileField;
 import it.polimi.spf.shared.model.ProfileFieldContainer;
+import lombok.Getter;
 
 public class ProfileFragment extends Fragment implements LoaderManager.LoaderCallbacks<ProfileFieldContainer>,
         OnItemSelectedListener, OnClickListener {
@@ -81,8 +82,8 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     ViewPager mViewPager;
     @Bind(R.id.profile_picture)
     CircleImageView resultView;
-    @Bind(R.id.toolbar)
-    Toolbar toolbar;
+//    @Bind(R.id.toolbar)
+//    Toolbar toolbar;
 
     /**
      * Possible visualization modes of fields values.
@@ -157,6 +158,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     private static final String TAG = "ProfileFragment";
 
     private String mPersonIdentifier;
+    @Getter
     private SPFPersona mCurrentPersona;
     private Mode mMode;
     private ProfileFieldContainer mContainer;
@@ -177,7 +179,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        this.setupToolBar();
+//        this.setupToolBar();
 
         if (savedInstanceState == null) {
             mMode = Mode.values()[getArguments().getInt(EXTRA_VIEW_MODE)];
@@ -209,14 +211,14 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         }
     }
 
-    private void setupToolBar() {
-        if (toolbar != null) {
-            toolbar.setTitle("SPF");
-            toolbar.setTitleTextColor(Color.BLACK);
-            toolbar.inflateMenu(R.menu.menu_view_self_profile);
-            ((AppCompatActivity)this.getActivity()).setSupportActionBar(toolbar);
-        }
-    }
+//    private void setupToolBar() {
+//        if (toolbar != null) {
+//            toolbar.setTitle("SPF");
+//            toolbar.setTitleTextColor(Color.BLACK);
+//            toolbar.inflateMenu(R.menu.menu_view_self_profile);
+//            ((AppCompatActivity)this.getActivity()).setSupportActionBar(toolbar);
+//        }
+//    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -456,73 +458,69 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     /*
      * MENU
      */
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        switch (mMode) {
-            case SELF:
-                inflater.inflate(R.menu.menu_view_self_profile, menu);
-                break;
-            case REMOTE:
-                if (SPF.get().getSecurityMonitor().getPersonRegistry().lookup(mPersonIdentifier) == null) {
-                    inflater.inflate(R.menu.menu_view_other_profile, menu);
-                }
-                break;
-            case EDIT:
-                inflater.inflate(R.menu.menu_edit_profile, menu);
-                break;
+//    @Override
+//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+//        switch (mMode) {
+//            case SELF:
+//                inflater.inflate(R.menu.menu_view_self_profile, menu);
+//                break;
+//            case REMOTE:
+//                if (SPF.get().getSecurityMonitor().getPersonRegistry().lookup(mPersonIdentifier) == null) {
+//                    inflater.inflate(R.menu.menu_view_other_profile, menu);
+//                }
+//                break;
+//            case EDIT:
+//                inflater.inflate(R.menu.menu_edit_profile, menu);
+//                break;
+//        }
+//    }
+
+//    @Override
+//    public void onPrepareOptionsMenu(Menu menu) {
+//        super.onPrepareOptionsMenu(menu);
+//        MenuItem item = menu.findItem(R.id.profileview_persona_selector);
+//        Spinner spinner = (Spinner) MenuItemCompat.getActionView(item);
+//        List<SPFPersona> personas = SPF.get().getProfileManager().getAvailablePersonas();
+//        spinner.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, personas));
+//        spinner.setSelection(personas.indexOf(mCurrentPersona), false);
+//        spinner.setOnItemSelectedListener(this);
+//    }
+
+
+    public void clickedOptionItemEdit() {
+        Intent i = new Intent(getActivity(), ProfileEditActivity.class);
+        i.putExtra(ProfileEditActivity.EXTRA_PERSONA, mCurrentPersona);
+        startActivityForResult(i, ACTIVITY_EDIT_PROFILE_CODE);
+    }
+
+    public void clickedOptionItemSendContactRequest() {
+        final String displayName = mContainer.getFieldValue(ProfileField.DISPLAY_NAME);
+        final Bitmap picture = mContainer.getFieldValue(ProfileField.PHOTO);
+
+        final ContactConfirmDialogView view = new ContactConfirmDialogView(getActivity(), displayName, picture);
+        new AlertDialog.Builder(getActivity()).setTitle("Send contact request?").setView(view).setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                SPF.get().getSecurityMonitor().getPersonRegistry().sendContactRequestTo(mPersonIdentifier, view.getPassphrase(), displayName, picture, view.getSelectedCircles());
+            }
+        }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        }).show();
+    }
+
+    public void clickedOptionItemSave() {
+        if (mContainer.isModified()) {
+            startLoader(SAVE_PROFILE_LOADER_ID);
+        } else {
+            onSaveNotNecessary();
         }
     }
 
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-        MenuItem item = menu.findItem(R.id.profileview_persona_selector);
-        Spinner spinner = (Spinner) MenuItemCompat.getActionView(item);
-        List<SPFPersona> personas = SPF.get().getProfileManager().getAvailablePersonas();
-        spinner.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, personas));
-        spinner.setSelection(personas.indexOf(mCurrentPersona), false);
-        spinner.setOnItemSelectedListener(this);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.profileview_edit:
-                Intent i = new Intent(getActivity(), ProfileEditActivity.class);
-                i.putExtra(ProfileEditActivity.EXTRA_PERSONA, mCurrentPersona);
-                startActivityForResult(i, ACTIVITY_EDIT_PROFILE_CODE);
-                return true;
-            case R.id.profileview_send_contact_request:
-                final String displayName = mContainer.getFieldValue(ProfileField.DISPLAY_NAME);
-                final Bitmap picture = mContainer.getFieldValue(ProfileField.PHOTO);
-
-                final ContactConfirmDialogView view = new ContactConfirmDialogView(getActivity(), displayName, picture);
-                new AlertDialog.Builder(getActivity()).setTitle("Send contact request?").setView(view).setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        SPF.get().getSecurityMonitor().getPersonRegistry().sendContactRequestTo(mPersonIdentifier, view.getPassphrase(), displayName, picture, view.getSelectedCircles());
-                    }
-                }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                }).show();
-
-                return true;
-            case R.id.profileedit_save:
-                if (mContainer.isModified()) {
-                    startLoader(SAVE_PROFILE_LOADER_ID);
-                } else {
-                    onSaveNotNecessary();
-                }
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
 
     /*
         * Click on the profile picture in edit mode starts an activity to change

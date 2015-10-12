@@ -30,7 +30,6 @@ import android.view.MenuItem;
 
 import com.soundcloud.android.crop.Crop;
 
-import butterknife.ButterKnife;
 import it.polimi.spf.app.R;
 import it.polimi.spf.framework.profile.SPFPersona;
 
@@ -66,6 +65,11 @@ public class ProfileEditActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.profileedit_save:
+                if (mFragment != null) {
+                    (mFragment).clickedOptionItemSave();
+                }
+                return true;
             case android.R.id.home:
                 finish();
                 return true;

@@ -56,13 +56,13 @@ import it.polimi.spf.framework.notification.NotificationMessage;
 public class NotificationFragment extends Fragment
         implements OnItemClickListener, SPFContext.OnEventListener, LoaderManager.LoaderCallbacks<List<NotificationMessage>> {
 
-    @Bind(R.id.toolbar)
-    Toolbar toolbar;
+//    @Bind(R.id.toolbar)
+//    Toolbar toolbar;
 
     private NotificationMessageAdapter mAdapter;
 
-    private final static int MESSAGE_LOADER_ID = 0;
-    private final static int MESSAGE_DELETER_ID = 1;
+    public final static int MESSAGE_LOADER_ID = 0;
+    public final static int MESSAGE_DELETER_ID = 1;
 
     private static final String EXTRA_MESSAGE_ID = "messageId";
 
@@ -77,7 +77,7 @@ public class NotificationFragment extends Fragment
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        this.setupToolBar();
+//        this.setupToolBar();
 
         ListView listview = (ListView) getView().findViewById(R.id.notifications_list);
         mAdapter = new NotificationMessageAdapter(getActivity());
@@ -88,14 +88,14 @@ public class NotificationFragment extends Fragment
         getLoaderManager().initLoader(MESSAGE_LOADER_ID, null, this).forceLoad();
     }
 
-    private void setupToolBar() {
-        if (toolbar != null) {
-            toolbar.setTitle("SPF");
-            toolbar.setTitleTextColor(Color.BLACK);
-            toolbar.inflateMenu(R.menu.menu_notifications);
-            ((AppCompatActivity) this.getActivity()).setSupportActionBar(toolbar);
-        }
-    }
+//    private void setupToolBar() {
+//        if (toolbar != null) {
+//            toolbar.setTitle("SPF");
+//            toolbar.setTitleTextColor(Color.BLACK);
+//            toolbar.inflateMenu(R.menu.menu_notifications);
+//            ((AppCompatActivity) this.getActivity()).setSupportActionBar(toolbar);
+//        }
+//    }
 
     @Override
     public void onResume() {
@@ -110,21 +110,26 @@ public class NotificationFragment extends Fragment
     }
 
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_notifications, menu);
-    }
+//    @Override
+//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+//        inflater.inflate(R.menu.menu_notifications, menu);
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        switch (item.getItemId()) {
+//            case R.id.notifications_delete_all:
+//                getLoaderManager().destroyLoader(MESSAGE_DELETER_ID);
+//                getLoaderManager().initLoader(MESSAGE_DELETER_ID, null, this);
+//                return true;
+//            default:
+//                return super.onOptionsItemSelected(item);
+//        }
+//    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.notifications_delete_all:
-                getLoaderManager().destroyLoader(MESSAGE_DELETER_ID);
-                getLoaderManager().initLoader(MESSAGE_DELETER_ID, null, this);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+    public void clickedOptionItemDeleteAll() {
+        getLoaderManager().destroyLoader(MESSAGE_DELETER_ID);
+        getLoaderManager().initLoader(MESSAGE_DELETER_ID, null, this);
     }
 
     @Override
