@@ -67,9 +67,9 @@ public class CustomDnsServiceResponseListener implements WifiP2pManager.DnsSdSer
             }
             Log.d(TAG, "onDnsSdServiceAvailable " + instanceName);
 
-            if (!wifiDirectMiddleware.getOnServiceDiscovered().onIsGroupCreated()) {
+            if (!wifiDirectMiddleware.isGroupCreated() && !wifiDirectMiddleware.isAutonomous()) {
                 WfdLog.d(TAG, "createGroup: onDnsSdTxtRecordAvailable");
-                wifiDirectMiddleware.getOnServiceDiscovered().onCreateGroup();
+                wifiDirectMiddleware.createGroup();
             }
         }
     }

@@ -122,7 +122,7 @@ public class SPF {
         mNotificationManager = new SPFNotificationManager(context);
         mSecurityMonitor = new SPFSecurityMonitor(context);
 
-        //TODO FIXME refactor, because this method can rename or init the idenfier
+        //TODO FIXME refactor, because this method can rename or init the identifier
         this.updateIdentifier(goIntent);
 
         // Initialize middleware
@@ -216,6 +216,10 @@ public class SPF {
             mSearchManager.onInstanceLost(ref);
         }
 
+    }
+
+    public void notifyProximityStatus(boolean isForceKilled) {
+        mMiddleware.notifyProximityStatus(isForceKilled);
     }
 
     public boolean isConnected() {

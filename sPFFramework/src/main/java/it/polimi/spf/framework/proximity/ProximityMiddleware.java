@@ -59,4 +59,6 @@ public interface ProximityMiddleware {
     void unregisterAdvertisement();
 
     boolean isAdvertising();
+
+    void notifyProximityStatus(boolean isForceKilled);
 }

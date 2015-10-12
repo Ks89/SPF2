@@ -45,6 +45,7 @@ import it.polimi.spf.app.navigation.Navigation.Entry;
 import it.polimi.spf.framework.SPF;
 import it.polimi.spf.framework.SPFContext;
 import it.polimi.spf.framework.local.SPFService;
+import it.polimi.spf.wfd.events.NineBus;
 
 /**
  * Base navigation fragment without drawer functionalities to be used in two
@@ -234,7 +235,7 @@ public class NavigationFragment extends Fragment {
                 Log.d(TAG, "connectSwitch checked -> gointent=15");
                 ((SPFApp) getActivity().getApplication()).initSPF(15, group_autonomous_switch.isChecked());
             } else {
-                ((SPFApp) getActivity().getApplication()).initSPF(0, group_autonomous_switch.isChecked());
+                ((SPFApp) getActivity().getApplication()).initSPF(0, false);
 
             }
             SPFService.startForeground(getActivity());

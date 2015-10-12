@@ -151,4 +151,9 @@ public class WFDMiddlewareAdapter implements ProximityMiddleware, WFDRemoteInsta
         return mMiddleware.getWfdHandler() != null
                 && mMiddleware.getWfdHandler().hasMessages(WfdHandler.SEND_ADVERTISING);
     }
+
+    @Override
+    public void notifyProximityStatus(boolean isForceKilled) {
+        mMiddleware.setProximityKilledByUser(isForceKilled);
+    }
 }

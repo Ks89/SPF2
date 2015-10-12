@@ -20,10 +20,6 @@
  */
 package it.polimi.spf.framework.local;
 
-import it.polimi.spf.framework.SPF;
-import it.polimi.spf.framework.SPFContext;
-import it.polimi.spf.shared.SPFInfo;
-
 import android.app.Notification;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -34,196 +30,204 @@ import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import it.polimi.spf.framework.SPF;
+import it.polimi.spf.framework.SPFContext;
+import it.polimi.spf.shared.SPFInfo;
+
 /**
  *
  */
 public class SPFService extends Service {
 
-	// ## WARNING ##
-	// Any modification to the package name or class name of this component
-	// should be reflected in SPFInfo.
+    // ## WARNING ##
+    // Any modification to the package name or class name of this component
+    // should be reflected in SPFInfo.
 
-	private static final String TAG = "SPFService";
-	private static final int NOTIFICATION_ID = 0xab01d;
-	private static boolean mIsStartedForeground = false;
-	private static String ACTION_START_FOREGROUND = "it.polimi.spf.framework.SPFService.START_FOREGROUND";
-	private static String ACTION_STOP_FOREGROUND = "it.polimi.spf.framework.SPFService.STOP_FOREGROUND";
+    private static final String TAG = "SPFService";
+    private static final int NOTIFICATION_ID = 0xab01d;
+    private static boolean mIsStartedForeground = false;
+    private static String ACTION_START_FOREGROUND = "it.polimi.spf.framework.SPFService.START_FOREGROUND";
+    private static String ACTION_STOP_FOREGROUND = "it.polimi.spf.framework.SPFService.STOP_FOREGROUND";
 
-	//associated to the button in the notification to catch clicks
-	private static final String STOPSPF = "it.polimi.spf.app.stop";
+    //associated to the button in the notification to catch clicks
+    private static final String STOPSPF = "it.polimi.spf.app.stop";
 
 
-	private static String ACTION_STOP_FOREGROUND_SWITCH = "it.polimi.spf.framework.SPFService.UPDATE_SWITCH";
-	private static String CALL_NAVIGATION_FRAGMENT_BROADCAST_INTENT = "it.polimi.spf.SPFService.spfservice-navigationfragment";
-	private static final int UPDATESWITCH = 1;
+    private static String ACTION_STOP_FOREGROUND_SWITCH = "it.polimi.spf.framework.SPFService.UPDATE_SWITCH";
+    private static String CALL_NAVIGATION_FRAGMENT_BROADCAST_INTENT = "it.polimi.spf.SPFService.spfservice-navigationfragment";
+    private static final int UPDATESWITCH = 1;
 
-	private final Service service = this;
-	/**
-	 * Sends an intent to SPFService, using the {@link Context} provided, that
-	 * makes it start in foreground.
-	 * 
-	 * @param c - the Context used to send the intent;
-	 * 
-	 * @see Service#startForeground(int, Notification)
-	 */
-	public static void startForeground(Context c) {
-		Intent i = new Intent(c, SPFService.class);
-		i.setAction(ACTION_START_FOREGROUND);
-		c.startService(i);
-	}
+    private final Service service = this;
 
-	/**
-	 * Sends an intent to SPFService, using the {@link Context} provided, that
-	 * makes it stop foreground.
-	 * 
-	 * @param c - the Context used to send the intent;
-	 * 
-	 * @see Service#stopForeground(boolean)
-	 */
-	public static void stopForeground(Context c) {
-		Intent i = new Intent(c, SPFService.class);
-		i.setAction(ACTION_STOP_FOREGROUND);
-		c.startService(i);
-		c.stopService(i);
-	}
+    /**
+     * Sends an intent to SPFService, using the {@link Context} provided, that
+     * makes it start in foreground.
+     *
+     * @param c - the Context used to send the intent;
+     * @see Service#startForeground(int, Notification)
+     */
+    public static void startForeground(Context c) {
+        Intent i = new Intent(c, SPFService.class);
+        i.setAction(ACTION_START_FOREGROUND);
+        c.startService(i);
+    }
 
-	/**
-	 * Check whether the service is started or not. Note that this method return
-	 * false if the service is bounded.
-	 * 
-	 * @return true if the service is started, otherwise false
-	 */
-	public static boolean isStarted() {
-		return mIsStartedForeground;
-	}
+    /**
+     * Sends an intent to SPFService, using the {@link Context} provided, that
+     * makes it stop foreground.
+     *
+     * @param c - the Context used to send the intent;
+     * @see Service#stopForeground(boolean)
+     */
+    public static void stopForeground(Context c) {
+        Intent i = new Intent(c, SPFService.class);
+        i.setAction(ACTION_STOP_FOREGROUND);
+        c.startService(i);
+        c.stopService(i);
+    }
 
-	private IBinder mServerBinder;
-	private IBinder mProfileBinder;
-	private IBinder mLocalServiceBinder;
-	private IBinder mNotificationBinder;
-	private IBinder mSecurityBinder;
+    /**
+     * Check whether the service is started or not. Note that this method return
+     * false if the service is bounded.
+     *
+     * @return true if the service is started, otherwise false
+     */
+    public static boolean isStarted() {
+        return mIsStartedForeground;
+    }
 
-	private Notification mDefaultNotification;
+    private IBinder mServerBinder;
+    private IBinder mProfileBinder;
+    private IBinder mLocalServiceBinder;
+    private IBinder mNotificationBinder;
+    private IBinder mSecurityBinder;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Service#onBind(android.content.Intent)
-	 */
-	@Override
-	public IBinder onBind(Intent intent) {
-		String action = intent.getAction();
-		Log.d(TAG, "External app bound with action " + intent.getAction());
+    private Notification mDefaultNotification;
 
-		if (SPFInfo.ACTION_PROXIMITY_SERVER.equalsIgnoreCase(action)) {
-			SPF.get().connect();
-			// Request the binder that offers access to proximity
-			// functionalities
-			if (mServerBinder == null) {
-				mServerBinder = new SPFProximityServiceImpl();
-			}
-			return mServerBinder;
+    /*
+     * (non-Javadoc)
+     *
+     * @see android.app.Service#onBind(android.content.Intent)
+     */
+    @Override
+    public IBinder onBind(Intent intent) {
+        String action = intent.getAction();
+        Log.d(TAG, "External app bound with action " + intent.getAction());
 
-		} else if (SPFInfo.ACTION_PROFILE.equals(action)) {
-			// Requests the binder that offers the access to the local profile
-			if (mProfileBinder == null) {
-				mProfileBinder = new SPFProfileServiceImpl(this);
-			}
-			return mProfileBinder;
+        if (SPFInfo.ACTION_PROXIMITY_SERVER.equalsIgnoreCase(action)) {
+            SPF.get().connect();
+            // Request the binder that offers access to proximity
+            // functionalities
+            if (mServerBinder == null) {
+                mServerBinder = new SPFProximityServiceImpl();
+            }
+            return mServerBinder;
 
-		} else if (SPFInfo.ACTION_SERVICE.equalsIgnoreCase(action)) {
-			// Request the binder to manage local services
-			if (mLocalServiceBinder == null) {
-				mLocalServiceBinder = new SPFServiceManagerImpl();
-			}
-			return mLocalServiceBinder;
+        } else if (SPFInfo.ACTION_PROFILE.equals(action)) {
+            // Requests the binder that offers the access to the local profile
+            if (mProfileBinder == null) {
+                mProfileBinder = new SPFProfileServiceImpl(this);
+            }
+            return mProfileBinder;
 
-		} else if (SPFInfo.ACTION_NOTIFICATION.equalsIgnoreCase(action)) {
-			// request the binder to access notification services
-			if (mNotificationBinder == null) {
-				mNotificationBinder = new SPFNotificationServiceImpl(this);
-			}
-			return mNotificationBinder;
-		} else if (SPFInfo.ACTION_SECURITY.equals(action)) {
-			// request the binder to access security services
-			if (mSecurityBinder == null) {
-				mSecurityBinder = new SPFSecurityServiceImpl(this);
-			}
-			return mSecurityBinder;
-		}
+        } else if (SPFInfo.ACTION_SERVICE.equalsIgnoreCase(action)) {
+            // Request the binder to manage local services
+            if (mLocalServiceBinder == null) {
+                mLocalServiceBinder = new SPFServiceManagerImpl();
+            }
+            return mLocalServiceBinder;
 
-		Log.d(TAG, "Unrecognized action: " + action);
-		return null;
-	}
+        } else if (SPFInfo.ACTION_NOTIFICATION.equalsIgnoreCase(action)) {
+            // request the binder to access notification services
+            if (mNotificationBinder == null) {
+                mNotificationBinder = new SPFNotificationServiceImpl(this);
+            }
+            return mNotificationBinder;
+        } else if (SPFInfo.ACTION_SECURITY.equals(action)) {
+            // request the binder to access security services
+            if (mSecurityBinder == null) {
+                mSecurityBinder = new SPFSecurityServiceImpl(this);
+            }
+            return mSecurityBinder;
+        }
 
-	// Triggered by the front end to keep spf service active in foreground
-	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
-		if(intent == null){
-			return START_STICKY;
-		}
-		
-		String action = intent.getAction();
+        Log.d(TAG, "Unrecognized action: " + action);
+        return null;
+    }
 
-		if (ACTION_START_FOREGROUND.equals(action)) {
-			if (!SPF.get().isConnected()) {
-				SPF.get().connect();
-			}
+    // Triggered by the front end to keep spf service active in foreground
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent == null) {
+            return START_STICKY;
+        }
 
-			startInForeground();
-			Log.d(TAG, "Started in foreground");
-		} else if (ACTION_STOP_FOREGROUND.equals(action)) {
-			stopForeground(true);
-			mIsStartedForeground = false;
-			Log.d(TAG, "Foreground stopped");
-		}
+        String action = intent.getAction();
 
-		return START_STICKY;
-	}
+        if (ACTION_START_FOREGROUND.equals(action)) {
+            if (!SPF.get().isConnected()) {
+                SPF.get().connect();
+            }
+            SPF.get().notifyProximityStatus(false); //false because it's starting
 
-	private void startInForeground() {
-		Notification n = SPFContext.get().getServiceNotification();
-		if (n == null) {
-			n = mDefaultNotification;
-		}
-		startForeground(NOTIFICATION_ID, n);
-		mIsStartedForeground = true;
-	}
+            startInForeground();
+            Log.d(TAG, "Started in foreground");
+        } else if (ACTION_STOP_FOREGROUND.equals(action)) {
 
-	private BroadcastReceiver receivefromServiceNotificationStop = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			Log.d(TAG, "Button 'Stop' pressed in Notification");
+            //notify to the middleware that i killed the proximity service
+            SPF.get().notifyProximityStatus(true); //true because it's killing
 
-			//Stop the service
-			SPFService.stopForeground(service.getBaseContext());
+            stopForeground(true);
+            mIsStartedForeground = false;
+            Log.d(TAG, "Foreground stopped");
+        }
 
-			//Now i want to call a LocalBroadcast to ask to the NavigationFragment:
-			// "Please can you update the switch status?" :)
-			Intent intent_call_navigationFragment = new Intent(ACTION_STOP_FOREGROUND_SWITCH);
-			intent_call_navigationFragment.putExtra(CALL_NAVIGATION_FRAGMENT_BROADCAST_INTENT, UPDATESWITCH);
+        return START_STICKY;
+    }
 
-			LocalBroadcastManager.getInstance(service).sendBroadcast(intent_call_navigationFragment);
-		}
-	};
+    private void startInForeground() {
+        Notification n = SPFContext.get().getServiceNotification();
+        if (n == null) {
+            n = mDefaultNotification;
+        }
+        startForeground(NOTIFICATION_ID, n);
+        mIsStartedForeground = true;
+    }
 
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		SPF.get().onServerCreated(this);
-		// Default notification is empty, so Android will use its own default
-		// notification for this app.
-		mDefaultNotification = new Notification.Builder(this).build();
-		Log.d(TAG, "Service created");
-		this.registerReceiver(receivefromServiceNotificationStop, new IntentFilter(STOPSPF));
-	}
+    private BroadcastReceiver receivefromServiceNotificationStop = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d(TAG, "Button 'Stop' pressed in Notification");
 
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		Log.d(TAG, "Service destroyed");
-		this.unregisterReceiver(receivefromServiceNotificationStop);
-		SPF.get().onServerDestroy();
-		SPF.get().disconnect();
-	}
+            //Stop the service
+            SPFService.stopForeground(service.getBaseContext());
+
+            //Now i want to call a LocalBroadcast to ask to the NavigationFragment:
+            // "Please can you update the switch status?" :)
+            Intent intent_call_navigationFragment = new Intent(ACTION_STOP_FOREGROUND_SWITCH);
+            intent_call_navigationFragment.putExtra(CALL_NAVIGATION_FRAGMENT_BROADCAST_INTENT, UPDATESWITCH);
+
+            LocalBroadcastManager.getInstance(service).sendBroadcast(intent_call_navigationFragment);
+        }
+    };
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        SPF.get().onServerCreated(this);
+        // Default notification is empty, so Android will use its own default
+        // notification for this app.
+        mDefaultNotification = new Notification.Builder(this).build();
+        Log.d(TAG, "Service created");
+        this.registerReceiver(receivefromServiceNotificationStop, new IntentFilter(STOPSPF));
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "Service destroyed");
+        this.unregisterReceiver(receivefromServiceNotificationStop);
+        SPF.get().onServerDestroy();
+        SPF.get().disconnect();
+    }
 }

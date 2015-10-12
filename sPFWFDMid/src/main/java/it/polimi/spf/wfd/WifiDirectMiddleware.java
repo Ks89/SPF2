@@ -93,11 +93,18 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
     @Getter
     private boolean connected = false;
+
+    @Getter
     private boolean isGroupCreated = false;
     private boolean eternalConnect = false;
 
     @Setter
+    private boolean proximityKilledByUser = false;
+
+    @Setter
     private int goIntent;
+
+    @Getter
     private boolean isAutonomous;
 
     private GroupActor mGroupActor;
@@ -159,6 +166,11 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
         this.startRegistration();
         this.discoverService();
+
+        WfdLog.d(TAG, "-----> " + isAutonomous + " , " + goIntent);
+        if (this.isAutonomous() && this.goIntent == 15) {
+            this.createGroup();
+        }
 
         this.connected = true;
     }
@@ -325,7 +337,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         });
     }
 
-    private void createGroup() {
+    public void createGroup() {
         WfdLog.d(TAG, "createGroup()");
         if (isGroupCreated || !this.connected) {
             WfdLog.d(TAG, "group already created or middleware not started");
@@ -453,7 +465,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
             mManager.removeGroup(mChannel, null);
         }
 
-        if (eternalConnect) {
+        if (eternalConnect && !proximityKilledByUser) {
             WfdLog.d(TAG, "Eternal connect is active...Reconnecting...");
             scheduler = Executors.newScheduledThreadPool(1);
             eternalConnect();
@@ -466,18 +478,18 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
     private void eternalConnect() {
         final Runnable beeper = new Runnable() {
             public void run() {
-                System.out.println("beep");
+                WfdLog.d(TAG, "Eternal Connect is creating a new connection, please wait...");
                 disconnect();
                 init();
                 connect();
             }
         };
-        final ScheduledFuture<?> beeperHandle = scheduler.scheduleAtFixedRate(beeper, 10, 10, TimeUnit.SECONDS);
+        final ScheduledFuture<?> beeperHandle = scheduler.scheduleAtFixedRate(beeper, 0, 15, TimeUnit.SECONDS);
         scheduler.schedule(new Runnable() {
             public void run() {
                 beeperHandle.cancel(true);
             }
-        }, 10, TimeUnit.SECONDS);
+        }, 15, TimeUnit.SECONDS);
     }
 
 
@@ -676,24 +688,6 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
             } catch (IOException e) {
                 WfdLog.e(TAG, "Impossible to instantiate the GroupOwner Actor!", e);
             }
-        }
-    }
-
-
-    /**
-     * Class and attribute used in {@link CustomDnsServiceResponseListener#onDnsSdServiceAvailable(String, String, WifiP2pDevice)}
-     * to call methods in {@link WifiDirectMiddleware}.
-     */
-    @Getter
-    private CallbackToMiddleware onServiceDiscovered = new CallbackToMiddleware();
-
-    public class CallbackToMiddleware {
-        public boolean onIsGroupCreated() {
-            return isGroupCreated;
-        }
-
-        public void onCreateGroup() {
-            createGroup();
         }
     }
 }
