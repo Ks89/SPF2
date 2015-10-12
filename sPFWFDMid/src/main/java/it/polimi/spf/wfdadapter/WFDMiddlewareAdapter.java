@@ -35,6 +35,7 @@ import it.polimi.spf.wfd.WfdMessage;
 import it.polimi.spf.wfd.WifiDirectMiddleware;
 import it.polimi.spf.wfd.exceptions.GroupException;
 import it.polimi.spf.wfd.listeners.WfdMiddlewareListener;
+import it.polimi.spf.wfd.util.WfdLog;
 
 public class WFDMiddlewareAdapter implements ProximityMiddleware, WFDRemoteInstance.Factory {
     private final static String TAG = WFDMiddlewareAdapter.class.getSimpleName();
@@ -60,6 +61,7 @@ public class WFDMiddlewareAdapter implements ProximityMiddleware, WFDRemoteInsta
 
     @Override
     public void connect() {
+        WfdLog.d(TAG, "Connect() called in WFDMiddlewareAdapter");
         mMiddleware.init();
         mMiddleware.connect();
     }
@@ -76,6 +78,7 @@ public class WFDMiddlewareAdapter implements ProximityMiddleware, WFDRemoteInsta
 
     @Override
     public void sendSearchResult(String id, String uniqueIdentifier, String baseInfo) {
+        WfdLog.d(TAG, "sendSearchResult called");
         WfdMessage message = new WfdMessage();
         message.put(WFDMessageContract.KEY_METHOD_ID, WFDMessageContract.ID_SEND_SEARCH_RESULT);
         message.put(WFDMessageContract.KEY_QUERY_ID, id);
@@ -93,6 +96,7 @@ public class WFDMiddlewareAdapter implements ProximityMiddleware, WFDRemoteInsta
 
     @Override
     public void sendSearchSignal(String sender, String searchId, String query) {
+        WfdLog.d(TAG, "sendSearchSignal called");
         WfdMessage message = new WfdMessage();
         message.put(WFDMessageContract.KEY_METHOD_ID, WFDMessageContract.ID_SEND_SEARCH_SIGNAL);
         message.put(WFDMessageContract.KEY_QUERY_ID, searchId);
@@ -110,12 +114,15 @@ public class WFDMiddlewareAdapter implements ProximityMiddleware, WFDRemoteInsta
 
     @Override
     public SPFRemoteInstance createRemoteInstance(String identifier) {
+        WfdLog.d(TAG, "createRemoteInstance called");
         return new WFDRemoteInstance(mMiddleware, identifier);
     }
 
     @Override
     public void registerAdvertisement(String profile, long period) {
+        WfdLog.d(TAG, "registerAdvertisement called");
         if (mMiddleware.getWfdHandler() == null) {
+            WfdLog.e(TAG, "mMiddleware.getWfdHandler() is null");
             return;
         }
         // Clear possible pending message
@@ -131,6 +138,7 @@ public class WFDMiddlewareAdapter implements ProximityMiddleware, WFDRemoteInsta
 
     @Override
     public void unregisterAdvertisement() {
+        WfdLog.d(TAG, "unregisterAdvertisement called");
         if (mMiddleware.getWfdHandler() == null) {
             return;
         }
@@ -139,6 +147,7 @@ public class WFDMiddlewareAdapter implements ProximityMiddleware, WFDRemoteInsta
 
     @Override
     public boolean isAdvertising() {
+        WfdLog.d(TAG, "isAdvertising called");
         return mMiddleware.getWfdHandler() != null
                 && mMiddleware.getWfdHandler().hasMessages(WfdHandler.SEND_ADVERTISING);
     }

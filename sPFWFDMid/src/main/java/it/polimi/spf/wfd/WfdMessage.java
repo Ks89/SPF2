@@ -25,6 +25,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import it.polimi.spf.wfd.exceptions.MessageException;
+
 public class WfdMessage {
 
     private static final String KEY_SENDER_ID = "senderId";
@@ -49,7 +51,7 @@ public class WfdMessage {
      */
     public static final String TYPE_CONNECT = "CONNECT";
     public static final String TYPE_SIGNAL = "SIGNAL";
-    public  static final String TYPE_REQUEST = "REQUEST";
+    public static final String TYPE_REQUEST = "REQUEST";
     public static final String TYPE_RESPONSE = "RESPONSE";
     public static final String TYPE_RESPONSE_ERROR = "response_error";
     public static final String TYPE_INSTANCE_DISCOVERY = "DISCOVERY";
@@ -119,7 +121,10 @@ public class WfdMessage {
      * @param str
      * @return
      */
-    public static WfdMessage fromString(String str) {
+    public static WfdMessage fromString(String str) throws MessageException {
+        if (str == null) {
+            throw new MessageException(MessageException.Reason.NULL_MESSAGE);
+        }
         JsonObject o = new JsonParser().parse(str).getAsJsonObject();
         WfdMessage msg = new WfdMessage();
         msg.msgContent = o.getAsJsonObject(KEY_MSG_CONTENT);

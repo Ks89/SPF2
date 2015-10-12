@@ -30,12 +30,14 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.net.SocketException;
 
-import it.polimi.spf.wfd.listeners.GroupActorListener;
-import it.polimi.spf.wfd.util.WfdLog;
 import it.polimi.spf.wfd.WfdMessage;
+import it.polimi.spf.wfd.exceptions.MessageException;
 import it.polimi.spf.wfd.groups.streams.WfdInputStream;
 import it.polimi.spf.wfd.groups.streams.WfdOutputStream;
+import it.polimi.spf.wfd.listeners.GroupActorListener;
+import it.polimi.spf.wfd.util.WfdLog;
 
 /**
  * GroupClientActor is the class that implements the role of a standard group member,
@@ -107,8 +109,12 @@ public class GroupClientActor extends GroupActor {
                 WfdLog.d(TAG, "message received");
                 super.handle(msg);
             }
-        } catch (Throwable e) {
-            WfdLog.d(TAG, "error in the run loop", e);
+        } catch (MessageException e) {
+            WfdLog.e(TAG, "MessageException in enterReadLoop() in GOInternalClient", e);
+        } catch (SocketException e) {
+            WfdLog.e(TAG, "SocketException in enterReadLoop() in GOInternalClient", e);
+        } catch (IOException e) {
+            WfdLog.e(TAG, "IOException in enterReadLoop() in GOInternalClient", e);
         } finally {
             disconnect(false); //without errors
         }

@@ -24,8 +24,10 @@ package it.polimi.spf.wfd.groups;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketException;
 
 import it.polimi.spf.wfd.WfdMessage;
+import it.polimi.spf.wfd.exceptions.MessageException;
 import it.polimi.spf.wfd.groups.streams.WfdInputStream;
 import it.polimi.spf.wfd.groups.streams.WfdOutputStream;
 import it.polimi.spf.wfd.util.WfdLog;
@@ -69,10 +71,17 @@ class GOInternalClient extends Thread {
             WfdLog.d(TAG, "Get input stream from socket");
             inStream = new WfdInputStream(socket.getInputStream());
             connmsg = waitForConnectionMsg(inStream);
-        } catch (Exception e) {
-            WfdLog.d(TAG, "Exception in the read loop", e);
+        } catch (MessageException e) {
+            WfdLog.d(TAG, "MessageException in the read loop", e);
+            return;
+        } catch (InterruptedException e) {
+            WfdLog.d(TAG, "InterruptedException in the read loop", e);
+            return;
+        } catch (IOException e) {
+            WfdLog.d(TAG, "IOException in the read loop", e);
             return;
         }
+
         if (attachToGroupOwner(connmsg)) {
             enterReadLoop(inStream);
         }
@@ -98,8 +107,12 @@ class GOInternalClient extends Thread {
                 WfdLog.d(TAG, "message read: " + msg);
                 groupOwnerActor.onMessageReceived(msg);
             }
-        } catch (Exception e) {
-            WfdLog.e(TAG, "Error in enterReadLoop() in GOInternalClient", e);
+        } catch (MessageException e) {
+            WfdLog.e(TAG, "MessageException in enterReadLoop() in GOInternalClient", e);
+        } catch (SocketException e) {
+            WfdLog.e(TAG, "SocketException in enterReadLoop() in GOInternalClient", e);
+        } catch (IOException e) {
+            WfdLog.e(TAG, "IOException in enterReadLoop() in GOInternalClient", e);
         }
         WfdLog.d(TAG, "Exiting while loop: " + identifier);
     }
@@ -122,7 +135,7 @@ class GOInternalClient extends Thread {
     }
 
     private WfdMessage waitForConnectionMsg(WfdInputStream inStream)
-            throws InterruptedException {
+            throws InterruptedException, MessageException {
         WfdMessage connmsg;
         WfdLog.d(TAG, "read connection message");
         connmsg = inStream.readMessage((long) 60000);

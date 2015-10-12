@@ -21,22 +21,22 @@
 package it.polimi.spf.wfd.exceptions;
 
 /**
- * Created by Stefano Cappa on 04/08/15.
+ * Created by Stefano Cappa on 12/10/15.
  */
 
 import lombok.Getter;
 
 /**
- * Exception for Groups.
+ * Exception for Messages.
  */
-public class GroupException extends Exception {
+public class MessageException extends Exception {
 
-    public enum Reason {NOT_INSTANTIATED_YET}
+    public enum Reason {NULL_MESSAGE}
 
     @Getter
     private Reason reason;
 
-    public GroupException() {
+    public MessageException() {
         super();
     }
 
@@ -46,7 +46,7 @@ public class GroupException extends Exception {
      * @param message String message
      * @param cause   The throwable object
      */
-    public GroupException(String message, Throwable cause) {
+    public MessageException(String message, Throwable cause) {
         super(message, cause);
     }
 
@@ -55,7 +55,7 @@ public class GroupException extends Exception {
      *
      * @param message String message
      */
-    public GroupException(String message) {
+    public MessageException(String message) {
         super(message);
     }
 
@@ -64,7 +64,7 @@ public class GroupException extends Exception {
      *
      * @param cause String message
      */
-    public GroupException(Throwable cause) {
+    public MessageException(Throwable cause) {
         super(cause);
     }
 
@@ -73,8 +73,7 @@ public class GroupException extends Exception {
      *
      * @param reason Enumeration that represents the exception's reason.
      */
-    public GroupException(Reason reason, String message) {
-        super(message);
+    public MessageException(Reason reason) {
         this.reason = reason;
     }
 }

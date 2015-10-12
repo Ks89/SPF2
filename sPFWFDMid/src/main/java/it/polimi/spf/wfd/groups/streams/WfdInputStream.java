@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import it.polimi.spf.wfd.WfdMessage;
+import it.polimi.spf.wfd.exceptions.MessageException;
 
 public class WfdInputStream {
     private static final String TAG = WfdInputStream.class.getSimpleName();
@@ -38,12 +39,12 @@ public class WfdInputStream {
         this.reader = new BufferedReader(new InputStreamReader(inputStream));
     }
 
-    public WfdMessage readMessage() throws IOException {
+    public WfdMessage readMessage() throws IOException, MessageException {
         String str = reader.readLine();
         return WfdMessage.fromString(str);
     }
 
-    public WfdMessage readMessage(long l) throws InterruptedException {
+    public WfdMessage readMessage(long l) throws InterruptedException, MessageException {
         TimedRead tr = new TimedRead();
         tr.start();
         String str = tr.readResult(l);
@@ -60,8 +61,7 @@ public class WfdInputStream {
         @Override
         public void run() {
             try {
-                str = WfdInputStream.this.reader.readLine();
-
+                str = reader.readLine();
             } catch (IOException e) {
                 Log.e(TAG, "IOException during readline in WfdInputStream", e);
             } finally {
