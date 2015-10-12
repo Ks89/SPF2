@@ -109,6 +109,12 @@ public class NotificationFragment extends Fragment
         SPFContext.get().unregisterEventListener(this);
     }
 
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_notifications, menu);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
