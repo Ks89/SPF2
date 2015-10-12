@@ -53,7 +53,7 @@ public class WfdHandler extends Handler {
                 wfdMsg.put(WFDMessageContract.KEY_ADV_PROFILE, profile);
 
                 //post the event to the WifiDirectMiddleware
-                NineBus.get().post(new HandlerSendBroadcastEvent("sendsageBroadcast", wfdMsg));
+                NineBus.get().post(new HandlerSendBroadcastEvent("sendsMessageBroadcast", wfdMsg));
 
                 Message msgNew = obtainMessage(SEND_ADVERTISING);
                 msgNew.getData().putString("profile", profile);
