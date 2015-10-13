@@ -91,6 +91,9 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
     @Getter
     private WfdHandler wfdHandler;
 
+    private ScheduledExecutorService scheduler = null;
+
+
     @Getter
     private boolean connected = false;
 
@@ -466,14 +469,13 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         }
 
         if (eternalConnect && !proximityKilledByUser) {
-            WfdLog.d(TAG, "Eternal connect is active...Reconnecting...");
-            scheduler = Executors.newScheduledThreadPool(1);
-            eternalConnect();
+            if(!isAutonomous) {
+                WfdLog.d(TAG, "Eternal connect is active...Reconnecting...");
+                scheduler = Executors.newScheduledThreadPool(1);
+                eternalConnect();
+            }
         }
     }
-
-    private ScheduledExecutorService scheduler = null;
-
 
     private void eternalConnect() {
         final Runnable beeper = new Runnable() {
