@@ -96,20 +96,12 @@ public class MainActivity extends AppCompatActivity implements
 
         ButterKnife.bind(this);
 
+        //this var says if we are on a tablet (true) or a smartphone (false)
         this.tabletSize = getResources().getBoolean(R.bool.isTablet);
 
         this.setupToolBar();
 
-        mSectionNames = getResources().getStringArray(R.array.content_fragments_titles);
-//        mNavigationDrawerFragment = (NavigationFragment) getSupportFragmentManager().findFragmentById(R.id.navigation);
-
-//        getSupportFragmentManager().executePendingTransactions();
-
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-//        if (drawerLayout != null) {
-        // We are in two panes mode, thus set up the drawer.
-//            ((NavigationDrawerFragment) mNavigationDrawerFragment).setUpDrawer(R.id.navigation, drawerLayout);
-//        }
 
         mUserLearnedDrawer = Boolean.valueOf(readSharedSetting(this, PREF_USER_LEARNED_DRAWER, "false"));
 
@@ -157,6 +149,9 @@ public class MainActivity extends AppCompatActivity implements
                         beginTransaction().
                         replace(R.id.container, createFragment(mCurrentSelectedPosition)).
                         commit();
+                if (!tabletSize) {
+                    mDrawerLayout.closeDrawer(GravityCompat.START);
+                }
                 return true;
             }
         });
@@ -193,7 +188,6 @@ public class MainActivity extends AppCompatActivity implements
         if (toolbar != null) {
             toolbar.setTitle("SPF");
             toolbar.setTitleTextColor(Color.BLACK);
-//            toolbar.inflateMenu(R.menu.menu_view_self_profile);
             toolbar.setNavigationIcon(R.drawable.ic_drawer);
             toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
@@ -203,7 +197,6 @@ public class MainActivity extends AppCompatActivity implements
             });
             this.setSupportActionBar(toolbar);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         }
     }
 
@@ -351,7 +344,7 @@ public class MainActivity extends AppCompatActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                if(!tabletSize) {
+                if (!tabletSize) {
                     mDrawerLayout.openDrawer(GravityCompat.START);
                 }
                 break;
