@@ -81,14 +81,7 @@ public class MainActivity extends AppCompatActivity implements
     private int mCurrentSelectedPosition;
     private boolean mFromSavedInstanceState;
     private Fragment currentFragment;
-
-
-    /**
-     * Fragment managing the behaviors, interactions and presentation of the
-     * navigation drawer.
-     */
-//    @Getter
-//    private NavigationFragment mNavigationDrawerFragment;
+    private boolean tabletSize;
 
     /**
      * Array that contains the names of sections
@@ -101,6 +94,8 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
+
+        this.tabletSize = getResources().getBoolean(R.bool.isTablet);
 
         this.setupToolBar();
 
@@ -212,10 +207,12 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void setUpNavDrawer() {
-        if (!mUserLearnedDrawer) {
-            mDrawerLayout.openDrawer(GravityCompat.START);
-            mUserLearnedDrawer = true;
-            saveSharedSetting(this, PREF_USER_LEARNED_DRAWER, "true");
+        if (!tabletSize) {
+            if (!mUserLearnedDrawer) {
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                mUserLearnedDrawer = true;
+                saveSharedSetting(this, PREF_USER_LEARNED_DRAWER, "true");
+            }
         }
     }
 
@@ -353,7 +350,9 @@ public class MainActivity extends AppCompatActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                mDrawerLayout.openDrawer(GravityCompat.START);
+                if(!tabletSize) {
+                    mDrawerLayout.openDrawer(GravityCompat.START);
+                }
                 break;
             case R.id.notifications_delete_all:
                 if (currentFragment instanceof NotificationFragment) {

@@ -38,7 +38,7 @@ public class PersonasCirclesActivity extends AppCompatActivity {
         PersonasCirclesFragment fragment = PersonasCirclesFragment.newInstance(persona);
         getFragmentManager().beginTransaction().replace(R.id.activity_persona_circles_container, fragment).commit();
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     public static void start(Activity callingActivity, SPFPersona persona) {

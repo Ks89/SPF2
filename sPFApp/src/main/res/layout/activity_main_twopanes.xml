@@ -1,37 +1,55 @@
 <!-- A DrawerLayout is intended to be used as the top-level content view using match_parent for both width and height to consume the full space available. -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:baselineAligned="false"
-    android:orientation="horizontal"
-    tools:context="it.polimi.spf.app.MainActivity" >
+    android:fitsSystemWindows="true"
+    tools:context="it.polimi.spf.app.MainActivity">
 
-    <RelativeLayout
-        android:layout_width="@dimen/navigation_menu_width"
-        android:layout_height="match_parent" >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
 
-        <fragment
-            android:id="@+id/navigation"
-            android:name="it.polimi.spf.app.navigation.NavigationFragment"
+        <RelativeLayout
+            android:layout_width="@dimen/navigation_menu_width"
+            android:layout_height="match_parent">
+
+            <android.support.design.widget.NavigationView
+                android:id="@+id/nav_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="start"
+                app:headerLayout="@layout/drawer_header"
+                app:menu="@menu/drawer_menu" />
+
+            <View
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:background="@drawable/drawer_inner_shadow" />
+
+        </RelativeLayout>
+
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="start"
-            tools:layout="@layout/fragment_navigation_drawer" />
+            android:orientation="vertical">
 
-        <View
-            android:layout_width="40dp"
-            android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:background="@drawable/drawer_inner_shadow" />
+            <include layout="@layout/toolbar" />
 
-    </RelativeLayout>
+            <FrameLayout
+                android:id="@+id/container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
-    <FrameLayout
-        android:id="@+id/container"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1" />
+        </LinearLayout>
 
-</LinearLayout>
+    </LinearLayout>
+
+</android.support.v4.widget.DrawerLayout>

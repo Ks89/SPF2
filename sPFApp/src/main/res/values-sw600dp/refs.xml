@@ -9,4 +9,6 @@
     -->
     <item name="activity_main" type="layout">@layout/activity_main_twopanes</item>
 
+    <bool name="isTablet">true</bool>
+
 </resources>
