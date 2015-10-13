@@ -486,7 +486,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
                 connect();
             }
         };
-        final ScheduledFuture<?> beeperHandle = scheduler.scheduleAtFixedRate(beeper, 0, 15, TimeUnit.SECONDS);
+        final ScheduledFuture<?> beeperHandle = scheduler.scheduleAtFixedRate(beeper, 10, 15, TimeUnit.SECONDS);
         scheduler.schedule(new Runnable() {
             public void run() {
                 beeperHandle.cancel(true);
