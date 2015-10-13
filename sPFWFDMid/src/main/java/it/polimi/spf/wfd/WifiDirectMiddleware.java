@@ -78,6 +78,7 @@ import lombok.Setter;
 public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListener {
     private final static String TAG = WifiDirectMiddleware.class.getSimpleName();
     private static final int THIS_DEVICE_IS_GO = 15;
+    private static final int MAX_ETERNAL_COUNT = 4;
 
     private final Context mContext;
     private final String myIdentifier;
@@ -100,6 +101,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
     @Getter
     private boolean isGroupCreated = false;
     private boolean eternalConnect = false;
+    private int eternalCounter = 0;
 
     @Setter
     private boolean proximityKilledByUser = false;
@@ -432,6 +434,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
             scheduler.shutdown();
             scheduler = null;
         }
+        this.eternalCounter = 0;
         this.eternalConnect = true;
     }
 
@@ -446,6 +449,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
             scheduler = null;
         }
 
+        this.eternalCounter = 0;
         this.eternalConnect = true;
     }
 
@@ -469,7 +473,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         }
 
         if (eternalConnect && !proximityKilledByUser) {
-            if(!isAutonomous) {
+            if (!isAutonomous) {
                 WfdLog.d(TAG, "Eternal connect is active...Reconnecting...");
                 scheduler = Executors.newScheduledThreadPool(1);
                 eternalConnect();
@@ -481,9 +485,22 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         final Runnable beeper = new Runnable() {
             public void run() {
                 WfdLog.d(TAG, "Eternal Connect is creating a new connection, please wait...");
-                disconnect();
-                init();
-                connect();
+                if(eternalCounter>=MAX_ETERNAL_COUNT) {
+                    WfdLog.d(TAG, "Eternal Connect count has reached the max value. " +
+                            "Terminating Eternal Connect...");
+                    if (scheduler != null) {
+                        WfdLog.d(TAG, "scheduler killed");
+                        scheduler.shutdown();
+                        scheduler = null;
+                    }
+                    eternalCounter = 0;
+                } else {
+                    WfdLog.d(TAG, "Eternal Counter = " + eternalCounter);
+                    disconnect();
+                    init();
+                    connect();
+                    eternalCounter++;
+                }
             }
         };
         final ScheduledFuture<?> beeperHandle = scheduler.scheduleAtFixedRate(beeper, 10, 15, TimeUnit.SECONDS);
