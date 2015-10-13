@@ -44,11 +44,8 @@ import java.net.ServerSocket;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
+import it.polimi.spf.wfd.events.EternalConnectEvent;
 import it.polimi.spf.wfd.events.Event;
 import it.polimi.spf.wfd.events.HandlerSendBroadcastEvent;
 import it.polimi.spf.wfd.events.MidConnectionEvent;
@@ -78,42 +75,30 @@ import lombok.Setter;
 public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListener {
     private final static String TAG = WifiDirectMiddleware.class.getSimpleName();
     private static final int THIS_DEVICE_IS_GO = 15;
-    private static final int MAX_ETERNAL_COUNT = 4;
 
     private final Context mContext;
     private final String myIdentifier;
-
     private final WfdMiddlewareListener mListener;
     private final WfdBroadcastReceiver mReceiver;
     private WifiP2pManager mManager;
     private Channel mChannel;
-
+    private GroupActor mGroupActor;
     private HandlerThread handlerThread;
     @Getter
     private WfdHandler wfdHandler;
 
-    private ScheduledExecutorService scheduler = null;
-
-
+    private int mPort;
     @Getter
     private boolean connected = false;
-
     @Getter
     private boolean isGroupCreated = false;
-    private boolean eternalConnect = false;
-    private int eternalCounter = 0;
-
     @Setter
     private boolean proximityKilledByUser = false;
-
     @Setter
     private int goIntent;
-
     @Getter
     private boolean isAutonomous;
 
-    private GroupActor mGroupActor;
-    private int mPort;
 
     public WifiDirectMiddleware(Context context, int goIntentFromSPFApp, boolean isAutonomous, String identifier, WfdMiddlewareListener listener) {
         WfdLog.d(TAG, "WifiDirectMiddleware (isAutonomous= " + isAutonomous +
@@ -418,7 +403,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         //Groups are really available only in GroupOwnerInfoListener and GroupClientInfoListener
         //after the mManager.requestGroupInfo
         if (info.isGroupOwner) {
-            mManager.requestGroupInfo(mChannel, new GroupOwnerInfoListener(info));
+            mManager.requestGroupInfo(mChannel, new GroupOwnerInfoListener());
         } else {
             mManager.requestGroupInfo(mChannel, new GroupClientInfoListener(info));
         }
@@ -429,13 +414,8 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         mGroupActor = new GroupClientActor(groupOwnerAddress, destPort, actorListener, myIdentifier);
         this.postEvent(new GOConnectActionEvent(GOConnectActionEvent.CONNECT_STRING));
 
-        if (scheduler != null) {
-            WfdLog.d(TAG, "scheduler killed");
-            scheduler.shutdown();
-            scheduler = null;
-        }
-        this.eternalCounter = 0;
-        this.eternalConnect = true;
+
+        EternalConnect.get().eternalCompletedSuccessfully();
     }
 
     private void instantiateGroupOwner() throws IOException {
@@ -443,14 +423,8 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         mGroupActor = new GroupOwnerActor(mPort, actorListener, myIdentifier);
         this.postEvent(new GOConnectActionEvent(GOConnectActionEvent.CONNECT_STRING));
 
-        if (scheduler != null) {
-            WfdLog.d(TAG, "scheduler killed");
-            scheduler.shutdown();
-            scheduler = null;
-        }
 
-        this.eternalCounter = 0;
-        this.eternalConnect = true;
+        EternalConnect.get().eternalCompletedSuccessfully();
     }
 
     public void onNetworkConnected() {
@@ -472,84 +446,15 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
             mManager.removeGroup(mChannel, null);
         }
 
-        if (eternalConnect && !proximityKilledByUser) {
+        if (EternalConnect.get().isEternalConnectStatus() && !proximityKilledByUser) {
             if (!isAutonomous) {
                 WfdLog.d(TAG, "Eternal connect is active...Reconnecting...");
-                scheduler = Executors.newScheduledThreadPool(1);
-                eternalConnect();
+
+                EternalConnect.get().eternalConnect();
             }
         }
     }
 
-    private void eternalConnect() {
-        final Runnable beeper = new Runnable() {
-            public void run() {
-                WfdLog.d(TAG, "Eternal Connect is creating a new connection, please wait...");
-                if(eternalCounter>=MAX_ETERNAL_COUNT) {
-                    WfdLog.d(TAG, "Eternal Connect count has reached the max value. " +
-                            "Terminating Eternal Connect...");
-                    if (scheduler != null) {
-                        WfdLog.d(TAG, "scheduler killed");
-                        scheduler.shutdown();
-                        scheduler = null;
-                    }
-                    eternalCounter = 0;
-                } else {
-                    WfdLog.d(TAG, "Eternal Counter = " + eternalCounter);
-                    disconnect();
-                    init();
-                    connect();
-                    eternalCounter++;
-                }
-            }
-        };
-        final ScheduledFuture<?> beeperHandle = scheduler.scheduleAtFixedRate(beeper, 10, 15, TimeUnit.SECONDS);
-        scheduler.schedule(new Runnable() {
-            public void run() {
-                beeperHandle.cancel(true);
-            }
-        }, 15, TimeUnit.SECONDS);
-    }
-
-
-    private final GroupActorListener actorListener = new GroupActorListener() {
-
-        @Override
-        public void onMessageReceived(WfdMessage msg) {
-            WfdLog.d(TAG, "GroupActorListener.onMessageReceived - msg= " + msg);
-            mListener.onMessageReceived(msg);
-        }
-
-        @Override
-        public void onError() {
-            WfdLog.e(TAG, "GroupActorListener.onError");
-            if (mGroupActor != null) {
-                postEvent(new GOConnectActionEvent(GOConnectActionEvent.DISCONNECT_STRING));
-            }
-            isGroupCreated = false;
-            mGroupActor = null;
-            mManager.removeGroup(mChannel, null);
-            mManager.requestConnectionInfo(mChannel, WifiDirectMiddleware.this);
-        }
-
-        @Override
-        public WfdMessage onRequestMessageReceived(WfdMessage msg) {
-            WfdLog.d(TAG, "GroupActorListener.onRequestMessageReceived - msg= " + msg);
-            return mListener.onRequestMessageReceived(msg);
-        }
-
-        @Override
-        public void onInstanceFound(String identifier) {
-            WfdLog.d(TAG, "GroupActorListener.onInstanceFound - identifier= " + identifier);
-            mListener.onInstanceFound(identifier);
-        }
-
-        @Override
-        public void onInstanceLost(String identifier) {
-            Log.e(TAG, "GroupActorListener.onInstanceLost - identifier= " + identifier);
-            mListener.onInstanceLost(identifier);
-        }
-    };
 
     public void sendMessage(WfdMessage msg, String targetId) throws IOException {
         msg.setSenderId(myIdentifier);
@@ -645,6 +550,17 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
     }
 
     /**
+     * subscribe to catch events posted by {@link EternalConnect}.
+     */
+    @Subscribe
+    public void onEternalConnectUpdate(EternalConnectEvent e) {
+        //start a new cycle of the Eternal Connect
+        disconnect();
+        init();
+        connect();
+    }
+
+    /**
      * subscribe to catch events posted by {@link WfdHandler}.
      */
     @Subscribe
@@ -658,6 +574,44 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         }
     }
 
+    private final GroupActorListener actorListener = new GroupActorListener() {
+
+        @Override
+        public void onMessageReceived(WfdMessage msg) {
+            WfdLog.d(TAG, "GroupActorListener.onMessageReceived - msg= " + msg);
+            mListener.onMessageReceived(msg);
+        }
+
+        @Override
+        public void onError() {
+            WfdLog.e(TAG, "GroupActorListener.onError");
+            if (mGroupActor != null) {
+                postEvent(new GOConnectActionEvent(GOConnectActionEvent.DISCONNECT_STRING));
+            }
+            isGroupCreated = false;
+            mGroupActor = null;
+            mManager.removeGroup(mChannel, null);
+            mManager.requestConnectionInfo(mChannel, WifiDirectMiddleware.this);
+        }
+
+        @Override
+        public WfdMessage onRequestMessageReceived(WfdMessage msg) {
+            WfdLog.d(TAG, "GroupActorListener.onRequestMessageReceived - msg= " + msg);
+            return mListener.onRequestMessageReceived(msg);
+        }
+
+        @Override
+        public void onInstanceFound(String identifier) {
+            WfdLog.d(TAG, "GroupActorListener.onInstanceFound - identifier= " + identifier);
+            mListener.onInstanceFound(identifier);
+        }
+
+        @Override
+        public void onInstanceLost(String identifier) {
+            Log.e(TAG, "GroupActorListener.onInstanceLost - identifier= " + identifier);
+            mListener.onInstanceLost(identifier);
+        }
+    };
 
     public class GroupClientInfoListener implements WifiP2pManager.GroupInfoListener {
         private WifiP2pInfo info;
@@ -669,7 +623,6 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         @Override
         public void onGroupInfoAvailable(WifiP2pGroup group) {
             if (group == null) {
-                // happens when the go goes away and theif (group == null) {
                 // happens when the go goes away and the
                 // framework does not have time to update the
                 // connection loss
@@ -684,7 +637,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
             WfdLog.d(TAG, "requestGroupInfo - service: " + service);
 
             if (service == null) {
-                Log.e(TAG, "service is null");
+                WfdLog.e(TAG, "service is null");
                 mManager.removeGroup(mChannel, null);
             } else {
                 int destPort = service.getPort();
@@ -694,12 +647,6 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
     }
 
     public class GroupOwnerInfoListener implements WifiP2pManager.GroupInfoListener {
-        private WifiP2pInfo info;
-
-        public GroupOwnerInfoListener(WifiP2pInfo info) {
-            this.info = info;
-        }
-
         @Override
         public void onGroupInfoAvailable(WifiP2pGroup group) {
             try {
