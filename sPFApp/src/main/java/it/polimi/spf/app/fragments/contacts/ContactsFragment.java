@@ -1,10 +1,11 @@
-/* 
+/*
  * Copyright 2014 Jacopo Aliprandi, Dario Archetti
- * 
+ * Copyright 2015 Stefano Cappa
+ *
  * This file is part of SPF.
- * 
+ *
  * SPF is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free 
+ * terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option)
  * any later version.
  *
@@ -12,22 +13,19 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with SPF.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  */
 package it.polimi.spf.app.fragments.contacts;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,8 +42,6 @@ public class ContactsFragment extends Fragment {
     TabLayout tabLayout;
     @Bind(R.id.contacts_pager)
     ViewPager mViewPager;
-    @Bind(R.id.toolbar)
-    Toolbar toolbar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -57,8 +53,6 @@ public class ContactsFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        this.setupToolBar();
 
         String[] mPageTitles = getResources().getStringArray(R.array.contacts_fragments_titles);
         tabLayout.removeAllTabs();
@@ -84,15 +78,6 @@ public class ContactsFragment extends Fragment {
             public void onTabReselected(TabLayout.Tab tab) {
             }
         });
-    }
-
-    private void setupToolBar() {
-        if (toolbar != null) {
-            toolbar.setTitle("SPF");
-            toolbar.setTitleTextColor(Color.BLACK);
-            toolbar.inflateMenu(R.menu.menu_view_self_profile);
-            ((AppCompatActivity) this.getActivity()).setSupportActionBar(toolbar);
-        }
     }
 
     @Override

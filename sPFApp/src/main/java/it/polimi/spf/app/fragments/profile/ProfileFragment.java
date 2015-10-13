@@ -1,10 +1,11 @@
 /* 
  * Copyright 2014 Jacopo Aliprandi, Dario Archetti
- * 
+ * Copyright 2015 Stefano Cappa
+ *
  * This file is part of SPF.
- * 
+ *
  * SPF is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free 
+ * terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option)
  * any later version.
  *
@@ -12,10 +13,10 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with SPF.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  */
 package it.polimi.spf.app.fragments.profile;
 
@@ -25,7 +26,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -33,22 +33,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.soundcloud.android.crop.Crop;
@@ -58,7 +50,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.Locale;
 
 import butterknife.Bind;
@@ -82,8 +73,6 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     ViewPager mViewPager;
     @Bind(R.id.profile_picture)
     CircleImageView resultView;
-//    @Bind(R.id.toolbar)
-//    Toolbar toolbar;
 
     /**
      * Possible visualization modes of fields values.
@@ -179,8 +168,6 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-//        this.setupToolBar();
-
         if (savedInstanceState == null) {
             mMode = Mode.values()[getArguments().getInt(EXTRA_VIEW_MODE)];
             switch (mMode) {
@@ -210,15 +197,6 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
             onProfileDataAvailable();
         }
     }
-
-//    private void setupToolBar() {
-//        if (toolbar != null) {
-//            toolbar.setTitle("SPF");
-//            toolbar.setTitleTextColor(Color.BLACK);
-//            toolbar.inflateMenu(R.menu.menu_view_self_profile);
-//            ((AppCompatActivity)this.getActivity()).setSupportActionBar(toolbar);
-//        }
-//    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -455,38 +433,6 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
             Toast.makeText(this.getActivity(), Crop.getError(result).getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
-
-    /*
-     * MENU
-     */
-//    @Override
-//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//        switch (mMode) {
-//            case SELF:
-//                inflater.inflate(R.menu.menu_view_self_profile, menu);
-//                break;
-//            case REMOTE:
-//                if (SPF.get().getSecurityMonitor().getPersonRegistry().lookup(mPersonIdentifier) == null) {
-//                    inflater.inflate(R.menu.menu_view_other_profile, menu);
-//                }
-//                break;
-//            case EDIT:
-//                inflater.inflate(R.menu.menu_edit_profile, menu);
-//                break;
-//        }
-//    }
-
-//    @Override
-//    public void onPrepareOptionsMenu(Menu menu) {
-//        super.onPrepareOptionsMenu(menu);
-//        MenuItem item = menu.findItem(R.id.profileview_persona_selector);
-//        Spinner spinner = (Spinner) MenuItemCompat.getActionView(item);
-//        List<SPFPersona> personas = SPF.get().getProfileManager().getAvailablePersonas();
-//        spinner.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, personas));
-//        spinner.setSelection(personas.indexOf(mCurrentPersona), false);
-//        spinner.setOnItemSelectedListener(this);
-//    }
-
 
     public void clickedOptionItemEdit() {
         Intent i = new Intent(getActivity(), ProfileEditActivity.class);

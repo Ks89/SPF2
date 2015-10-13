@@ -1,6 +1,7 @@
 /* 
  * Copyright 2014 Jacopo Aliprandi, Dario Archetti
- * 
+ * Copyright 2015 Stefano Cappa
+ *
  * This file is part of SPF.
  * 
  * SPF is free software: you can redistribute it and/or modify it under the
@@ -19,6 +20,18 @@
  */
 package it.polimi.spf.app.fragments.appmanager;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
+
 import java.util.List;
 
 import butterknife.Bind;
@@ -26,97 +39,76 @@ import butterknife.ButterKnife;
 import it.polimi.spf.app.R;
 import it.polimi.spf.framework.SPF;
 import it.polimi.spf.framework.security.AppAuth;
-import android.content.Intent;
-import android.graphics.Color;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.AsyncTaskLoader;
-import android.support.v4.content.Loader;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
 
 public class AppManagerFragment extends Fragment implements ListView.OnItemClickListener, LoaderManager.LoaderCallbacks<List<AppAuth>> {
-	private static final int APP_LOADER = 0;
+    private static final int APP_LOADER = 0;
 
-	@Bind(R.id.toolbar)
-	Toolbar toolbar;
+    private AppManagerListAdapter mAdapter;
 
-	private AppManagerListAdapter mAdapter;
-	private ListView mAppList;
+    @Bind(R.id.app_manager_list)
+    ListView mAppList;
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View root = inflater.inflate(R.layout.content_fragment_appmanager, container, false);
-		ButterKnife.bind(this, root);
-		return root;
-	}
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View root = inflater.inflate(R.layout.content_fragment_appmanager, container, false);
+        ButterKnife.bind(this, root);
+        return root;
+    }
 
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
+    }
 
-		this.setupToolBar();
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
-		mAdapter = new AppManagerListAdapter(getActivity());
-		mAppList = (ListView) getView().findViewById(R.id.app_manager_list);
-		mAppList.setAdapter(mAdapter);
-		mAppList.setEmptyView(getView().findViewById(R.id.app_manager_list_emptyview));
-		mAppList.setOnItemClickListener(this);
-	}
+        mAdapter = new AppManagerListAdapter(getActivity());
+        mAppList.setAdapter(mAdapter);
+        mAppList.setEmptyView(getView().findViewById(R.id.app_manager_list_emptyview));
+        mAppList.setOnItemClickListener(this);
+    }
 
-	private void setupToolBar() {
-		if (toolbar != null) {
-			toolbar.setTitle("SPF");
-			toolbar.setTitleTextColor(Color.BLACK);
-			toolbar.inflateMenu(R.menu.menu_view_self_profile);
-			((AppCompatActivity) this.getActivity()).setSupportActionBar(toolbar);
-		}
-	}
+    @Override
+    public void onResume() {
+        super.onResume();
+        getLoaderManager().initLoader(APP_LOADER, null, this).forceLoad();
+    }
 
-	@Override
-	public void onResume() {
-		super.onResume();
-		getLoaderManager().initLoader(APP_LOADER, null, this).forceLoad();
-	}
-	
-	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		AppAuth auth = mAdapter.getItem(position);
-		Intent i = new Intent(getActivity(), AppDetailActivity.class);
-		i.putExtra(AppDetailActivity.APP_AUTH_KEY, auth);
-		startActivity(i);
-	}
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        AppAuth auth = mAdapter.getItem(position);
+        Intent i = new Intent(getActivity(), AppDetailActivity.class);
+        i.putExtra(AppDetailActivity.APP_AUTH_KEY, auth);
+        startActivity(i);
+    }
 
-	@Override
-	public Loader<List<AppAuth>> onCreateLoader(int id, Bundle args) {
-		switch (id) {
-		case APP_LOADER:
-			return new AsyncTaskLoader<List<AppAuth>>(getActivity()) {
+    @Override
+    public Loader<List<AppAuth>> onCreateLoader(int id, Bundle args) {
+        switch (id) {
+            case APP_LOADER:
+                return new AsyncTaskLoader<List<AppAuth>>(getActivity()) {
 
-				@Override
-				public List<AppAuth> loadInBackground() {
-					return SPF.get().getSecurityMonitor().getAvailableApplications();
-				}
-			};
+                    @Override
+                    public List<AppAuth> loadInBackground() {
+                        return SPF.get().getSecurityMonitor().getAvailableApplications();
+                    }
+                };
 
-		default:
-			return null;
-		}
-	}
+            default:
+                return null;
+        }
+    }
 
-	@Override
-	public void onLoadFinished(Loader<List<AppAuth>> loader, List<AppAuth> items) {
-		mAdapter.clear();
-		mAdapter.addAll(items);
-	}
+    @Override
+    public void onLoadFinished(Loader<List<AppAuth>> loader, List<AppAuth> items) {
+        mAdapter.clear();
+        mAdapter.addAll(items);
+    }
 
-	@Override
-	public void onLoaderReset(Loader<List<AppAuth>> loader) {
-	}
+    @Override
+    public void onLoaderReset(Loader<List<AppAuth>> loader) {
+    }
 
 }

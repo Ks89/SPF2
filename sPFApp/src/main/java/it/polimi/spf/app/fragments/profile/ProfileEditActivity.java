@@ -1,10 +1,11 @@
 /* 
  * Copyright 2014 Jacopo Aliprandi, Dario Archetti
- * 
+ * Copyright 2015 Stefano Cappa
+ *
  * This file is part of SPF.
- * 
+ *
  * SPF is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free 
+ * terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option)
  * any later version.
  *
@@ -12,37 +13,46 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with SPF.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  */
 package it.polimi.spf.app.fragments.profile;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.soundcloud.android.crop.Crop;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import it.polimi.spf.app.R;
 import it.polimi.spf.framework.profile.SPFPersona;
 
 public class ProfileEditActivity extends AppCompatActivity {
-
     public static final String EXTRA_PERSONA = "persona";
-
     private ProfileFragment mFragment;
+
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_edit);
+
+        ButterKnife.bind(this);
+
+        this.setupToolBar();
 
         if (savedInstanceState == null) {
             //received from ProfileFragment - onOptionsItemSelected - case R.id.profileview_edit
@@ -52,13 +62,21 @@ public class ProfileEditActivity extends AppCompatActivity {
         } else {
             mFragment = (ProfileFragment) getSupportFragmentManager().findFragmentById(R.id.container);
         }
+    }
 
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    public void setupToolBar() {
+        if (toolbar != null) {
+            toolbar.setTitle("Edit Profile");
+            toolbar.setTitleTextColor(Color.BLACK);
+            toolbar.inflateMenu(R.menu.menu_edit_profile);
+            this.setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        mFragment.onCreateOptionsMenu(menu, getMenuInflater());
+        getMenuInflater().inflate(R.menu.menu_edit_profile, menu);
         return true;
     }
 

@@ -1,6 +1,7 @@
 /* 
  * Copyright 2014 Jacopo Aliprandi, Dario Archetti
- * 
+ * Copyright 2015 Stefano Cappa
+ *
  * This file is part of SPF.
  * 
  * SPF is free software: you can redistribute it and/or modify it under the
@@ -19,14 +20,11 @@
  */
 package it.polimi.spf.app.fragments.personas;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -53,11 +51,14 @@ public class PersonasFragment extends Fragment implements PersonasArrayAdapter.O
     private static final int DELETE_PERSONA_LOADER = 2;
     protected static final String EXTRA_PERSONA = "persona";
 
-    @Bind(R.id.toolbar)
-    Toolbar toolbar;
-
     private PersonasArrayAdapter mAdapter;
-    private EditText mNewPersonaName;
+
+    @Bind(R.id.personas_new_add)
+    ImageButton addButton;
+    @Bind(R.id.personas_new_name)
+    EditText mNewPersonaName;
+    @Bind(R.id.personas_container)
+    ListView list;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -67,29 +68,21 @@ public class PersonasFragment extends Fragment implements PersonasArrayAdapter.O
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        this.setupToolBar();
-
         mAdapter = new PersonasArrayAdapter(getActivity(), this);
-        ListView list = (ListView) getView().findViewById(R.id.personas_container);
         list.setAdapter(mAdapter);
         list.setOnItemClickListener(itemClickListener);
-        mNewPersonaName = (EditText) getView().findViewById(R.id.personas_new_name);
-        ImageButton addButton = (ImageButton) getView().findViewById(R.id.personas_new_add);
         addButton.setOnClickListener(this);
         getLoaderManager().destroyLoader(LOAD_PERSONAS_LOADER);
         getLoaderManager().initLoader(LOAD_PERSONAS_LOADER, null, this).forceLoad();
-    }
-
-    private void setupToolBar() {
-        if (toolbar != null) {
-            toolbar.setTitle("SPF");
-            toolbar.setTitleTextColor(Color.BLACK);
-            toolbar.inflateMenu(R.menu.menu_view_self_profile);
-            ((AppCompatActivity) this.getActivity()).setSupportActionBar(toolbar);
-        }
     }
 
     private OnItemClickListener itemClickListener = new OnItemClickListener() {

@@ -1,6 +1,7 @@
 /* 
  * Copyright 2014 Jacopo Aliprandi, Dario Archetti
- * 
+ * Copyright 2015 Stefano Cappa
+ *
  * This file is part of SPF.
  * 
  * SPF is free software: you can redistribute it and/or modify it under the
@@ -19,11 +20,8 @@
  */
 package it.polimi.spf.app.fragments.advertising;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,11 +49,11 @@ import it.polimi.spf.shared.model.ProfileField;
 
 public class AdvertisingFragment extends Fragment {
 
-    @Bind(R.id.toolbar)
-    Toolbar toolbar;
-
     private SPFAdvertisingManager mAdvertiseManager = SPF.get().getAdvertiseManager();
     private boolean mSpinnerEnabled = false;
+
+    @Bind(R.id.advertising_switch)
+    Switch advSwitch;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -65,13 +63,16 @@ public class AdvertisingFragment extends Fragment {
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        this.setupToolBar();
-
         // Set up switch
-        Switch advSwitch = (Switch) getView().findViewById(R.id.advertising_switch);
         advSwitch.setOnCheckedChangeListener(mAdvertisingToggleListener);
         advSwitch.setChecked(mAdvertiseManager.isAdvertisingEnabled());
 
@@ -107,15 +108,6 @@ public class AdvertisingFragment extends Fragment {
         };
 
         list.setAdapter(new ProfileFieldSelectAdapter(getActivity(), choiches));
-    }
-
-    private void setupToolBar() {
-        if (toolbar != null) {
-            toolbar.setTitle("SPF");
-            toolbar.setTitleTextColor(Color.BLACK);
-            toolbar.inflateMenu(R.menu.menu_view_self_profile);
-            ((AppCompatActivity) this.getActivity()).setSupportActionBar(toolbar);
-        }
     }
 
     private final OnCheckedChangeListener mAdvertisingToggleListener = new OnCheckedChangeListener() {

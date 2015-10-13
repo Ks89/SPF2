@@ -1,10 +1,11 @@
 /* 
  * Copyright 2014 Jacopo Aliprandi, Dario Archetti
- * 
+ * Copyright 2015 Stefano Cappa
+ *
  * This file is part of SPF.
- * 
+ *
  * SPF is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free 
+ * terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option)
  * any later version.
  *
@@ -12,33 +13,55 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with SPF.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  */
 package it.polimi.spf.app.fragments.personas;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import it.polimi.spf.app.R;
 import it.polimi.spf.framework.profile.SPFPersona;
 
 public class PersonasCirclesActivity extends AppCompatActivity {
 
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_persona_circles);
+
+        ButterKnife.bind(this);
+
+        this.setupToolBar();
+
         SPFPersona persona = getIntent().getParcelableExtra("persona");
         PersonasCirclesFragment fragment = PersonasCirclesFragment.newInstance(persona);
         getFragmentManager().beginTransaction().replace(R.id.activity_persona_circles_container, fragment).commit();
 
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    public void setupToolBar() {
+        if (toolbar != null) {
+            toolbar.setTitle("Personas Circles");
+            toolbar.setTitleTextColor(Color.BLACK);
+            this.setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        }
     }
 
     public static void start(Activity callingActivity, SPFPersona persona) {

@@ -1,10 +1,11 @@
-/* 
+/*
  * Copyright 2014 Jacopo Aliprandi, Dario Archetti
- * 
+ * Copyright 2015 Stefano Cappa
+ *
  * This file is part of SPF.
- * 
+ *
  * SPF is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free 
+ * terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option)
  * any later version.
  *
@@ -12,26 +13,20 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with SPF.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  */
 package it.polimi.spf.app.fragments;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -56,15 +51,18 @@ import it.polimi.spf.framework.notification.NotificationMessage;
 public class NotificationFragment extends Fragment
         implements OnItemClickListener, SPFContext.OnEventListener, LoaderManager.LoaderCallbacks<List<NotificationMessage>> {
 
-//    @Bind(R.id.toolbar)
-//    Toolbar toolbar;
-
     private NotificationMessageAdapter mAdapter;
 
     public final static int MESSAGE_LOADER_ID = 0;
     public final static int MESSAGE_DELETER_ID = 1;
 
     private static final String EXTRA_MESSAGE_ID = "messageId";
+
+    @Bind(R.id.notifications_list)
+    ListView listview;
+
+    @Bind(R.id.notifications_emptyview)
+    TextView notifications_emptyview;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -74,28 +72,22 @@ public class NotificationFragment extends Fragment
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-//        this.setupToolBar();
-
-        ListView listview = (ListView) getView().findViewById(R.id.notifications_list);
         mAdapter = new NotificationMessageAdapter(getActivity());
         listview.setAdapter(mAdapter);
-        listview.setEmptyView(getView().findViewById(R.id.notifications_emptyview));
+        listview.setEmptyView(notifications_emptyview);
         listview.setOnItemClickListener(this);
 
         getLoaderManager().initLoader(MESSAGE_LOADER_ID, null, this).forceLoad();
     }
-
-//    private void setupToolBar() {
-//        if (toolbar != null) {
-//            toolbar.setTitle("SPF");
-//            toolbar.setTitleTextColor(Color.BLACK);
-//            toolbar.inflateMenu(R.menu.menu_notifications);
-//            ((AppCompatActivity) this.getActivity()).setSupportActionBar(toolbar);
-//        }
-//    }
 
     @Override
     public void onResume() {
@@ -108,24 +100,6 @@ public class NotificationFragment extends Fragment
         super.onPause();
         SPFContext.get().unregisterEventListener(this);
     }
-
-
-//    @Override
-//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//        inflater.inflate(R.menu.menu_notifications, menu);
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        switch (item.getItemId()) {
-//            case R.id.notifications_delete_all:
-//                getLoaderManager().destroyLoader(MESSAGE_DELETER_ID);
-//                getLoaderManager().initLoader(MESSAGE_DELETER_ID, null, this);
-//                return true;
-//            default:
-//                return super.onOptionsItemSelected(item);
-//        }
-//    }
 
     public void clickedOptionItemDeleteAll() {
         getLoaderManager().destroyLoader(MESSAGE_DELETER_ID);

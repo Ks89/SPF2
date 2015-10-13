@@ -1,6 +1,7 @@
 /* 
  * Copyright 2014 Jacopo Aliprandi, Dario Archetti
- * 
+ * Copyright 2015 Stefano Cappa
+ *
  * This file is part of SPF.
  * 
  * SPF is free software: you can redistribute it and/or modify it under the
@@ -55,15 +56,11 @@ import it.polimi.spf.framework.services.ServiceIdentifier;
 public class ActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Collection<ActivityVerb>> {
     private static final int LOAD_LIST_LOADER_ID = 0;
 
-    @Bind(R.id.toolbar)
-    Toolbar toolbar;
-
     private ActivityVerbAdapter mAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.content_fragment_activities, container, false);
-        ButterKnife.bind(this, root);
         return root;
     }
 
@@ -71,23 +68,12 @@ public class ActivityFragment extends Fragment implements LoaderManager.LoaderCa
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        this.setupToolBar();
-
         ListView activities = findView(R.id.activities_list);
         activities.setEmptyView(findView(R.id.activities_list_emptyview));
         mAdapter = new ActivityVerbAdapter(getActivity());
         activities.setAdapter(mAdapter);
 
         getLoaderManager().initLoader(LOAD_LIST_LOADER_ID, null, this).forceLoad();
-    }
-
-    private void setupToolBar() {
-        if (toolbar != null) {
-            toolbar.setTitle("SPF");
-            toolbar.setTitleTextColor(Color.BLACK);
-            toolbar.inflateMenu(R.menu.menu_view_self_profile);
-            ((AppCompatActivity) this.getActivity()).setSupportActionBar(toolbar);
-        }
     }
 
     @SuppressWarnings("unchecked")
