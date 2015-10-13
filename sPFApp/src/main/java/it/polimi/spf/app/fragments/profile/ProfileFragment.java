@@ -301,6 +301,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 
         String[] mPageTitles = this.getResources().getStringArray(R.array.profileedit_fragments_titles);
 
+        tabLayout.removeAllTabs();
         tabLayout.addTab(tabLayout.newTab().setText(mPageTitles[0].toUpperCase(Locale.getDefault())));
         tabLayout.addTab(tabLayout.newTab().setText(mPageTitles[1].toUpperCase(Locale.getDefault())));
         tabLayout.addTab(tabLayout.newTab().setText(mPageTitles[2].toUpperCase(Locale.getDefault())));

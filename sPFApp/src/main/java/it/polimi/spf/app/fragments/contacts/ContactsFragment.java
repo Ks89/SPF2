@@ -61,6 +61,7 @@ public class ContactsFragment extends Fragment {
         this.setupToolBar();
 
         String[] mPageTitles = getResources().getStringArray(R.array.contacts_fragments_titles);
+        tabLayout.removeAllTabs();
         tabLayout.addTab(tabLayout.newTab().setText(mPageTitles[0].toUpperCase(Locale.getDefault())));
         tabLayout.addTab(tabLayout.newTab().setText(mPageTitles[1].toUpperCase(Locale.getDefault())));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);

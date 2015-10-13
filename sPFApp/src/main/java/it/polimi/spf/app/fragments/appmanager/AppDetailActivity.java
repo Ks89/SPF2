@@ -91,6 +91,7 @@ public class AppDetailActivity extends AppCompatActivity {
         appIconImageView.setBackground(icon);
 
         String[] mPageTitles = getResources().getStringArray(R.array.appmanager_fragments_titles);
+        tabLayout.removeAllTabs();
         tabLayout.addTab(tabLayout.newTab().setText(mPageTitles[0].toUpperCase(Locale.getDefault())));
         tabLayout.addTab(tabLayout.newTab().setText(mPageTitles[1].toUpperCase(Locale.getDefault())));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
