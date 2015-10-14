@@ -23,7 +23,6 @@ package it.polimi.spf.app;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -70,12 +69,12 @@ public class MainActivity extends AppCompatActivity implements
     Toolbar toolbar;
 
     private FrameLayout mContentFrame;
-    //    private boolean mUserLearnedDrawer;
+    private boolean mUserLearnedDrawer;
     private int mCurrentSelectedPosition;
-    //    private boolean mFromSavedInstanceState;
+    private boolean mFromSavedInstanceState;
     private Fragment currentFragment;
     private boolean tabletSize;
-    private Drawer result;
+    private Drawer drawer;
 
     /**
      * Array that contains the names of sections
@@ -86,84 +85,7 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         ButterKnife.bind(this);
-
-        //this var says if we are on a tablet (true) or a smartphone (false)
-        this.tabletSize = getResources().getBoolean(R.bool.isTablet);
-
-        this.setupToolBar();
-
-//        mUserLearnedDrawer = Boolean.valueOf(readSharedSetting(this, PREF_USER_LEARNED_DRAWER, "false"));
-//
-//        if (savedInstanceState != null) {
-//            mCurrentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION);
-//            mFromSavedInstanceState = true;
-//        }
-//
-        mContentFrame = (FrameLayout) findViewById(R.id.container);
-
-        DrawerBuilder result = new DrawerBuilder()
-                .withActivity(this)
-                .withHeader(R.layout.drawer_header)
-                .withToolbar(toolbar)
-                .addDrawerItems(
-                        new PrimaryDrawerItem().withName("Profile"),
-                        new SecondaryDrawerItem().withName("Personas"),
-                        new SecondaryDrawerItem().withName("Contacts"),
-                        new SecondaryDrawerItem().withName("Notifications"),
-                        new SecondaryDrawerItem().withName("Advertising"),
-                        new SecondaryDrawerItem().withName("Apps"),
-                        new SecondaryDrawerItem().withName("Activities")
-                )
-                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
-                    @Override
-                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                        // do something with the clicked item :D
-                        mCurrentSelectedPosition = position - 1;
-                        getSupportFragmentManager().
-                                beginTransaction().
-                                replace(R.id.container, createFragment(mCurrentSelectedPosition)).
-                                commit();
-
-                        switch (mCurrentSelectedPosition) {
-                            case 0:
-                                toolbar.inflateMenu(R.menu.menu_view_self_profile);
-                                if (currentFragment instanceof ProfileFragment) {
-//                                    MenuItem ≤item = menu.findItem(R.id.profileview_persona_selector);
-//                                    Spinner spinner = (Spinner) MenuItemCompat.getActionView(item);
-//                                    List<SPFPersona> personas = SPF.get().getProfileManager().getAvailablePersonas();
-//                                    spinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, personas));
-//                                    spinner.setSelection(personas.indexOf(((ProfileFragment) currentFragment).getMCurrentPersona()), false);
-//                                    spinner.setOnItemSelectedListener((ProfileFragment) currentFragment);
-                                }
-                                break;
-                            case 3:
-                                toolbar.inflateMenu(R.menu.menu_notifications);
-                                break;
-                        }
-
-                        return true;
-                    }
-                })
-                .withShowDrawerOnFirstLaunch(true);
-
-        if (tabletSize) {
-            //on tablet like explained to me here:
-            //https://github.com/mikepenz/MaterialDrawer/issues/743
-            Drawer d = result.buildView();
-            ((ViewGroup) findViewById(R.id.nav_tablet)).addView(d.getSlider());
-        } else {
-            //on smartphones
-            result.build();
-        }
-
-        //default
-        getSupportFragmentManager().
-                beginTransaction().
-                replace(R.id.container, createFragment(0)).
-                commit();
-
 
         /*
          * Workaround to fix the crash:
@@ -183,21 +105,87 @@ public class MainActivity extends AppCompatActivity implements
             }
         }
 
+        mSectionNames = getResources().getStringArray(R.array.content_fragments_titles);
+
+        //this var says if we are on a tablet (true) or a smartphone (false)
+        this.tabletSize = getResources().getBoolean(R.bool.isTablet);
+
+        this.setupToolBar();
+
+        mUserLearnedDrawer = Boolean.valueOf(readSharedSetting(this, PREF_USER_LEARNED_DRAWER, "false"));
+
+        if (savedInstanceState != null) {
+            mCurrentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION);
+            mFromSavedInstanceState = true;
+        }
+
+        mContentFrame = (FrameLayout) findViewById(R.id.container);
+
+        DrawerBuilder drawerBuilder = new DrawerBuilder()
+                .withActivity(this)
+                .withHeader(R.layout.drawer_header)
+                .withToolbar(toolbar)
+                .addDrawerItems(
+                        new PrimaryDrawerItem().withName(mSectionNames[0]),
+                        new SecondaryDrawerItem().withName(mSectionNames[1]),
+                        new SecondaryDrawerItem().withName(mSectionNames[2]),
+                        new SecondaryDrawerItem().withName(mSectionNames[3]),
+                        new SecondaryDrawerItem().withName(mSectionNames[4]),
+                        new SecondaryDrawerItem().withName(mSectionNames[5]),
+                        new SecondaryDrawerItem().withName(mSectionNames[6])
+                )
+                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                    @Override
+                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                        // do something with the clicked item :D
+                        mCurrentSelectedPosition = position - 1;
+                        getSupportFragmentManager().
+                                beginTransaction().
+                                replace(R.id.container, createFragment(mCurrentSelectedPosition)).
+                                commit();
+
+                        switch (mCurrentSelectedPosition) {
+                            case 0:
+                                toolbar.inflateMenu(R.menu.menu_view_self_profile);
+                                if (currentFragment instanceof ProfileFragment) {
+//                                    MenuItem item = menu.findItem(R.id.profileview_persona_selector);
+//                                    Spinner spinner = (Spinner) MenuItemCompat.getActionView(item);
+//                                    List<SPFPersona> personas = SPF.get().getProfileManager().getAvailablePersonas();
+//                                    spinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, personas));
+//                                    spinner.setSelection(personas.indexOf(((ProfileFragment) currentFragment).getMCurrentPersona()), false);
+//                                    spinner.setOnItemSelectedListener((ProfileFragment) currentFragment);
+                                }
+                                break;
+                            case 3:
+                                toolbar.inflateMenu(R.menu.menu_notifications);
+                                break;
+                        }
+
+                        return true;
+                    }
+                });
+
+        if (tabletSize) {
+            //on tablet like explained to me here:
+            //https://github.com/mikepenz/MaterialDrawer/issues/743
+            drawer = drawerBuilder.buildView();
+            ((ViewGroup) findViewById(R.id.nav_tablet)).addView(drawer.getSlider());
+        } else {
+            //on smartphones
+            drawer = drawerBuilder.build();
+        }
+
+        //default
+        getSupportFragmentManager().
+                beginTransaction().
+                replace(R.id.container, createFragment(0)).
+                commit();
     }
 
     public void setupToolBar() {
         if (toolbar != null) {
             toolbar.setTitle("SPF");
-            toolbar.setTitleTextColor(Color.BLACK);
-//            toolbar.setNavigationIcon(R.drawable.ic_drawer);
-//            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    mDrawerLayout.openDrawer(GravityCompat.START);
-//                }
-//            });
-            this.setSupportActionBar(toolbar);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            toolbar.setTitleTextColor(getResources().getColor(R.color.white_main));
         }
     }
 
@@ -254,12 +242,9 @@ public class MainActivity extends AppCompatActivity implements
                 finish();
             } else {
                 Log.d(TAG, "WOW!!! Required permission enabled! Thank you ;)");
+                this.setUpFirstStartNavDrawer();
             }
         }
-    }
-
-    private String getPageTitle(int position) {
-        return mSectionNames[position];
     }
 
     private Fragment createFragment(int position) {
@@ -296,28 +281,8 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-//        outState.putInt(STATE_SELECTED_POSITION, mCurrentSelectedPosition);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-//        mCurrentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION, 0);
-//        Menu menu = mNavigationView.getMenu();
-//        menu.getItem(mCurrentSelectedPosition).setChecked(true);
-    }
-
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
-                if (!tabletSize) {
-//                    mDrawerLayout.openDrawer(GravityCompat.START);
-                }
-                break;
             case R.id.notifications_delete_all:
                 if (currentFragment instanceof NotificationFragment) {
                     ((NotificationFragment) currentFragment).clickedOptionItemDeleteAll();
@@ -338,8 +303,25 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(STATE_SELECTED_POSITION, mCurrentSelectedPosition);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        mCurrentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION, 0);
+    }
+
+    private void setUpFirstStartNavDrawer() {
+        if (!tabletSize) {
+            if (!mUserLearnedDrawer) {
+                drawer.openDrawer();
+                mUserLearnedDrawer = true;
+                saveSharedSetting(this, PREF_USER_LEARNED_DRAWER, "true");
+            }
+        }
     }
 
     public static void saveSharedSetting(Context ctx, String settingName, String settingValue) {
