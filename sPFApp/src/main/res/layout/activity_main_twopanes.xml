@@ -15,23 +15,24 @@
         android:orientation="horizontal">
 
         <RelativeLayout
+            android:id="@+id/nav_tablet"
             android:layout_width="@dimen/navigation_menu_width"
             android:layout_height="match_parent">
 
-            <android.support.design.widget.NavigationView
-                android:id="@+id/nav_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="start"
-                app:headerLayout="@layout/drawer_header"
-                app:menu="@menu/drawer_menu" />
+            <!--<android.support.design.widget.NavigationView-->
+                <!--android:id="@+id/nav_view"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_gravity="start"-->
+                <!--app:headerLayout="@layout/drawer_header"-->
+                <!--app:menu="@menu/drawer_menu" />-->
 
-            <View
-                android:layout_width="40dp"
-                android:layout_height="match_parent"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
-                android:background="@drawable/drawer_inner_shadow" />
+            <!--<View-->
+                <!--android:layout_width="40dp"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_alignParentRight="true"-->
+                <!--android:layout_alignParentTop="true"-->
+                <!--android:background="@drawable/drawer_inner_shadow" />-->
 
         </RelativeLayout>
 

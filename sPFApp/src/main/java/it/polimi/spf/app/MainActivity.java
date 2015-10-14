@@ -28,10 +28,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -39,12 +36,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
-import android.widget.Spinner;
 import android.widget.Toast;
 
-import java.util.List;
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -56,10 +55,6 @@ import it.polimi.spf.app.fragments.contacts.ContactsFragment;
 import it.polimi.spf.app.fragments.personas.PersonasFragment;
 import it.polimi.spf.app.fragments.profile.ProfileFragment;
 import it.polimi.spf.app.permissiondisclaimer.PermissionDisclaimerDialogFragment;
-import it.polimi.spf.framework.SPF;
-import it.polimi.spf.framework.profile.SPFPersona;
-
-//import it.polimi.spf.app.navigation.NavigationFragment;
 
 public class MainActivity extends AppCompatActivity implements
 //        NavigationFragment.ItemSelectedListener,
@@ -75,14 +70,13 @@ public class MainActivity extends AppCompatActivity implements
     @Bind(R.id.toolbar)
     Toolbar toolbar;
 
-    private DrawerLayout mDrawerLayout;
-    private NavigationView mNavigationView;
     private FrameLayout mContentFrame;
-    private boolean mUserLearnedDrawer;
+    //    private boolean mUserLearnedDrawer;
     private int mCurrentSelectedPosition;
-    private boolean mFromSavedInstanceState;
+    //    private boolean mFromSavedInstanceState;
     private Fragment currentFragment;
     private boolean tabletSize;
+    private Drawer result;
 
     /**
      * Array that contains the names of sections
@@ -101,61 +95,73 @@ public class MainActivity extends AppCompatActivity implements
 
         this.setupToolBar();
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-
-        mUserLearnedDrawer = Boolean.valueOf(readSharedSetting(this, PREF_USER_LEARNED_DRAWER, "false"));
-
-        if (savedInstanceState != null) {
-            mCurrentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION);
-            mFromSavedInstanceState = true;
-        }
-
-        this.setUpNavDrawer();
-
-        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
+//        mUserLearnedDrawer = Boolean.valueOf(readSharedSetting(this, PREF_USER_LEARNED_DRAWER, "false"));
+//
+//        if (savedInstanceState != null) {
+//            mCurrentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION);
+//            mFromSavedInstanceState = true;
+//        }
+//
         mContentFrame = (FrameLayout) findViewById(R.id.container);
 
-        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(MenuItem menuItem) {
-                menuItem.setChecked(true);
-                switch (menuItem.getItemId()) {
-                    case R.id.navigation_item_1:
-                        mCurrentSelectedPosition = 0;
-                        break;
-                    case R.id.navigation_item_2:
-                        mCurrentSelectedPosition = 1;
-                        break;
-                    case R.id.navigation_item_3:
-                        mCurrentSelectedPosition = 2;
-                        break;
-                    case R.id.navigation_item_4:
-                        mCurrentSelectedPosition = 3;
-                        break;
-                    case R.id.navigation_item_5:
-                        mCurrentSelectedPosition = 4;
-                        break;
-                    case R.id.navigation_item_6:
-                        mCurrentSelectedPosition = 5;
-                        break;
-                    case R.id.navigation_item_7:
-                        mCurrentSelectedPosition = 6;
-                        break;
-                    default:
-                        break;
-                }
-                setupToolBar();
-                getSupportFragmentManager().
-                        beginTransaction().
-                        replace(R.id.container, createFragment(mCurrentSelectedPosition)).
-                        commit();
-                if (!tabletSize) {
-                    mDrawerLayout.closeDrawer(GravityCompat.START);
-                }
-                return true;
-            }
-        });
 
+        result = new DrawerBuilder()
+                .withActivity(this)
+                .withHeader(R.layout.drawer_header)
+                .withToolbar(toolbar)
+                .addDrawerItems(
+                        new PrimaryDrawerItem().withName("Profile"),
+                        new SecondaryDrawerItem().withName("Personas"),
+                        new SecondaryDrawerItem().withName("Contacts"),
+                        new SecondaryDrawerItem().withName("Notifications"),
+                        new SecondaryDrawerItem().withName("Advertising"),
+                        new SecondaryDrawerItem().withName("Apps"),
+                        new SecondaryDrawerItem().withName("Activities")
+                )
+                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                    @Override
+                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                        // do something with the clicked item :D
+                        mCurrentSelectedPosition = position - 1;
+                        Log.d(TAG, "-----> " + position);
+                        getSupportFragmentManager().
+                                beginTransaction().
+                                replace(R.id.container, createFragment(mCurrentSelectedPosition)).
+                                commit();
+
+                        switch (mCurrentSelectedPosition) {
+                            case 0:
+                                toolbar.inflateMenu(R.menu.menu_view_self_profile);
+                                if (currentFragment instanceof ProfileFragment) {
+//                                    MenuItem ≤item = menu.findItem(R.id.profileview_persona_selector);
+//                                    Spinner spinner = (Spinner) MenuItemCompat.getActionView(item);
+//                                    List<SPFPersona> personas = SPF.get().getProfileManager().getAvailablePersonas();
+//                                    spinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, personas));
+//                                    spinner.setSelection(personas.indexOf(((ProfileFragment) currentFragment).getMCurrentPersona()), false);
+//                                    spinner.setOnItemSelectedListener((ProfileFragment) currentFragment);
+                                }
+                                break;
+                            case 3:
+                                toolbar.inflateMenu(R.menu.menu_notifications);
+                                break;
+                        }
+
+                        return true;
+                    }
+                })
+                .withShowDrawerOnFirstLaunch(true)
+                .build();
+
+        if (tabletSize) {
+            //TODO FIXME IMPLEMENT
+            //get the DrawerLayout from the Drawer
+//            DrawerLayout drawerLayout = result.getDrawerLayout();
+            //do whatever you want with the Drawer. Like locking it.
+//            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_OPEN);
+            //or (int lockMode, int edgeGravity)
+
+//            result.withCustomView(findViewById(R.id.nav_tablet));
+        }
 
         //default
         getSupportFragmentManager().
@@ -188,25 +194,15 @@ public class MainActivity extends AppCompatActivity implements
         if (toolbar != null) {
             toolbar.setTitle("SPF");
             toolbar.setTitleTextColor(Color.BLACK);
-            toolbar.setNavigationIcon(R.drawable.ic_drawer);
-            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mDrawerLayout.openDrawer(GravityCompat.START);
-                }
-            });
+//            toolbar.setNavigationIcon(R.drawable.ic_drawer);
+//            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    mDrawerLayout.openDrawer(GravityCompat.START);
+//                }
+//            });
             this.setSupportActionBar(toolbar);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
-    }
-
-    private void setUpNavDrawer() {
-        if (!tabletSize) {
-            if (!mUserLearnedDrawer) {
-                mDrawerLayout.openDrawer(GravityCompat.START);
-                mUserLearnedDrawer = true;
-                saveSharedSetting(this, PREF_USER_LEARNED_DRAWER, "true");
-            }
         }
     }
 
@@ -305,38 +301,17 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        switch (mCurrentSelectedPosition) {
-            case 0:
-                getMenuInflater().inflate(R.menu.menu_view_self_profile, menu);
-                if (currentFragment instanceof ProfileFragment) {
-                    MenuItem item = menu.findItem(R.id.profileview_persona_selector);
-                    Spinner spinner = (Spinner) MenuItemCompat.getActionView(item);
-                    List<SPFPersona> personas = SPF.get().getProfileManager().getAvailablePersonas();
-                    spinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, personas));
-                    spinner.setSelection(personas.indexOf(((ProfileFragment) currentFragment).getMCurrentPersona()), false);
-                    spinner.setOnItemSelectedListener((ProfileFragment) currentFragment);
-                }
-                break;
-            case 3:
-                getMenuInflater().inflate(R.menu.menu_notifications, menu);
-                break;
-        }
-        return true;
-    }
-
-    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(STATE_SELECTED_POSITION, mCurrentSelectedPosition);
+//        outState.putInt(STATE_SELECTED_POSITION, mCurrentSelectedPosition);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        mCurrentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION, 0);
-        Menu menu = mNavigationView.getMenu();
-        menu.getItem(mCurrentSelectedPosition).setChecked(true);
+//        mCurrentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION, 0);
+//        Menu menu = mNavigationView.getMenu();
+//        menu.getItem(mCurrentSelectedPosition).setChecked(true);
     }
 
 
@@ -345,7 +320,7 @@ public class MainActivity extends AppCompatActivity implements
         switch (item.getItemId()) {
             case android.R.id.home:
                 if (!tabletSize) {
-                    mDrawerLayout.openDrawer(GravityCompat.START);
+//                    mDrawerLayout.openDrawer(GravityCompat.START);
                 }
                 break;
             case R.id.notifications_delete_all:
