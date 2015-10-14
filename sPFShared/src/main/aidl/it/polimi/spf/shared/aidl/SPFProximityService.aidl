@@ -168,12 +168,4 @@ interface SPFProximityService {
 	 * @return true if the person is still available, false otherwise
 	 */
     boolean lookup(in String accessToken, String personIdentifier, out SPFError err);
-
-
-    /**
-     *
-     * @param accessToken
-     * @param accessToken
-     */
-     InvocationResponse setGoIntent(int goIntent, String accessToken, String target, out SPFError err);
 }

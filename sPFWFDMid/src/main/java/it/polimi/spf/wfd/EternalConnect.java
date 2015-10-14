@@ -79,6 +79,7 @@ public class EternalConnect {
                         scheduler = null;
                     }
                     eternalCounter = 0;
+                    //TODO find a way to disable the proximity switch in the gui!!!
                 } else {
                     WfdLog.d(TAG, "Eternal Counter = " + eternalCounter);
 
