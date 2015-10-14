@@ -34,13 +34,21 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.interfaces.OnCheckedChangeListener;
+import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.SwitchDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -52,16 +60,26 @@ import it.polimi.spf.app.fragments.contacts.ContactsFragment;
 import it.polimi.spf.app.fragments.personas.PersonasFragment;
 import it.polimi.spf.app.fragments.profile.ProfileFragment;
 import it.polimi.spf.app.permissiondisclaimer.PermissionDisclaimerDialogFragment;
+import it.polimi.spf.framework.SPF;
+import it.polimi.spf.framework.SPFContext;
+import it.polimi.spf.framework.local.SPFService;
 
 public class MainActivity extends AppCompatActivity implements
-        PermissionDisclaimerDialogFragment.PermissionDisclaimerListener {
-
+        PermissionDisclaimerDialogFragment.PermissionDisclaimerListener,
+        SPFContext.OnEventListener {
     private static final String TAG = MainActivity.class.getSimpleName();
+    
     private static final int OVERLAY_PERMISSION_REQ_CODE = 1234;
     private static final String DIAG_TAG = "DIAG_TAG";
     private static final String PREFERENCES_FILE = "it.polimi.spf.navigationdrawer";
     private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
     private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
+
+    public enum Entry {
+        PROFILE, PERSONAS, CONTACTS, NOTIFICATIONS, ADVERTISING, APPS, ACTIVITIES;
+    }
+
+    private Map<Entry, PrimaryDrawerItem> mEntries;
 
     @Bind(R.id.toolbar)
     Toolbar toolbar;
@@ -74,6 +92,12 @@ public class MainActivity extends AppCompatActivity implements
     private boolean tabletSize;
     private Drawer drawer;
     private DrawerBuilder drawerBuilder;
+    private SwitchDrawerItem goSwitch;
+    private SwitchDrawerItem autonomousSwitch;
+    private SwitchDrawerItem proximitySwitch;
+    private PrimaryDrawerItem contactsDrawerItem;
+    private PrimaryDrawerItem notificationsDrawerItem;
+    private PrimaryDrawerItem advertisingDrawerItem;
 
     /**
      * Array that contains the names of sections
@@ -104,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements
             }
         }
 
-        String[] mSectionNames = getResources().getStringArray(R.array.content_fragments_titles);
+        mSectionNames = getResources().getStringArray(R.array.content_fragments_titles);
 
         //this var says if we are on a tablet (true) or a smartphone (false)
         this.tabletSize = getResources().getBoolean(R.bool.isTablet);
@@ -120,6 +144,14 @@ public class MainActivity extends AppCompatActivity implements
 
         mContentFrame = (FrameLayout) findViewById(R.id.container);
 
+        goSwitch = new SwitchDrawerItem().withName("Group Owner")/*.withIcon(Octicons.Icon.oct_tools)*/.withChecked(false).withEnabled(true).withOnCheckedChangeListener(goSwitchListener);
+        autonomousSwitch = new SwitchDrawerItem().withName("Autonomous GO")/*.withIcon(Octicons.Icon.oct_tools)*/.withChecked(true).withEnabled(false).withOnCheckedChangeListener(autonomousSwitchListener);
+        proximitySwitch = new SwitchDrawerItem().withName("Proximity")/*.withIcon(Octicons.Icon.oct_tools)*/.withChecked(false).withEnabled(true).withOnCheckedChangeListener(proximitySwitchListener);
+
+        contactsDrawerItem = new PrimaryDrawerItem().withName(mSectionNames[2]);
+        notificationsDrawerItem = new PrimaryDrawerItem().withName(mSectionNames[3]);
+        advertisingDrawerItem = new PrimaryDrawerItem().withName(mSectionNames[4]);
+
         drawerBuilder = new DrawerBuilder()
                 .withActivity(this)
                 .withHeader(R.layout.drawer_header)
@@ -127,14 +159,19 @@ public class MainActivity extends AppCompatActivity implements
                 .addDrawerItems(
                         new PrimaryDrawerItem().withName(mSectionNames[0]),
                         new PrimaryDrawerItem().withName(mSectionNames[1]),
-                        new PrimaryDrawerItem().withName(mSectionNames[2]),
-                        new PrimaryDrawerItem().withName(mSectionNames[3]),
-                        new PrimaryDrawerItem().withName(mSectionNames[4]),
+                        contactsDrawerItem,
+                        notificationsDrawerItem,
+                        advertisingDrawerItem,
                         new PrimaryDrawerItem().withName(mSectionNames[5]),
-                        new PrimaryDrawerItem().withName(mSectionNames[6])
+                        new PrimaryDrawerItem().withName(mSectionNames[6]),
+                        new DividerDrawerItem(),
+                        goSwitch,
+                        autonomousSwitch,
+                        proximitySwitch
                 )
                 .withCloseOnClick(true)
                 .withOnDrawerItemClickListener(drawerItemClickListener);
+
 
         if (tabletSize) {
             //on tablet like explained to me here:
@@ -151,12 +188,28 @@ public class MainActivity extends AppCompatActivity implements
                 beginTransaction().
                 replace(R.id.container, createFragment(0)).
                 commit();
+
+        this.mEntries = new HashMap<>();
+        this.mEntries.put(Entry.CONTACTS, contactsDrawerItem);
+        this.mEntries.put(Entry.NOTIFICATIONS, notificationsDrawerItem);
+        this.mEntries.put(Entry.ADVERTISING, advertisingDrawerItem);
+
+        //update the navigation drawer badges
+        Iterator it = this.mEntries.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry el = (Map.Entry)it.next();
+            updateViewNotification((Entry)el.getKey(), (PrimaryDrawerItem)el.getValue());
+            it.remove(); // avoids a ConcurrentModificationException
+        }
+
+        SPFContext.get().registerEventListener(this);
     }
 
     public void setupToolBar() {
         if (toolbar != null) {
             toolbar.setTitle("SPF");
             toolbar.setTitleTextColor(getResources().getColor(R.color.white_main));
+            setSupportActionBar(toolbar);
         }
     }
 
@@ -338,4 +391,108 @@ public class MainActivity extends AppCompatActivity implements
             return true;
         }
     };
+
+
+    private OnCheckedChangeListener goSwitchListener = new OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(IDrawerItem drawerItem, CompoundButton buttonView, boolean isChecked) {
+            if (isChecked) {
+                Log.d(TAG, "connectSwitch checked -> gointent=15");
+                autonomousSwitch.withSwitchEnabled(true);
+                ((SPFApp) getApplication()).updateIdentifier(15);
+            } else {
+                Log.d(TAG, "connectSwitch unchecked -> gointent=0");
+                autonomousSwitch.withSwitchEnabled(false);
+                ((SPFApp) getApplication()).updateIdentifier(0);
+            }
+            drawer.updateItem(autonomousSwitch);
+        }
+    };
+
+    private OnCheckedChangeListener autonomousSwitchListener = new OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(IDrawerItem drawerItem, CompoundButton buttonView, boolean isChecked) {
+            Log.d(TAG, "goSwitch status = " + isChecked);
+        }
+    };
+
+    private OnCheckedChangeListener proximitySwitchListener = new OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(IDrawerItem drawerItem, CompoundButton buttonView, boolean isChecked) {
+            if (isChecked) {
+                if (goSwitch.isChecked()) {
+                    Log.d(TAG, "connectSwitch checked -> gointent=15");
+                    ((SPFApp) getApplication()).initSPF(15, autonomousSwitch.isChecked());
+                } else {
+                    ((SPFApp) getApplication()).initSPF(0, false);
+
+                }
+                SPFService.startForeground(getBaseContext());
+                autonomousSwitch.withSwitchEnabled(false);
+                goSwitch.withSwitchEnabled(false);
+            } else {
+                SPFService.stopForeground(getBaseContext());
+                autonomousSwitch.withSwitchEnabled(true);
+                goSwitch.withSwitchEnabled(true);
+            }
+            drawer.updateItem(autonomousSwitch);
+            drawer.updateItem(goSwitch);
+        }
+    };
+
+    @Override
+    public void onEvent(int eventCode, Bundle payload) {
+        Entry entry;
+
+        switch (eventCode) {
+            case SPFContext.EVENT_ADVERTISING_STATE_CHANGED: {
+                entry = Entry.ADVERTISING;
+                break;
+            }
+            case SPFContext.EVENT_NOTIFICATION_MESSAGE_RECEIVED: {
+                entry = Entry.NOTIFICATIONS;
+                break;
+            }
+            case SPFContext.EVENT_CONTACT_REQUEST_RECEIVED: {
+                entry = Entry.CONTACTS;
+                break;
+            }
+            default:
+                return;
+        }
+
+        PrimaryDrawerItem item = mEntries.get(entry);
+        updateViewNotification(entry, item);
+    }
+
+    private void updateViewNotification(Entry entry, PrimaryDrawerItem item) {
+        switch (entry) {
+            case NOTIFICATIONS:
+                int notifCount = SPF.get().getNotificationManager().getAvailableNotificationCount();
+                showNotificationOrClear(item, notifCount > 0 ? String.valueOf(notifCount) : null);
+                break;
+            case CONTACTS:
+                int msgCount = SPF.get().getSecurityMonitor().getPersonRegistry().getPendingRequestCount();
+                showNotificationOrClear(item, msgCount > 0 ? String.valueOf(msgCount) : null);
+                break;
+            case ADVERTISING:
+                boolean active = SPF.get().getAdvertiseManager().isAdvertisingEnabled();
+                showNotificationOrClear(item, active ? "ON" : null);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void showNotificationOrClear(PrimaryDrawerItem item, String text) {
+        if (item == null) {
+            return;
+        }
+        if (text == null) {
+            item.withBadge("");
+        } else {
+            item.withBadge(text);
+        }
+        drawer.updateItem(item);
+    }
 }

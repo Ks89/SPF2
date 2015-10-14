@@ -72,5 +72,5 @@ dependencies {
     compile('com.mikepenz:materialdrawer:4.3.5@aar') {
         transitive = true
     }
-    compile project(':sPFLib')
+    compile 'com.mikepenz:iconics-core:1.7.7@aar'
 }
