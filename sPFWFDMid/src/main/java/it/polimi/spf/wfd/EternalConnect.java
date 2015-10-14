@@ -63,23 +63,32 @@ public class EternalConnect {
     private EternalConnect() {
     }
 
-    public void eternalConnect() {
+    public void eternalConnect(final boolean proximityKilledByUser) {
+        //to be sure that there aren't any eternal connect's cycles running
+        killScheduler();
+
         scheduler = Executors.newScheduledThreadPool(1);
 
         final Runnable runnable = new Runnable() {
             //to execute into another Thread
             public void run() {
                 WfdLog.d(TAG, "Eternal Connect is creating a new connection, please wait...");
+
+                //if user disabled the proximity service manually fromt he gui
+                if (proximityKilledByUser) {
+                    WfdLog.d(TAG, "Killing Eternal connect because proximity killed by user...");
+                    killScheduler();
+                    eternalCounter = 0;
+                    return;
+                }
+
                 if (eternalCounter >= MAX_ETERNAL_COUNT) {
                     WfdLog.d(TAG, "Eternal Connect count has reached the max value. " +
                             "Terminating Eternal Connect...");
-                    if (scheduler != null) {
-                        WfdLog.d(TAG, "scheduler killed");
-                        scheduler.shutdown();
-                        scheduler = null;
-                    }
+                    killScheduler();
                     eternalCounter = 0;
-                    //TODO find a way to disable the proximity switch in the gui!!!
+                    //TODO find a way to disable the proximity switch in the gui, because the eternal connect
+                    //TODO is failed after MAX_ETERNAL_COUNT tries.
                 } else {
                     WfdLog.d(TAG, "Eternal Counter = " + eternalCounter);
 
@@ -96,6 +105,32 @@ public class EternalConnect {
                 eternalHandle.cancel(true);
             }
         }, 15, TimeUnit.SECONDS);
+    }
+
+
+    public boolean onNetworkDisconnected(boolean proximityKilledByUser, boolean isAutonomous) {
+        if (isEternalConnectStatus() && !proximityKilledByUser) {
+            if (!isAutonomous) {
+                WfdLog.d(TAG, "onNetworkDisconnected - Eternal connect is active...Reconnecting...");
+                this.eternalConnect(proximityKilledByUser);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean onConnectFailed(boolean proximityKilledByUser) {
+        if (!proximityKilledByUser) {
+            WfdLog.d(TAG, "onConnectFailed - Eternal connect is active...Reconnecting...");
+            this.eternalConnect(proximityKilledByUser);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean onGroupCreationFailed(boolean proximityKilledByUser) {
+        //TODO implement this
+        return true;
     }
 
     /**

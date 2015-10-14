@@ -258,7 +258,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
                 "ClearServiceRequests success",
                 null,
                 "ClearServiceRequests failure",
-                "ClearServiceRequests failure",
+                null,
                 false)); //important: sets false if you don't want detailed messages when this method fails
 
         mManager.clearLocalServices(mChannel, new CustomizableActionListener(
@@ -267,7 +267,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
                 "ClearLocalServices success",
                 null,
                 "ClearLocalServices failure",
-                "ClearLocalServices failure",
+                null,
                 false)); //important: sets false if you don't want detailed messages when this method fails
 
         mManager.cancelConnect(mChannel, new CustomizableActionListener(
@@ -276,7 +276,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
                 "CancelConnect success",
                 null,
                 "CancelConnect failure",
-                "CancelConnect failure",
+                null,
                 false)); //important: sets false if you don't want detailed messages when this method fails
 
         mManager.removeGroup(mChannel, new WifiP2pManager.ActionListener() {
@@ -381,6 +381,10 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
             @Override
             public void onFailure(int reason) {
                 WfdLog.e(TAG, "Connect failure");
+                boolean eternalActivated = EternalConnect.get().onConnectFailed(proximityKilledByUser);
+                if (!eternalActivated) {
+                    Toast.makeText(mContext, "Connect failure!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -414,7 +418,6 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         mGroupActor = new GroupClientActor(groupOwnerAddress, destPort, actorListener, myIdentifier);
         this.postEvent(new GOConnectActionEvent(GOConnectActionEvent.CONNECT_STRING));
 
-
         EternalConnect.get().eternalCompletedSuccessfully();
     }
 
@@ -422,7 +425,6 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         WfdLog.d(TAG, "Instantiating group owner's logic");
         mGroupActor = new GroupOwnerActor(mPort, actorListener, myIdentifier);
         this.postEvent(new GOConnectActionEvent(GOConnectActionEvent.CONNECT_STRING));
-
 
         EternalConnect.get().eternalCompletedSuccessfully();
     }
@@ -446,13 +448,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
             mManager.removeGroup(mChannel, null);
         }
 
-        if (EternalConnect.get().isEternalConnectStatus() && !proximityKilledByUser) {
-            if (!isAutonomous) {
-                WfdLog.d(TAG, "Eternal connect is active...Reconnecting...");
-
-                EternalConnect.get().eternalConnect();
-            }
-        }
+        EternalConnect.get().onNetworkDisconnected(proximityKilledByUser, isAutonomous);
     }
 
 
