@@ -24,6 +24,10 @@ package it.polimi.spf.wfd.events;
  * Created by Stefano Cappa on 13/10/15.
  */
 public class EternalConnectEvent extends Event {
+
+    public static final String NEW_EC_CYCLE = "Starting another Eternal Connect cycle";
+    public static final String SIMPLE_EC_RECONNECTION = "Starting simple Eternal Connect reconnection";
+
     public EternalConnectEvent(String type) {
         super(type);
     }

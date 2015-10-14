@@ -322,7 +322,11 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
             @Override
             public void onFailure(int reason) {
-                WfdLog.e(TAG, "CreateGroup failure");
+                WfdLog.e(TAG, "becomeAutonomousGroupOwner() - CreateGroup failure");
+                boolean eternalActivated = EternalConnect.get().onGroupCreationFailed(proximityKilledByUser);
+                if (!eternalActivated) {
+                    Toast.makeText(mContext, "CreateGroup (autonomous) failure!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -550,10 +554,20 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
      */
     @Subscribe
     public void onEternalConnectUpdate(EternalConnectEvent e) {
-        //start a new cycle of the Eternal Connect
-        disconnect();
-        init();
-        connect();
+        if (e == null || e.getType() == null) {
+            return;
+        }
+
+        //if you want, in the future, you can change the behaviour of either a
+        //simple eternal connect reconnection (autonomous go) or a cycle of the eternal connect (clients)
+        switch (e.getType()) {
+            case EternalConnectEvent.NEW_EC_CYCLE:
+            case EternalConnectEvent.SIMPLE_EC_RECONNECTION:
+                disconnect();
+                init();
+                connect();
+                break;
+        }
     }
 
     /**

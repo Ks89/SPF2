@@ -82,7 +82,7 @@ public class EternalConnect {
                     return;
                 }
 
-                if (eternalCounter >= MAX_ETERNAL_COUNT) {
+                if (eternalCounter > MAX_ETERNAL_COUNT) {
                     WfdLog.d(TAG, "Eternal Connect count has reached the max value. " +
                             "Terminating Eternal Connect...");
                     killScheduler();
@@ -92,7 +92,7 @@ public class EternalConnect {
                 } else {
                     WfdLog.d(TAG, "Eternal Counter = " + eternalCounter);
 
-                    NineBus.get().post(new EternalConnectEvent("Start another eternal connect cycle"));
+                    NineBus.get().post(new EternalConnectEvent(EternalConnectEvent.NEW_EC_CYCLE));
 
                     eternalCounter++;
                 }
@@ -129,8 +129,16 @@ public class EternalConnect {
     }
 
     public boolean onGroupCreationFailed(boolean proximityKilledByUser) {
-        //TODO implement this
-        return true;
+        if (!proximityKilledByUser) {
+            WfdLog.d(TAG, "onGroupCreationFailed - Eternal connect is active...Reconnecting...");
+            //attention: it' useless for an autonomous go to continuously restart the connection,
+            //because it should be discoverable without making direct connections to clients
+            //Indeed, Clients should connect (join) to the autonomous GO.
+
+            NineBus.get().post(new EternalConnectEvent(EternalConnectEvent.SIMPLE_EC_RECONNECTION));
+            return true;
+        }
+        return false;
     }
 
     /**
