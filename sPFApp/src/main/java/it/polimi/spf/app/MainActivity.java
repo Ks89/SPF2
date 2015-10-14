@@ -29,13 +29,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
@@ -104,8 +103,7 @@ public class MainActivity extends AppCompatActivity implements
 //
         mContentFrame = (FrameLayout) findViewById(R.id.container);
 
-
-        result = new DrawerBuilder()
+        DrawerBuilder result = new DrawerBuilder()
                 .withActivity(this)
                 .withHeader(R.layout.drawer_header)
                 .withToolbar(toolbar)
@@ -123,7 +121,6 @@ public class MainActivity extends AppCompatActivity implements
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
                         // do something with the clicked item :D
                         mCurrentSelectedPosition = position - 1;
-                        Log.d(TAG, "-----> " + position);
                         getSupportFragmentManager().
                                 beginTransaction().
                                 replace(R.id.container, createFragment(mCurrentSelectedPosition)).
@@ -149,18 +146,16 @@ public class MainActivity extends AppCompatActivity implements
                         return true;
                     }
                 })
-                .withShowDrawerOnFirstLaunch(true)
-                .build();
+                .withShowDrawerOnFirstLaunch(true);
 
         if (tabletSize) {
-            //TODO FIXME IMPLEMENT
-            //get the DrawerLayout from the Drawer
-//            DrawerLayout drawerLayout = result.getDrawerLayout();
-            //do whatever you want with the Drawer. Like locking it.
-//            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_OPEN);
-            //or (int lockMode, int edgeGravity)
-
-//            result.withCustomView(findViewById(R.id.nav_tablet));
+            //on tablet like explained to me here:
+            //https://github.com/mikepenz/MaterialDrawer/issues/743
+            Drawer d = result.buildView();
+            ((ViewGroup) findViewById(R.id.nav_tablet)).addView(d.getSlider());
+        } else {
+            //on smartphones
+            result.build();
         }
 
         //default
