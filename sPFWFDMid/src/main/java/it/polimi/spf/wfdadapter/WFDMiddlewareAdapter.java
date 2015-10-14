@@ -115,6 +115,7 @@ public class WFDMiddlewareAdapter implements ProximityMiddleware, WFDRemoteInsta
     @Override
     public SPFRemoteInstance createRemoteInstance(String identifier) {
         WfdLog.d(TAG, "createRemoteInstance called");
+        mMiddleware.showConnectedMessage();
         return new WFDRemoteInstance(mMiddleware, identifier);
     }
 

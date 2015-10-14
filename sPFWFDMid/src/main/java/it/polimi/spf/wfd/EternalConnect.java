@@ -114,6 +114,11 @@ public class EternalConnect {
                 WfdLog.d(TAG, "onNetworkDisconnected - Eternal connect is active...Reconnecting...");
                 this.eternalConnect(proximityKilledByUser);
                 return true;
+            } else {
+                WfdLog.d(TAG, "onNetworkDisconnected - Simple Eternal connect. Reconnecting...");
+                //TODO FIXME here i should check if there aren't client connected to proceed with the reconnection
+                //FIXME because if i don't want to destroy an existing group, only because a client decided to leave.
+                NineBus.get().post(EternalConnectEvent.SIMPLE_EC_RECONNECTION);
             }
         }
         return false;
@@ -130,7 +135,7 @@ public class EternalConnect {
 
     public boolean onGroupCreationFailed(boolean proximityKilledByUser) {
         if (!proximityKilledByUser) {
-            WfdLog.d(TAG, "onGroupCreationFailed - Eternal connect is active...Reconnecting...");
+            WfdLog.d(TAG, "onGroupCreationFailed - Simple Eternal connect. Reconnecting...");
             //attention: it' useless for an autonomous go to continuously restart the connection,
             //because it should be discoverable without making direct connections to clients
             //Indeed, Clients should connect (join) to the autonomous GO.

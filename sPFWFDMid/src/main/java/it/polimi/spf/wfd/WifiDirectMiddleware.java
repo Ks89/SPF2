@@ -31,6 +31,7 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
+import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.util.Log;
@@ -490,6 +491,19 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         }
     }
 
+    public void showConnectedMessage() {
+        //handler, becuse i must execute this code on the ui thread
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                if (goIntent != 15) {
+                    Toast.makeText(mContext, "Connected to GO", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+    }
+
     private int requestAvailablePortFromOs() throws IOException {
         ServerSocket mServerSocket = new ServerSocket(0);
         int assignedPort = mServerSocket.getLocalPort();
@@ -557,6 +571,8 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         if (e == null || e.getType() == null) {
             return;
         }
+
+        WfdLog.d(TAG, "onEternalConnectUpdate received event: " + e.getType());
 
         //if you want, in the future, you can change the behaviour of either a
         //simple eternal connect reconnection (autonomous go) or a cycle of the eternal connect (clients)
