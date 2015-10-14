@@ -40,7 +40,6 @@ import android.widget.Toast;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
-import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 import butterknife.Bind;
@@ -55,7 +54,6 @@ import it.polimi.spf.app.fragments.profile.ProfileFragment;
 import it.polimi.spf.app.permissiondisclaimer.PermissionDisclaimerDialogFragment;
 
 public class MainActivity extends AppCompatActivity implements
-//        NavigationFragment.ItemSelectedListener,
         PermissionDisclaimerDialogFragment.PermissionDisclaimerListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -75,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements
     private Fragment currentFragment;
     private boolean tabletSize;
     private Drawer drawer;
+    private DrawerBuilder drawerBuilder;
 
     /**
      * Array that contains the names of sections
@@ -105,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements
             }
         }
 
-        mSectionNames = getResources().getStringArray(R.array.content_fragments_titles);
+        String[] mSectionNames = getResources().getStringArray(R.array.content_fragments_titles);
 
         //this var says if we are on a tablet (true) or a smartphone (false)
         this.tabletSize = getResources().getBoolean(R.bool.isTablet);
@@ -121,49 +120,21 @@ public class MainActivity extends AppCompatActivity implements
 
         mContentFrame = (FrameLayout) findViewById(R.id.container);
 
-        DrawerBuilder drawerBuilder = new DrawerBuilder()
+        drawerBuilder = new DrawerBuilder()
                 .withActivity(this)
                 .withHeader(R.layout.drawer_header)
                 .withToolbar(toolbar)
                 .addDrawerItems(
                         new PrimaryDrawerItem().withName(mSectionNames[0]),
-                        new SecondaryDrawerItem().withName(mSectionNames[1]),
-                        new SecondaryDrawerItem().withName(mSectionNames[2]),
-                        new SecondaryDrawerItem().withName(mSectionNames[3]),
-                        new SecondaryDrawerItem().withName(mSectionNames[4]),
-                        new SecondaryDrawerItem().withName(mSectionNames[5]),
-                        new SecondaryDrawerItem().withName(mSectionNames[6])
+                        new PrimaryDrawerItem().withName(mSectionNames[1]),
+                        new PrimaryDrawerItem().withName(mSectionNames[2]),
+                        new PrimaryDrawerItem().withName(mSectionNames[3]),
+                        new PrimaryDrawerItem().withName(mSectionNames[4]),
+                        new PrimaryDrawerItem().withName(mSectionNames[5]),
+                        new PrimaryDrawerItem().withName(mSectionNames[6])
                 )
-                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
-                    @Override
-                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                        // do something with the clicked item :D
-                        mCurrentSelectedPosition = position - 1;
-                        getSupportFragmentManager().
-                                beginTransaction().
-                                replace(R.id.container, createFragment(mCurrentSelectedPosition)).
-                                commit();
-
-                        switch (mCurrentSelectedPosition) {
-                            case 0:
-                                toolbar.inflateMenu(R.menu.menu_view_self_profile);
-                                if (currentFragment instanceof ProfileFragment) {
-//                                    MenuItem item = menu.findItem(R.id.profileview_persona_selector);
-//                                    Spinner spinner = (Spinner) MenuItemCompat.getActionView(item);
-//                                    List<SPFPersona> personas = SPF.get().getProfileManager().getAvailablePersonas();
-//                                    spinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, personas));
-//                                    spinner.setSelection(personas.indexOf(((ProfileFragment) currentFragment).getMCurrentPersona()), false);
-//                                    spinner.setOnItemSelectedListener((ProfileFragment) currentFragment);
-                                }
-                                break;
-                            case 3:
-                                toolbar.inflateMenu(R.menu.menu_notifications);
-                                break;
-                        }
-
-                        return true;
-                    }
-                });
+                .withCloseOnClick(true)
+                .withOnDrawerItemClickListener(drawerItemClickListener);
 
         if (tabletSize) {
             //on tablet like explained to me here:
@@ -335,4 +306,36 @@ public class MainActivity extends AppCompatActivity implements
         SharedPreferences sharedPref = ctx.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
         return sharedPref.getString(settingName, defaultValue);
     }
+
+    private Drawer.OnDrawerItemClickListener drawerItemClickListener = new Drawer.OnDrawerItemClickListener() {
+        @Override
+        public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+            // do something with the clicked item :D
+            mCurrentSelectedPosition = position - 1;
+            getSupportFragmentManager().
+                    beginTransaction().
+                    replace(R.id.container, createFragment(mCurrentSelectedPosition)).
+                    commit();
+
+            switch (mCurrentSelectedPosition) {
+                case 0:
+                    toolbar.inflateMenu(R.menu.menu_view_self_profile);
+
+                    if (currentFragment instanceof ProfileFragment) {
+//                                    MenuItem item = menu.findItem(R.id.profileview_persona_selector);
+//                                    Spinner spinner = (Spinner) MenuItemCompat.getActionView(item);
+//                                    List<SPFPersona> personas = SPF.get().getProfileManager().getAvailablePersonas();
+//                                    spinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, personas));
+//                                    spinner.setSelection(personas.indexOf(((ProfileFragment) currentFragment).getMCurrentPersona()), false);
+//                                    spinner.setOnItemSelectedListener((ProfileFragment) currentFragment);
+                    }
+                    break;
+                case 3:
+                    toolbar.inflateMenu(R.menu.menu_notifications);
+                    break;
+            }
+
+            return true;
+        }
+    };
 }
