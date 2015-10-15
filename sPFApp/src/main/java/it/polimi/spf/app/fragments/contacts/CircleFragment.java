@@ -32,13 +32,10 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.mikepenz.fontawesome_typeface_library.FontAwesome;
-import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.iconics.view.IconicsButton;
 
 import java.util.Collection;
@@ -69,12 +66,21 @@ public class CircleFragment extends Fragment implements
     @Bind(R.id.contacts_circle_add_button)
     IconicsButton addButton;
 
+
+    public static CircleFragment newInstance() {
+        return new CircleFragment();
+    }
+
+    public CircleFragment() {
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.contacts_circle_page, container, false);
         ButterKnife.bind(this, root);
         return root;
     }
+
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -88,6 +94,7 @@ public class CircleFragment extends Fragment implements
         addButton.setOnClickListener(this);
 
         startLoader(LOAD_CIRCLE_LOADER, null, false);
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -229,6 +236,7 @@ public class CircleFragment extends Fragment implements
     public void onLoadFinished(Loader<Collection<String>> loader, Collection<String> data) {
         mAdapter.clear();
         mAdapter.addAll(data);
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override

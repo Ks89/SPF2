@@ -105,9 +105,9 @@ public class ContactsFragment extends Fragment {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return new PeopleFragment();
+                    return PeopleFragment.newInstance();
                 case 1:
-                    return new CircleFragment();
+                    return CircleFragment.newInstance();
                 default:
                     throw new IllegalArgumentException("Requested page outside boundaries");
             }

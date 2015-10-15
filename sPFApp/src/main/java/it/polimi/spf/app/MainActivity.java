@@ -34,6 +34,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -421,22 +422,12 @@ public class MainActivity extends AppCompatActivity implements
                     replace(R.id.container, createFragment(drawerItem.getIdentifier())).
                     commit();
 
-            Log.d(TAG, "Clicked in navdrawer: " + drawerItem.getIdentifier());
-
             //to prevent multiple items added every time that this method will be called
             toolbar.getMenu().clear();
 
             switch (drawerItem.getIdentifier()) {
                 case 0:
-                    toolbar.inflateMenu(R.menu.menu_view_self_profile);
-                    if (currentFragment instanceof ProfileFragment) {
-                        MenuItem item = toolbar.getMenu().findItem(R.id.profileview_persona_selector);
-                        Spinner spinner = (Spinner) MenuItemCompat.getActionView(item);
-                        List<SPFPersona> personas = SPF.get().getProfileManager().getAvailablePersonas();
-                        spinner.setAdapter(new ArrayAdapter<>(getBaseContext(), android.R.layout.simple_list_item_1, personas));
-                        spinner.setSelection(personas.indexOf(((ProfileFragment) currentFragment).getMCurrentPersona()), false);
-                        spinner.setOnItemSelectedListener((ProfileFragment) currentFragment);
-                    }
+                    initProfileFragmentToolbar();
                     break;
                 case 3:
                     toolbar.inflateMenu(R.menu.menu_notifications);
@@ -458,6 +449,22 @@ public class MainActivity extends AppCompatActivity implements
             return true;
         }
     };
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        this.initProfileFragmentToolbar();
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    private void initProfileFragmentToolbar() {
+        toolbar.inflateMenu(R.menu.menu_view_self_profile);
+        MenuItem item = toolbar.getMenu().findItem(R.id.profileview_persona_selector);
+        Spinner spinner = (Spinner) MenuItemCompat.getActionView(item);
+        List<SPFPersona> personas = SPF.get().getProfileManager().getAvailablePersonas();
+        spinner.setAdapter(new ArrayAdapter<>(getBaseContext(), android.R.layout.simple_list_item_1, personas));
+        spinner.setSelection(personas.indexOf(((ProfileFragment) currentFragment).getMCurrentPersona()), false);
+        spinner.setOnItemSelectedListener((ProfileFragment) currentFragment);
+    }
 
 
     private OnCheckedChangeListener goSwitchListener = new OnCheckedChangeListener() {

@@ -53,6 +53,14 @@ public class PeopleFragment extends Fragment implements OnItemClickListener, SPF
     private PersonRegistry mPersonRegistry = SPF.get().getSecurityMonitor().getPersonRegistry();
     private FriendListArrayAdapter mFriendsAdapter, mRequestAdapter;
 
+
+    public static PeopleFragment newInstance() {
+        return new PeopleFragment();
+    }
+
+    public PeopleFragment() {
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.contacts_people_page, container, false);
