@@ -57,6 +57,7 @@ import java.util.Locale;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
+import it.polimi.spf.app.MainActivity;
 import it.polimi.spf.app.R;
 import it.polimi.spf.app.fragments.contacts.ContactConfirmDialogView;
 import it.polimi.spf.framework.SPF;
@@ -66,8 +67,14 @@ import it.polimi.spf.shared.model.ProfileField;
 import it.polimi.spf.shared.model.ProfileFieldContainer;
 import lombok.Getter;
 
-public class ProfileFragment extends Fragment implements LoaderManager.LoaderCallbacks<ProfileFieldContainer>,
-        OnItemSelectedListener, OnClickListener {
+public class ProfileFragment extends Fragment implements
+        LoaderManager.LoaderCallbacks<ProfileFieldContainer>,
+        OnItemSelectedListener,
+        OnClickListener {
+
+    public interface ProfilePhotoListener {
+        void onPhotoReady(Bitmap bitmap);
+    }
 
     @Bind(R.id.profileedit_tabs)
     TabLayout tabLayout;
@@ -159,8 +166,6 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     private ProfileFieldViewFactory mFactory;
     private boolean mModifiedAtLeastOnce = false;
 
-    // Lifecycle management methods
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root;
@@ -186,7 +191,6 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         super.onActivityCreated(savedInstanceState);
 
         if (savedInstanceState == null) {
-//            mMode = Mode.values()[getArguments().getInt(EXTRA_VIEW_MODE)];
             switch (mMode) {
                 case SELF:
                     String callerApp = getActivity().getCallingPackage();
@@ -344,6 +348,8 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 
         if (mMode != Mode.SELF) {
             showPicture(mContainer.getFieldValue(ProfileField.PHOTO));
+        } else {
+            ((MainActivity) getActivity()).onPhotoReady(mContainer.getFieldValue(ProfileField.PHOTO));
         }
 
         // Refresh field fragments
@@ -351,13 +357,19 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     }
 
     private void showPicture(Bitmap photo) {
+        if (this.resultView == null) {
+            return;
+        }
+
         // Show picture
         if (mMode == Mode.EDIT) {
             this.resultView.setOnClickListener(this);
         }
 
-        this.resultView.setImageBitmap(photo);
-        this.resultView.invalidate();
+        if (photo != null) {
+            this.resultView.setImageBitmap(photo);
+            this.resultView.invalidate();
+        }
     }
 
     // Methods to be called from child ProfileFieldsFragment to obtain views and

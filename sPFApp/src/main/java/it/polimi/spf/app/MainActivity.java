@@ -23,6 +23,7 @@ package it.polimi.spf.app;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -36,16 +37,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
-import android.widget.Switch;
 import android.widget.Toast;
 
+import com.mikepenz.materialdrawer.AccountHeader;
+import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.holder.StringHolder;
 import com.mikepenz.materialdrawer.interfaces.OnCheckedChangeListener;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.SwitchDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -67,7 +71,9 @@ import it.polimi.spf.framework.local.SPFService;
 
 public class MainActivity extends AppCompatActivity implements
         PermissionDisclaimerDialogFragment.PermissionDisclaimerListener,
-        SPFContext.OnEventListener {
+        SPFContext.OnEventListener,
+        ProfileFragment.ProfilePhotoListener {
+
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private static final int OVERLAY_PERMISSION_REQ_CODE = 1234;
@@ -99,6 +105,8 @@ public class MainActivity extends AppCompatActivity implements
     private PrimaryDrawerItem contactsDrawerItem;
     private PrimaryDrawerItem notificationsDrawerItem;
     private PrimaryDrawerItem advertisingDrawerItem;
+    private ProfileDrawerItem profileDrawerItem;
+    private AccountHeader headerResult;
 
     /**
      * Array that contains the names of sections
@@ -162,9 +170,26 @@ public class MainActivity extends AppCompatActivity implements
         notificationsDrawerItem = new PrimaryDrawerItem().withName(mSectionNames[3]);
         advertisingDrawerItem = new PrimaryDrawerItem().withName(mSectionNames[4]);
 
+        profileDrawerItem = new ProfileDrawerItem().withIcon(getResources().getDrawable(R.drawable.empty_profile_picture)).withIdentifier(100);
+
+        // Create the AccountHeader
+        headerResult = new AccountHeaderBuilder()
+                .withActivity(this)
+                .withHeaderBackground(R.drawable.drawer_header)
+                .addProfiles(profileDrawerItem)
+                .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
+                    @Override
+                    public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
+                        return false;
+                    }
+                })
+                .withSelectionListEnabledForSingleProfile(false)
+                .build();
+
         drawerBuilder = new DrawerBuilder()
                 .withActivity(this)
-                .withHeader(R.layout.drawer_header)
+                .withAccountHeader(headerResult)
+//                .withHeader(R.layout.drawer_header)
                 .withToolbar(toolbar)
                 .withHasStableIds(true)
                 .addDrawerItems(
@@ -183,7 +208,6 @@ public class MainActivity extends AppCompatActivity implements
                 .withOnDrawerItemClickListener(drawerItemClickListener)
                 .withCloseOnClick(true)
                 .withSavedInstance(savedInstanceState);
-
 
         if (tabletSize) {
             //on tablet like explained to me here:
@@ -313,6 +337,17 @@ public class MainActivity extends AppCompatActivity implements
                 break;
         }
         return currentFragment;
+    }
+
+    @Override
+    public void onPhotoReady(Bitmap bitmap) {
+        if (bitmap == null) {
+            Log.d(TAG, "onPhotoReady, but photo is null");
+            return;
+        }
+        Log.d(TAG, "onPhotoReady!!!");
+        profileDrawerItem.withIcon(bitmap);
+        headerResult.updateProfile(profileDrawerItem);
     }
 
     @Override
