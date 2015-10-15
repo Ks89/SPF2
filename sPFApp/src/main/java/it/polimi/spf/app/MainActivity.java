@@ -180,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements
         // Create the AccountHeader
         headerResult = new AccountHeaderBuilder()
                 .withActivity(this)
-                .withHeaderBackground(R.drawable.drawer_header)
+                .withHeaderBackground(R.drawable.drawer_header_new)
                 .addProfiles(profileDrawerItem)
                 .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
                     @Override
