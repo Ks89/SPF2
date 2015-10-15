@@ -417,6 +417,9 @@ public class MainActivity extends AppCompatActivity implements
 
             Log.d(TAG, "Clicked in navdrawer: " + drawerItem.getIdentifier());
 
+            //to prevent multiple items added every time that this method will be called
+            toolbar.getMenu().clear();
+
             switch (drawerItem.getIdentifier()) {
                 case 0:
                     toolbar.inflateMenu(R.menu.menu_view_self_profile);
