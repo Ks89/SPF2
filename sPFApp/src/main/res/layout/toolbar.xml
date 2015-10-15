@@ -4,7 +4,8 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/red"
+        android:background="@color/toolbar_background"
+        android:titleTextColor="@color/toolbar_text_color"
         android:minHeight="?attr/actionBarSize">
     </android.support.v7.widget.Toolbar>
 </merge>
