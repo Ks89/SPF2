@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -46,6 +47,7 @@ import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.holder.BadgeStyle;
 import com.mikepenz.materialdrawer.holder.StringHolder;
 import com.mikepenz.materialdrawer.interfaces.OnCheckedChangeListener;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
@@ -194,7 +196,6 @@ public class MainActivity extends AppCompatActivity implements
         drawerBuilder = new DrawerBuilder()
                 .withActivity(this)
                 .withAccountHeader(headerResult)
-//                .withHeader(R.layout.drawer_header)
                 .withToolbar(toolbar)
                 .withHasStableIds(true)
                 .addDrawerItems(
@@ -556,12 +557,16 @@ public class MainActivity extends AppCompatActivity implements
         if (item == null) {
             return;
         }
+        item.withBadgeStyle(new BadgeStyle()
+                .withTextColor(Color.WHITE)
+                .withColorRes(R.color.md_red_700));
+        StringHolder badge;
         if (text == null) {
-            item.withBadge("");
+            badge = null; //to remove the badge, use null
         } else {
-            item.withBadge(new StringHolder(text));
+            badge = new StringHolder(text);
         }
-        drawer.updateItem(item);
+        drawer.updateBadge(item.getIdentifier(), badge);
     }
 
     @Override
