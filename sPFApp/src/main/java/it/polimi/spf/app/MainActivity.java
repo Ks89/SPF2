@@ -29,14 +29,17 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.mikepenz.materialdrawer.AccountHeader;
@@ -53,6 +56,7 @@ import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import butterknife.Bind;
@@ -68,6 +72,7 @@ import it.polimi.spf.app.permissiondisclaimer.PermissionDisclaimerDialogFragment
 import it.polimi.spf.framework.SPF;
 import it.polimi.spf.framework.SPFContext;
 import it.polimi.spf.framework.local.SPFService;
+import it.polimi.spf.framework.profile.SPFPersona;
 
 public class MainActivity extends AppCompatActivity implements
         PermissionDisclaimerDialogFragment.PermissionDisclaimerListener,
@@ -424,12 +429,12 @@ public class MainActivity extends AppCompatActivity implements
                 case 0:
                     toolbar.inflateMenu(R.menu.menu_view_self_profile);
                     if (currentFragment instanceof ProfileFragment) {
-//                                    MenuItem item = menu.findItem(R.id.profileview_persona_selector);
-//                                    Spinner spinner = (Spinner) MenuItemCompat.getActionView(item);
-//                                    List<SPFPersona> personas = SPF.get().getProfileManager().getAvailablePersonas();
-//                                    spinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, personas));
-//                                    spinner.setSelection(personas.indexOf(((ProfileFragment) currentFragment).getMCurrentPersona()), false);
-//                                    spinner.setOnItemSelectedListener((ProfileFragment) currentFragment);
+                        MenuItem item = toolbar.getMenu().findItem(R.id.profileview_persona_selector);
+                        Spinner spinner = (Spinner) MenuItemCompat.getActionView(item);
+                        List<SPFPersona> personas = SPF.get().getProfileManager().getAvailablePersonas();
+                        spinner.setAdapter(new ArrayAdapter<>(getBaseContext(), android.R.layout.simple_list_item_1, personas));
+                        spinner.setSelection(personas.indexOf(((ProfileFragment) currentFragment).getMCurrentPersona()), false);
+                        spinner.setOnItemSelectedListener((ProfileFragment) currentFragment);
                     }
                     break;
                 case 3:
