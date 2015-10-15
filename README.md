@@ -13,6 +13,15 @@ Work in progress...
 
 Attention to build you must start Sonatype Nexus with all libs published. I'll post istructions and other stuff in the future.
 
+# Releases
+
+- 10-14-2015 - Beta 1 - [AVAILABLE FROM 10-14-2015 SOON](https://github.com/Ks89/SPF2/releases/tag/v.beta1)
+- 10-13-2015 - Alpha 4 - [Download](https://github.com/Ks89/SPF2/releases/tag/v.alpha4)
+- 10-08-2015 - Alpha 3 - [Download](https://github.com/Ks89/SPF2/releases/tag/v.alpha3)
+- 10-06-2015 - Alpha 2 - [Download](https://github.com/Ks89/SPF2/releases/tag/v.alpha2)
+- 10-06-2015 - Alpha 1 - [Download](https://github.com/Ks89/SPF2/releases/tag/v.alpha1)
+
+
 # License
 Copyright 2014 Jacopo Aliprandi, Dario Archetti<br>
 Copyright 2015 Stefano Cappa
