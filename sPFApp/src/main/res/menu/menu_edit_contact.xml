@@ -5,6 +5,6 @@
     <item
         android:id="@+id/contacts_delete_contact"
         android:icon="@android:drawable/ic_menu_delete"
-        android:title=""
+        android:title="Delete"
         app:showAsAction="ifRoom" />
 </menu>

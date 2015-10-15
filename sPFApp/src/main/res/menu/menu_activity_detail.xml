@@ -4,6 +4,6 @@
     <item
         android:id="@+id/appmanager_delete_app"
         android:icon="@android:drawable/ic_menu_delete"
-        android:title=""
+        android:title="Delete"
         app:showAsAction="ifRoom" />
 </menu>

@@ -9,6 +9,13 @@
         <!--<item name="colorButtonNormal">@color/black</item>-->
     </style>
 
+    <style name="MyToolbarTheme" parent="Widget.AppCompat.Toolbar">
+        <item name="android:background">@color/toolbar_background</item>
+        <item name="android:textColor">@color/white_main</item>
+        <item name="popupTheme">@style/Theme.AppCompat.Light</item>
+        <item name="theme">@style/Theme.AppCompat</item>
+    </style>
+
 
     <!-- Theme for custom dialog fragments with @color/transparent_diagfrag as background-->
     <style name="MyDialog" parent="@android:style/Theme.Dialog">
