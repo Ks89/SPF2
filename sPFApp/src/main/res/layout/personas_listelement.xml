@@ -4,23 +4,25 @@
     android:layout_height="match_parent"
     android:descendantFocusability="blocksDescendants"
     android:minHeight="50dp"
-    android:padding="@dimen/content_inner_padding"
-    android:orientation="horizontal" >
+    android:orientation="horizontal"
+    android:padding="@dimen/content_inner_padding">
 
     <TextView
         android:id="@+id/personas_entry_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:textSize="@dimen/content_text_size"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:textSize="@dimen/content_text_size" />
 
-    <ImageButton
+    <com.mikepenz.iconics.view.IconicsButton
         android:id="@+id/personas_entry_delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
         android:contentDescription="@string/personas_delete_description"
-        android:src="@android:drawable/ic_menu_delete" />
+        android:text="{gmd-delete}"
+        android:textColor="@color/white_main"
+        android:textSize="26sp"
+        android:textAllCaps="false" />
 
 </LinearLayout>

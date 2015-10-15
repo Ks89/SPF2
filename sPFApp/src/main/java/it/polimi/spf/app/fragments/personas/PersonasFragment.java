@@ -32,12 +32,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.mikepenz.fontawesome_typeface_library.FontAwesome;
-import com.mikepenz.iconics.IconicsDrawable;
+import com.mikepenz.iconics.view.IconicsButton;
 
 import java.util.List;
 
@@ -61,7 +59,7 @@ public class PersonasFragment extends Fragment implements
     private PersonasArrayAdapter mAdapter;
 
     @Bind(R.id.personas_new_add)
-    ImageButton addButton;
+    IconicsButton addButton;
     @Bind(R.id.personas_new_name)
     EditText mNewPersonaName;
     @Bind(R.id.personas_container)
@@ -95,11 +93,6 @@ public class PersonasFragment extends Fragment implements
         list.setAdapter(mAdapter);
         list.setOnItemClickListener(itemClickListener);
 
-        addButton.setImageDrawable(new IconicsDrawable(getActivity())
-                .icon(FontAwesome.Icon.faw_user_plus)
-                .color(getResources().getColor(R.color.white_main))
-                .sizeDp(32)
-                .paddingPx(5));
         addButton.setOnClickListener(this);
         getLoaderManager().destroyLoader(LOAD_PERSONAS_LOADER);
         getLoaderManager().initLoader(LOAD_PERSONAS_LOADER, null, this).forceLoad();

@@ -47,12 +47,15 @@
             android:hint="@string/contacts_circle_add_hint"
             android:inputType="text" />
 
-        <ImageButton
+        <com.mikepenz.iconics.view.IconicsButton
             android:id="@+id/contacts_circle_add_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/contacts_circle_add_button_desc"
-            android:src="@android:drawable/ic_menu_add" />
+            android:text="{gmd-add-box}"
+            android:textColor="@color/white_main"
+            android:textSize="26sp"
+            android:textAllCaps="false" />
     </LinearLayout>
 
 </LinearLayout>

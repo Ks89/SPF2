@@ -37,15 +37,23 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mikepenz.fontawesome_typeface_library.FontAwesome;
+import com.mikepenz.iconics.IconicsDrawable;
+import com.mikepenz.iconics.view.IconicsButton;
+
 import java.util.Collection;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import it.polimi.spf.app.R;
 import it.polimi.spf.app.R.id;
 import it.polimi.spf.framework.SPF;
 import it.polimi.spf.framework.security.DefaultCircles;
 import it.polimi.spf.framework.security.PersonRegistry;
 
-public class CircleFragment extends Fragment implements OnClickListener, LoaderManager.LoaderCallbacks<Collection<String>> {
+public class CircleFragment extends Fragment implements
+        OnClickListener,
+        LoaderManager.LoaderCallbacks<Collection<String>> {
 
     private static final int LOAD_CIRCLE_LOADER = 0;
     private static final int ADD_CIRCLE_LOADER = 1;
@@ -53,28 +61,39 @@ public class CircleFragment extends Fragment implements OnClickListener, LoaderM
     protected static final String EXTRA_CIRCLE = "circle";
 
     private CircleArrayAdapter mAdapter;
-    private EditText mNewCircleName;
+
+    @Bind(R.id.contacts_circle_add_name)
+    EditText mNewCircleName;
+    @Bind(id.contacts_circle_list)
+    ListView circleList;
+    @Bind(R.id.contacts_circle_add_button)
+    IconicsButton addButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.contacts_circle_page, container, false);
+        View root = inflater.inflate(R.layout.contacts_circle_page, container, false);
+        ButterKnife.bind(this, root);
+        return root;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        ListView circleList = (ListView) getView().findViewById(R.id.contacts_circle_list);
         circleList.setEmptyView(getView().findViewById(R.id.contacts_circle_emptyview));
 
         mAdapter = new CircleArrayAdapter(getActivity());
         circleList.setAdapter(mAdapter);
 
-        mNewCircleName = (EditText) getView().findViewById(R.id.contacts_circle_add_name);
-        ImageButton addButton = (ImageButton) getView().findViewById(R.id.contacts_circle_add_button);
         addButton.setOnClickListener(this);
 
         startLoader(LOAD_CIRCLE_LOADER, null, false);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
     }
 
     private class CircleArrayAdapter extends ArrayAdapter<String> {
@@ -120,20 +139,21 @@ public class CircleFragment extends Fragment implements OnClickListener, LoaderM
             view.setTag(holder);
 
             holder.name = (TextView) view.findViewById(R.id.personas_entry_name);
-            holder.deletebutton = (ImageButton) view.findViewById(id.personas_entry_delete);
+            holder.deletebutton = (IconicsButton) view.findViewById(R.id.personas_entry_delete);
 
             return holder;
         }
 
         public TextView name;
-        public ImageButton deletebutton;
+        public IconicsButton deletebutton;
 
     }
 
     @Override
     public void onClick(View v) {
+        Bundle args = new Bundle();
         switch (v.getId()) {
-            case R.id.contacts_circle_add_button: {
+            case R.id.contacts_circle_add_button:
                 String newCircleName = mNewCircleName.getText().toString();
                 if (newCircleName.length() == 0) {
                     makeToast("Circle name must not be empty");
@@ -147,17 +167,12 @@ public class CircleFragment extends Fragment implements OnClickListener, LoaderM
 
                 mNewCircleName.setText("");
 
-                Bundle args = new Bundle();
                 args.putString(EXTRA_CIRCLE, newCircleName);
                 startLoader(ADD_CIRCLE_LOADER, args, true);
                 return;
-            }
-            case R.id.personas_entry_delete: {
-                Bundle args = new Bundle();
+            case R.id.personas_entry_delete:
                 args.putString(EXTRA_CIRCLE, (String) v.getTag());
                 startLoader(DELETE_CIRCLE_LOADER, args, true);
-                return;
-            }
         }
     }
 
