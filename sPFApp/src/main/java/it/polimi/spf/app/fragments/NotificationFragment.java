@@ -64,6 +64,13 @@ public class NotificationFragment extends Fragment
     @Bind(R.id.notifications_emptyview)
     TextView notifications_emptyview;
 
+    public static NotificationFragment newInstance() {
+        return new NotificationFragment();
+    }
+
+    public NotificationFragment() {
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.content_fragment_notifications, container, false);

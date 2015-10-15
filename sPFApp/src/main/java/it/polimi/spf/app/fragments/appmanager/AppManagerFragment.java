@@ -48,6 +48,13 @@ public class AppManagerFragment extends Fragment implements ListView.OnItemClick
     @Bind(R.id.app_manager_list)
     ListView mAppList;
 
+    public static AppManagerFragment newInstance() {
+        return new AppManagerFragment();
+    }
+
+    public AppManagerFragment() {
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.content_fragment_appmanager, container, false);

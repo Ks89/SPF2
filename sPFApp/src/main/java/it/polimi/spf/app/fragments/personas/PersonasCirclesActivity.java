@@ -22,7 +22,6 @@ package it.polimi.spf.app.fragments.personas;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -50,17 +49,14 @@ public class PersonasCirclesActivity extends AppCompatActivity {
         SPFPersona persona = getIntent().getParcelableExtra("persona");
         PersonasCirclesFragment fragment = PersonasCirclesFragment.newInstance(persona);
         getFragmentManager().beginTransaction().replace(R.id.activity_persona_circles_container, fragment).commit();
-
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     public void setupToolBar() {
         if (toolbar != null) {
             toolbar.setTitle("Personas Circles");
-            toolbar.setTitleTextColor(Color.BLACK);
+            toolbar.setTitleTextColor(getResources().getColor(R.color.toolbar_text_color));
             this.setSupportActionBar(toolbar);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         }
     }
 

@@ -31,6 +31,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -59,6 +60,8 @@ public class AppDetailActivity extends AppCompatActivity {
     TextView appIdTextView;
     @Bind(R.id.app_icon_view)
     ImageView appIconImageView;
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
 
     private AppAuth mAppAuth;
 
@@ -68,6 +71,8 @@ public class AppDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_app_detail);
 
         ButterKnife.bind(this);
+
+        this.setupToolBar();
 
         if (savedInstanceState == null) {
             mAppAuth = getIntent().getParcelableExtra(APP_AUTH_KEY);
@@ -115,9 +120,16 @@ public class AppDetailActivity extends AppCompatActivity {
             public void onTabReselected(TabLayout.Tab tab) {
             }
         });
+    }
 
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    public void setupToolBar() {
+        if (toolbar != null) {
+            toolbar.setTitle("Edit Profile");
+            toolbar.setTitleTextColor(getResources().getColor(R.color.toolbar_text_color));
+            toolbar.inflateMenu(R.menu.menu_edit_profile);
+            this.setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     @Override

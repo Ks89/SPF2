@@ -36,6 +36,9 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.mikepenz.fontawesome_typeface_library.FontAwesome;
+import com.mikepenz.iconics.IconicsDrawable;
+
 import java.util.List;
 
 import butterknife.Bind;
@@ -45,7 +48,11 @@ import it.polimi.spf.framework.SPF;
 import it.polimi.spf.framework.profile.SPFPersona;
 import it.polimi.spf.framework.profile.SPFProfileManager;
 
-public class PersonasFragment extends Fragment implements PersonasArrayAdapter.OnPersonaDeletedListener, OnClickListener, LoaderManager.LoaderCallbacks<List<SPFPersona>> {
+public class PersonasFragment extends Fragment implements
+        PersonasArrayAdapter.OnPersonaDeletedListener,
+        OnClickListener,
+        LoaderManager.LoaderCallbacks<List<SPFPersona>> {
+
     private static final int CREATE_PERSONA_LOADER = 0;
     private static final int LOAD_PERSONAS_LOADER = 1;
     private static final int DELETE_PERSONA_LOADER = 2;
@@ -59,6 +66,13 @@ public class PersonasFragment extends Fragment implements PersonasArrayAdapter.O
     EditText mNewPersonaName;
     @Bind(R.id.personas_container)
     ListView list;
+
+    public static PersonasFragment newInstance() {
+        return new PersonasFragment();
+    }
+
+    public PersonasFragment() {
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -80,6 +94,12 @@ public class PersonasFragment extends Fragment implements PersonasArrayAdapter.O
         mAdapter = new PersonasArrayAdapter(getActivity(), this);
         list.setAdapter(mAdapter);
         list.setOnItemClickListener(itemClickListener);
+
+        addButton.setImageDrawable(new IconicsDrawable(getActivity())
+                .icon(FontAwesome.Icon.faw_user_plus)
+                .color(getResources().getColor(R.color.white_main))
+                .sizeDp(32)
+                .paddingPx(5));
         addButton.setOnClickListener(this);
         getLoaderManager().destroyLoader(LOAD_PERSONAS_LOADER);
         getLoaderManager().initLoader(LOAD_PERSONAS_LOADER, null, this).forceLoad();

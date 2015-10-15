@@ -43,6 +43,13 @@ public class ContactsFragment extends Fragment {
     @Bind(R.id.contacts_pager)
     ViewPager mViewPager;
 
+    public static ContactsFragment newInstance() {
+        return new ContactsFragment();
+    }
+
+    public ContactsFragment() {
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.content_fragment_contacts, container, false);

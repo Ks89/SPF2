@@ -55,6 +55,13 @@ public class AdvertisingFragment extends Fragment {
     @Bind(R.id.advertising_switch)
     Switch advSwitch;
 
+    public static AdvertisingFragment newInstance() {
+        return new AdvertisingFragment();
+    }
+
+    public AdvertisingFragment() {
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.content_fragment_advertising, container, false);

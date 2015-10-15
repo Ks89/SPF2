@@ -58,6 +58,13 @@ public class ActivityFragment extends Fragment implements LoaderManager.LoaderCa
 
     private ActivityVerbAdapter mAdapter;
 
+    public static ActivityFragment newInstance() {
+        return new ActivityFragment();
+    }
+
+    public ActivityFragment() {
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.content_fragment_activities, container, false);

@@ -28,12 +28,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -71,6 +73,8 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     TabLayout tabLayout;
     @Bind(R.id.profileedit_pager)
     ViewPager mViewPager;
+
+    @Nullable
     @Bind(R.id.profile_picture)
     CircleImageView resultView;
 
@@ -159,7 +163,20 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.content_fragment_profile, container, false);
+        View root;
+
+        mMode = Mode.values()[getArguments().getInt(EXTRA_VIEW_MODE)];
+        switch (mMode) {
+            case EDIT:
+            case REMOTE:
+                root = inflater.inflate(R.layout.content_fragment_profile, container, false);
+                break;
+            case SELF:
+            default:
+                root = inflater.inflate(R.layout.content_fragment_profile_no_photo, container, false);
+                break;
+        }
+
         ButterKnife.bind(this, root);
         return root;
     }
@@ -169,7 +186,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         super.onActivityCreated(savedInstanceState);
 
         if (savedInstanceState == null) {
-            mMode = Mode.values()[getArguments().getInt(EXTRA_VIEW_MODE)];
+//            mMode = Mode.values()[getArguments().getInt(EXTRA_VIEW_MODE)];
             switch (mMode) {
                 case SELF:
                     String callerApp = getActivity().getCallingPackage();
@@ -304,7 +321,30 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
             }
         });
 
-        showPicture(mContainer.getFieldValue(ProfileField.PHOTO));
+        //workaround used to center tabs or scroll tabs based on screen width
+        //http://stackoverflow.com/questions/30616474/
+        // android-support-design-tablayout-gravity-center-and-mode-scrollable/31861336#31861336
+        tabLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                int tabLayoutWidth = tabLayout.getWidth();
+
+                DisplayMetrics metrics = new DisplayMetrics();
+                getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+                int deviceWidth = metrics.widthPixels;
+
+                if (tabLayoutWidth < deviceWidth) {
+                    tabLayout.setTabMode(TabLayout.MODE_FIXED);
+                    tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+                } else {
+                    tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+                }
+            }
+        });
+
+        if (mMode != Mode.SELF) {
+            showPicture(mContainer.getFieldValue(ProfileField.PHOTO));
+        }
 
         // Refresh field fragments
         mPagerAdapter.onRefresh();
@@ -379,9 +419,10 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
                 // Profile may have changed, reload it
                 if (resultCode == Activity.RESULT_CANCELED) {
                     Log.d(TAG, "Edit finished but no data was modified");
+                    onProfileDataNotSaved();
+                } else {
+                    onProfileDataSaved();
                 }
-
-                onProfileDataSaved();
                 startLoader(LOAD_PROFILE_LOADER_ID);
                 break;
         }
@@ -505,6 +546,10 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 
     private void onProfileDataSaved() {
         Toast.makeText(getActivity(), "Profile data saved", Toast.LENGTH_SHORT).show();
+    }
+
+    private void onProfileDataNotSaved() {
+        Toast.makeText(getActivity(), "Profile data NOT saved", Toast.LENGTH_SHORT).show();
     }
 
     private void onSaveNotNecessary() {

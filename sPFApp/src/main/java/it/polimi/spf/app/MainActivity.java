@@ -36,12 +36,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.holder.StringHolder;
 import com.mikepenz.materialdrawer.interfaces.OnCheckedChangeListener;
-import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SwitchDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
@@ -68,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements
         PermissionDisclaimerDialogFragment.PermissionDisclaimerListener,
         SPFContext.OnEventListener {
     private static final String TAG = MainActivity.class.getSimpleName();
-    
+
     private static final int OVERLAY_PERMISSION_REQ_CODE = 1234;
     private static final String DIAG_TAG = "DIAG_TAG";
     private static final String PREFERENCES_FILE = "it.polimi.spf.navigationdrawer";
@@ -144,9 +145,18 @@ public class MainActivity extends AppCompatActivity implements
 
         mContentFrame = (FrameLayout) findViewById(R.id.container);
 
-        goSwitch = new SwitchDrawerItem().withName("Group Owner")/*.withIcon(Octicons.Icon.oct_tools)*/.withChecked(false).withEnabled(true).withOnCheckedChangeListener(goSwitchListener);
-        autonomousSwitch = new SwitchDrawerItem().withName("Autonomous GO")/*.withIcon(Octicons.Icon.oct_tools)*/.withChecked(true).withEnabled(false).withOnCheckedChangeListener(autonomousSwitchListener);
-        proximitySwitch = new SwitchDrawerItem().withName("Proximity")/*.withIcon(Octicons.Icon.oct_tools)*/.withChecked(false).withEnabled(true).withOnCheckedChangeListener(proximitySwitchListener);
+        goSwitch = new SwitchDrawerItem().withName("Group Owner")/*.withIcon(Octicons.Icon.oct_tools)*/
+                .withChecked(false).withEnabled(true).withOnCheckedChangeListener(goSwitchListener)
+                .withSelectable(false)
+                .withIdentifier(8);
+        autonomousSwitch = new SwitchDrawerItem().withName("Autonomous GO")/*.withIcon(Octicons.Icon.oct_tools)*/
+                .withChecked(true).withEnabled(false).withOnCheckedChangeListener(autonomousSwitchListener)
+                .withSelectable(false)
+                .withIdentifier(9);
+        proximitySwitch = new SwitchDrawerItem().withName("Proximity")/*.withIcon(Octicons.Icon.oct_tools)*/
+                .withChecked(false).withEnabled(true).withOnCheckedChangeListener(proximitySwitchListener)
+                .withSelectable(false)
+                .withIdentifier(10);
 
         contactsDrawerItem = new PrimaryDrawerItem().withName(mSectionNames[2]);
         notificationsDrawerItem = new PrimaryDrawerItem().withName(mSectionNames[3]);
@@ -156,21 +166,23 @@ public class MainActivity extends AppCompatActivity implements
                 .withActivity(this)
                 .withHeader(R.layout.drawer_header)
                 .withToolbar(toolbar)
+                .withHasStableIds(true)
                 .addDrawerItems(
-                        new PrimaryDrawerItem().withName(mSectionNames[0]),
-                        new PrimaryDrawerItem().withName(mSectionNames[1]),
-                        contactsDrawerItem,
-                        notificationsDrawerItem,
-                        advertisingDrawerItem,
-                        new PrimaryDrawerItem().withName(mSectionNames[5]),
-                        new PrimaryDrawerItem().withName(mSectionNames[6]),
-                        new DividerDrawerItem(),
+                        new PrimaryDrawerItem().withName(mSectionNames[0]).withIdentifier(0),
+                        new PrimaryDrawerItem().withName(mSectionNames[1]).withIdentifier(1),
+                        contactsDrawerItem.withIdentifier(2),
+                        notificationsDrawerItem.withIdentifier(3),
+                        advertisingDrawerItem.withIdentifier(4),
+                        new PrimaryDrawerItem().withName(mSectionNames[5]).withIdentifier(5),
+                        new PrimaryDrawerItem().withName(mSectionNames[6]).withIdentifier(6)
+                )
+                .addStickyDrawerItems(
                         goSwitch,
-                        autonomousSwitch,
                         proximitySwitch
                 )
+                .withOnDrawerItemClickListener(drawerItemClickListener)
                 .withCloseOnClick(true)
-                .withOnDrawerItemClickListener(drawerItemClickListener);
+                .withSavedInstance(savedInstanceState);
 
 
         if (tabletSize) {
@@ -197,9 +209,8 @@ public class MainActivity extends AppCompatActivity implements
         //update the navigation drawer badges
         Iterator it = this.mEntries.entrySet().iterator();
         while (it.hasNext()) {
-            Map.Entry el = (Map.Entry)it.next();
-            updateViewNotification((Entry)el.getKey(), (PrimaryDrawerItem)el.getValue());
-            it.remove(); // avoids a ConcurrentModificationException
+            Map.Entry el = (Map.Entry) it.next();
+            updateViewNotification((Entry) el.getKey(), (PrimaryDrawerItem) el.getValue());
         }
 
         SPFContext.get().registerEventListener(this);
@@ -208,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements
     public void setupToolBar() {
         if (toolbar != null) {
             toolbar.setTitle("SPF");
-            toolbar.setTitleTextColor(getResources().getColor(R.color.white_main));
+            toolbar.setTitleTextColor(getResources().getColor(R.color.toolbar_text_color));
             setSupportActionBar(toolbar);
         }
     }
@@ -279,26 +290,26 @@ public class MainActivity extends AppCompatActivity implements
                 break;
             case 1:
                 // Displays available personas
-                currentFragment = new PersonasFragment();
+                currentFragment = PersonasFragment.newInstance();
                 break;
             case 2:
                 // Displays the list of friends
-                currentFragment = new ContactsFragment();
+                currentFragment = ContactsFragment.newInstance();
                 break;
             case 3:
                 // Displays the list of notifications
-                currentFragment = new NotificationFragment();
+                currentFragment = NotificationFragment.newInstance();
                 break;
             case 4:
                 // Displays advertising options
-                currentFragment = new AdvertisingFragment();
+                currentFragment = AdvertisingFragment.newInstance();
                 break;
             case 5:
                 // Displays the list of apps authorized to interact with SPF
-                currentFragment = new AppManagerFragment();
+                currentFragment = AppManagerFragment.newInstance();
                 break;
             case 6:
-                currentFragment = new ActivityFragment();
+                currentFragment = ActivityFragment.newInstance();
                 break;
         }
         return currentFragment;
@@ -364,16 +375,16 @@ public class MainActivity extends AppCompatActivity implements
         @Override
         public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
             // do something with the clicked item :D
-            mCurrentSelectedPosition = position - 1;
             getSupportFragmentManager().
                     beginTransaction().
-                    replace(R.id.container, createFragment(mCurrentSelectedPosition)).
+                    replace(R.id.container, createFragment(drawerItem.getIdentifier())).
                     commit();
 
-            switch (mCurrentSelectedPosition) {
+            Log.d(TAG, "Clicked in navdrawer: " + drawerItem.getIdentifier());
+
+            switch (drawerItem.getIdentifier()) {
                 case 0:
                     toolbar.inflateMenu(R.menu.menu_view_self_profile);
-
                     if (currentFragment instanceof ProfileFragment) {
 //                                    MenuItem item = menu.findItem(R.id.profileview_persona_selector);
 //                                    Spinner spinner = (Spinner) MenuItemCompat.getActionView(item);
@@ -385,6 +396,18 @@ public class MainActivity extends AppCompatActivity implements
                     break;
                 case 3:
                     toolbar.inflateMenu(R.menu.menu_notifications);
+                    break;
+                case 8:
+                    goSwitch.withChecked(true);
+                    drawer.updateItem(goSwitch);
+                    break;
+                case 9:
+                    autonomousSwitch.withChecked(true);
+                    drawer.updateItem(autonomousSwitch);
+                    break;
+                case 10:
+                    proximitySwitch.withChecked(true);
+                    drawer.updateItem(proximitySwitch);
                     break;
             }
 
@@ -399,10 +422,12 @@ public class MainActivity extends AppCompatActivity implements
             if (isChecked) {
                 Log.d(TAG, "connectSwitch checked -> gointent=15");
                 autonomousSwitch.withSwitchEnabled(true);
+                drawer.addStickyFooterItemAtPosition(autonomousSwitch, 1);
                 ((SPFApp) getApplication()).updateIdentifier(15);
             } else {
                 Log.d(TAG, "connectSwitch unchecked -> gointent=0");
                 autonomousSwitch.withSwitchEnabled(false);
+                drawer.removeStickyFooterItemAtPosition(1);
                 ((SPFApp) getApplication()).updateIdentifier(0);
             }
             drawer.updateItem(autonomousSwitch);
@@ -491,8 +516,18 @@ public class MainActivity extends AppCompatActivity implements
         if (text == null) {
             item.withBadge("");
         } else {
-            item.withBadge(text);
+            item.withBadge(new StringHolder(text));
         }
         drawer.updateItem(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        //handle the back press :D close the drawer first and if the drawer is closed close the activity
+        if (drawer != null && drawer.isDrawerOpen()) {
+            drawer.closeDrawer();
+        } else {
+            super.onBackPressed();
+        }
     }
 }
