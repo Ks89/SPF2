@@ -26,6 +26,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -78,9 +79,9 @@ public class CircleFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.contacts_circle_page, container, false);
         ButterKnife.bind(this, root);
+
         return root;
     }
-
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -94,7 +95,6 @@ public class CircleFragment extends Fragment implements
         addButton.setOnClickListener(this);
 
         startLoader(LOAD_CIRCLE_LOADER, null, false);
-        mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -227,16 +227,15 @@ public class CircleFragment extends Fragment implements
 
     private void startLoader(int id, Bundle args, boolean destroyPrevious) {
         if (destroyPrevious) {
-            getLoaderManager().destroyLoader(id);
+            getActivity().getSupportLoaderManager().destroyLoader(id);
         }
-        getLoaderManager().initLoader(id, args, this).forceLoad();
+        getActivity().getSupportLoaderManager().initLoader(id, args, this).forceLoad();
     }
 
     @Override
     public void onLoadFinished(Loader<Collection<String>> loader, Collection<String> data) {
         mAdapter.clear();
         mAdapter.addAll(data);
-        mAdapter.notifyDataSetChanged();
     }
 
     @Override

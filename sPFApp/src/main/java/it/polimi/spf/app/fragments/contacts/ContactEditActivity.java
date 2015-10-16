@@ -71,8 +71,8 @@ public class ContactEditActivity extends AppCompatActivity implements CirclePick
         mCirclePicker = (CirclePicker) findViewById(R.id.contacts_person_circle_picker);
         mCirclePicker.setOnChangeListener(this);
 
-        List<String> selectedCircles = new ArrayList<String>(mInfo.getPersonAuth().getCircles());
-        List<String> selectableCircles = new ArrayList<String>(mPersonRegistry.getGroups());
+        List<String> selectedCircles = new ArrayList<>(mInfo.getPersonAuth().getCircles());
+        List<String> selectableCircles = new ArrayList<>(mPersonRegistry.getGroups());
         mCirclePicker.setCircles(selectedCircles, selectableCircles);
     }
 
