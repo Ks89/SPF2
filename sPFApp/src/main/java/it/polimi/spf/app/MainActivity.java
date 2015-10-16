@@ -201,6 +201,8 @@ public class MainActivity extends AppCompatActivity implements
                 .withAccountHeader(headerResult)
                 .withToolbar(toolbar)
                 .withHasStableIds(true)
+                .withActionBarDrawerToggle(true)
+                .withActionBarDrawerToggleAnimated(true)
                 .addDrawerItems(
                         new PrimaryDrawerItem().withName(mSectionNames[0]).withIdentifier(0).withIcon(FontAwesome.Icon.faw_user),
                         new PrimaryDrawerItem().withName(mSectionNames[1]).withIdentifier(1).withIcon(FontAwesome.Icon.faw_users),
