@@ -44,6 +44,8 @@ import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.mikepenz.fontawesome_typeface_library.FontAwesome;
+import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -200,13 +202,13 @@ public class MainActivity extends AppCompatActivity implements
                 .withToolbar(toolbar)
                 .withHasStableIds(true)
                 .addDrawerItems(
-                        new PrimaryDrawerItem().withName(mSectionNames[0]).withIdentifier(0),
-                        new PrimaryDrawerItem().withName(mSectionNames[1]).withIdentifier(1),
-                        contactsDrawerItem.withIdentifier(2),
-                        notificationsDrawerItem.withIdentifier(3),
-                        advertisingDrawerItem.withIdentifier(4),
-                        new PrimaryDrawerItem().withName(mSectionNames[5]).withIdentifier(5),
-                        new PrimaryDrawerItem().withName(mSectionNames[6]).withIdentifier(6)
+                        new PrimaryDrawerItem().withName(mSectionNames[0]).withIdentifier(0).withIcon(FontAwesome.Icon.faw_user),
+                        new PrimaryDrawerItem().withName(mSectionNames[1]).withIdentifier(1).withIcon(FontAwesome.Icon.faw_users),
+                        contactsDrawerItem.withIdentifier(2).withIcon(GoogleMaterial.Icon.gmd_book),
+                        notificationsDrawerItem.withIdentifier(3).withIcon(FontAwesome.Icon.faw_exclamation_circle),
+                        advertisingDrawerItem.withIdentifier(4).withIcon(FontAwesome.Icon.faw_eye),
+                        new PrimaryDrawerItem().withName(mSectionNames[5]).withIdentifier(5).withIcon(GoogleMaterial.Icon.gmd_apps),
+                        new PrimaryDrawerItem().withName(mSectionNames[6]).withIdentifier(6).withIcon(FontAwesome.Icon.faw_check_circle)
                 )
                 .addStickyDrawerItems(
                         goSwitch,
