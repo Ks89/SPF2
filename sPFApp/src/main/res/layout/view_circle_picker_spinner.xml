@@ -2,19 +2,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <it.polimi.spf.app.view.TagsViewer
         android:id="@+id/tags_viewer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"     
-      />
+        android:layout_height="wrap_content" />
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
         <Spinner
             android:id="@+id/tag_select"
@@ -22,13 +21,14 @@
             android:layout_height="match_parent"
             android:layout_weight="1" />
 
-        <Button
+        <com.mikepenz.iconics.view.IconicsButton
             android:id="@+id/circle_add_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add"
-             >
-        </Button>
+            android:text="{gmd-add-box}"
+            android:textColor="@color/white_main"
+            android:textSize="26sp"
+            android:textAllCaps="false"/>
     </LinearLayout>
 
 </LinearLayout>

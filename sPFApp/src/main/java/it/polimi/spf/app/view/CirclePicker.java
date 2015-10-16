@@ -20,11 +20,6 @@
  */
 package it.polimi.spf.app.view;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import it.polimi.spf.app.R;
-import it.polimi.spf.app.view.TagsViewer.OnRemovedListener;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
@@ -35,114 +30,122 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 
+import com.mikepenz.iconics.view.IconicsButton;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import it.polimi.spf.app.R;
+import it.polimi.spf.app.view.TagsViewer.OnRemovedListener;
+
 public class CirclePicker extends LinearLayout {
 
-	public static interface ChangeListener {
-		void onCircleAdded(String tag);
+    public interface ChangeListener {
+        void onCircleAdded(String tag);
 
-		void onCircleRemoved(String tag);
-	}
+        void onCircleRemoved(String tag);
+    }
 
-	private TagsViewer mTagsViewer;
-	private Spinner mSpinner;
-	private Button mAddButton;
+    private TagsViewer mTagsViewer;
+    private Spinner mSpinner;
+    private IconicsButton mAddButton;
 
-	private List<String> mSelectedCircles, mSelectableCircles;
+    private List<String> mSelectedCircles, mSelectableCircles;
 
-	private Listener mListener;
+    private Listener mListener;
 
-	public CirclePicker(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
-		init();
-	}
+    public CirclePicker(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        init();
+    }
 
-	public CirclePicker(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		init();
-	}
+    public CirclePicker(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init();
+    }
 
-	public CirclePicker(Context context) {
-		super(context);
-		init();
-	}
+    public CirclePicker(Context context) {
+        super(context);
+        init();
+    }
 
-	private void init() {
-		inflate(getContext(), R.layout.view_circle_picker_spinner, this);
-		mListener = new Listener();
-		
-		mTagsViewer = (TagsViewer) findViewById(R.id.tags_viewer);
-		mTagsViewer.setOnRemovedTagListener(mListener);
-		
-		mSpinner = (Spinner) findViewById(R.id.tag_select);
-		mSpinner.setOnItemSelectedListener(mListener);
-		
-		mAddButton = (Button) findViewById(R.id.circle_add_button);
-		mAddButton.setOnClickListener(mListener);
-	}
+    private void init() {
+        inflate(getContext(), R.layout.view_circle_picker_spinner, this);
+        mListener = new Listener();
 
-	public void setCircles(List<String> selectedCircles, List<String> selectableCircles) {
-		this.mSelectedCircles = selectedCircles == null ? new ArrayList<String>() : selectedCircles;
-		this.mSelectableCircles = selectableCircles == null ? new ArrayList<String>() : selectableCircles;
+        mTagsViewer = (TagsViewer) findViewById(R.id.tags_viewer);
+        mTagsViewer.setOnRemovedTagListener(mListener);
 
-		mTagsViewer.setTags(mSelectedCircles);
-		refreshSpinner();
-	}
+        mSpinner = (Spinner) findViewById(R.id.tag_select);
+        mSpinner.setOnItemSelectedListener(mListener);
 
-	public List<String> getSelectedCircles() {
-		return new ArrayList<String>(mSelectedCircles);
-	}
-	
-	private void refreshSpinner() {
-		mSpinner.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, mSelectableCircles));
-	}
+        mAddButton = (IconicsButton) findViewById(R.id.circle_add_button);
+        mAddButton.setOnClickListener(mListener);
+    }
 
-	public void setOnChangeListener(ChangeListener listener) {
-		mListener.setChangeListener(listener);
-	}
+    public void setCircles(List<String> selectedCircles, List<String> selectableCircles) {
+        this.mSelectedCircles = selectedCircles == null ? new ArrayList<String>() : selectedCircles;
+        this.mSelectableCircles = selectableCircles == null ? new ArrayList<String>() : selectableCircles;
 
-	private class Listener implements OnClickListener, OnRemovedListener, OnItemSelectedListener {
+        mTagsViewer.setTags(mSelectedCircles);
+        refreshSpinner();
+    }
 
-		private ChangeListener mListener;
-		
-		public void setChangeListener(ChangeListener listener){
-			this.mListener = listener;
-		}
+    public List<String> getSelectedCircles() {
+        return new ArrayList<String>(mSelectedCircles);
+    }
 
-		@Override
-		public void onClick(View v) {
-			String circle = (String) mSpinner.getSelectedItem();
-			mSelectedCircles.add(circle);
-			mSelectableCircles.remove(circle);
+    private void refreshSpinner() {
+        mSpinner.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, mSelectableCircles));
+    }
 
-			mTagsViewer.addTag(circle);
-			refreshSpinner();
+    public void setOnChangeListener(ChangeListener listener) {
+        mListener.setChangeListener(listener);
+    }
 
-			if (mListener != null) {
-				mListener.onCircleAdded(circle);
-			}
-		}
+    private class Listener implements OnClickListener, OnRemovedListener, OnItemSelectedListener {
 
-		@Override
-		public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-			mAddButton.setEnabled(true);
-		}
+        private ChangeListener mListener;
 
-		@Override
-		public void onNothingSelected(AdapterView<?> parent) {
-			mAddButton.setEnabled(false);
-		}
+        public void setChangeListener(ChangeListener listener) {
+            this.mListener = listener;
+        }
 
-		@Override
-		public void onRemovedTag(String tag) {
-			mSelectedCircles.remove(tag);
-			mSelectableCircles.add(tag);
+        @Override
+        public void onClick(View v) {
+            String circle = (String) mSpinner.getSelectedItem();
+            mSelectedCircles.add(circle);
+            mSelectableCircles.remove(circle);
 
-			refreshSpinner();
+            mTagsViewer.addTag(circle);
+            refreshSpinner();
 
-			if (mListener != null) {
-				mListener.onCircleRemoved(tag);
-			}
-		}
+            if (mListener != null) {
+                mListener.onCircleAdded(circle);
+            }
+        }
 
-	}
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            mAddButton.setEnabled(true);
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+            mAddButton.setEnabled(false);
+        }
+
+        @Override
+        public void onRemovedTag(String tag) {
+            mSelectedCircles.remove(tag);
+            mSelectableCircles.add(tag);
+
+            refreshSpinner();
+
+            if (mListener != null) {
+                mListener.onCircleRemoved(tag);
+            }
+        }
+
+    }
 }

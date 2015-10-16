@@ -31,6 +31,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 
+import com.mikepenz.iconics.view.IconicsButton;
+
 /**
  * @author Jacopo
  * 
@@ -39,7 +41,7 @@ public class TagsPicker extends RelativeLayout {
 
 	private TagsViewer tv;
 	private EditText et;
-	private Button btn;
+	private IconicsButton btn;
 	private OnChangeListener changeListener;
 
 	/**
@@ -72,7 +74,7 @@ public class TagsPicker extends RelativeLayout {
 	private void init() {
 		inflate(getContext(), R.layout.view_tags_picker, this);
 		tv = ((TagsViewer) findViewById(R.id.tags_viewer));
-		btn = (Button) findViewById(R.id.add_tag_button);
+		btn = (IconicsButton) findViewById(R.id.add_tag_button);
 		et = (EditText) findViewById(R.id.edit_tag);
 		btn.setOnClickListener(new OnClickListener() {
 			@Override

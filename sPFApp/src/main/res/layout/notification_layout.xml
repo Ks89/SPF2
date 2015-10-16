@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -9,40 +8,41 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
-        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
         android:layout_marginLeft="2dp"
-        android:layout_marginBottom="12dp"/>
+        android:layout_marginTop="12dp" />
 
     <TextView
         android:id="@+id/title_text_notification"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Text"
+        android:layout_alignTop="@+id/imageView"
         android:layout_marginLeft="4dp"
         android:layout_marginStart="4dp"
-        android:layout_alignTop="@+id/imageView"
-        android:layout_toRightOf="@+id/imageView"
         android:layout_toEndOf="@+id/imageView"
-        android:textColor="@color/black"/>
+        android:layout_toRightOf="@+id/imageView"
+        android:text="New Text"
+        android:textColor="@color/dark_text_color" />
 
     <TextView
         android:id="@+id/message_notification"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Text"
-        android:textColor="@color/gray"
-        android:layout_below="@+id/title_text_notification"
         android:layout_alignLeft="@+id/title_text_notification"
-        android:layout_alignStart="@+id/title_text_notification" />
+        android:layout_alignStart="@+id/title_text_notification"
+        android:layout_below="@+id/title_text_notification"
+        android:text="New Text"
+        android:textColor="@color/primary_text_color" />
 
 
     <Button
+        android:id="@+id/stopSpfButton"
+        style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="X"
-        style="?android:attr/buttonStyleSmall"
-        android:id="@+id/stopSpfButton"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_marginTop="6dp"
+        android:text="X" />
 
 </RelativeLayout>

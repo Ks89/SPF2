@@ -3,7 +3,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="1dp"
-    android:background="@android:color/holo_blue_light" >
+    android:background="@color/red" >
 
     <TextView
         android:id="@+id/textView1"
@@ -16,7 +16,7 @@
         android:maxLines="1"
         android:text="TextView"
         android:textStyle="bold"
-        android:background="@android:color/holo_blue_light"
+        android:background="@color/red"
         android:textColor="@android:color/white" />
 
     <Button

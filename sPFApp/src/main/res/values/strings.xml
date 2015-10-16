@@ -90,7 +90,7 @@
     <!-- Notifications -->
     <string name="notifications_emptyview">No notifications available</string>
     <string name="notification_title">SPF</string>
-    <string name="notification_text">SPF is active.</string>
+    <string name="notification_text">Proximity enabled</string>
     <string name="notification_ticker">SPF is active.</string>
 
     <!-- old fields, delete -->
