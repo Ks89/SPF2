@@ -46,7 +46,6 @@ import android.widget.Toast;
 
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
-import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -470,9 +469,12 @@ public class MainActivity extends AppCompatActivity implements
         MenuItem item = toolbar.getMenu().findItem(R.id.profileview_persona_selector);
         Spinner spinner = (Spinner) MenuItemCompat.getActionView(item);
         List<SPFPersona> personas = SPF.get().getProfileManager().getAvailablePersonas();
-        spinner.setAdapter(new ArrayAdapter<>(getBaseContext(), android.R.layout.simple_list_item_1, personas));
+        ArrayAdapter adapter = new ArrayAdapter<>(getBaseContext(), R.layout.spinner_toolbar_item, personas);
+        adapter.setDropDownViewResource(R.layout.spinner_toolbar_item_dropdown);
+        spinner.setAdapter(adapter);
         spinner.setSelection(personas.indexOf(((ProfileFragment) currentFragment).getMCurrentPersona()), false);
         spinner.setOnItemSelectedListener((ProfileFragment) currentFragment);
+
     }
 
 

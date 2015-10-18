@@ -35,7 +35,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -165,11 +164,11 @@ public class ProfileFragment extends Fragment implements
 
     private ProfileFieldViewFactory mFactory;
     private boolean mModifiedAtLeastOnce = false;
+    private int deviceWidth;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root;
-
         mMode = Mode.values()[getArguments().getInt(EXTRA_VIEW_MODE)];
         switch (mMode) {
             case EDIT:
@@ -183,6 +182,9 @@ public class ProfileFragment extends Fragment implements
         }
 
         ButterKnife.bind(this, root);
+
+        deviceWidth = root.getMeasuredWidth();
+
         return root;
     }
 
@@ -227,9 +229,11 @@ public class ProfileFragment extends Fragment implements
 
                 final int tabLayoutWidth = tabLayout.getWidth();
 
-                DisplayMetrics metrics = new DisplayMetrics();
-                getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
-                final int deviceWidth = metrics.widthPixels;
+                Log.d(TAG, "tabLayoutWidth: " + tabLayoutWidth + " , deviceWidth: " + deviceWidth);
+
+                //removed to prevent a crash during screen rotarion
+//                DisplayMetrics metrics = new DisplayMetrics();
+//                getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
                 if (tabLayoutWidth < deviceWidth) {
                     Log.d(TAG, (tabLayoutWidth < deviceWidth) + "");
@@ -241,8 +245,8 @@ public class ProfileFragment extends Fragment implements
                 }
             }
         });
-    }
 
+    }
 
 
     @Override
@@ -352,13 +356,12 @@ public class ProfileFragment extends Fragment implements
         });
 
 
-
         if (mMode != Mode.SELF) {
             showPicture(mContainer.getFieldValue(ProfileField.PHOTO));
         } else {
-            if(getActivity() instanceof MainActivity) {
+            if (getActivity() instanceof MainActivity) {
                 ((MainActivity) getActivity()).onPhotoReady(mContainer.getFieldValue(ProfileField.PHOTO));
-            } else if(getActivity() instanceof ProfileViewActivity) {
+            } else if (getActivity() instanceof ProfileViewActivity) {
                 //TODO implement this
 //                ((ProfileViewActivity) getActivity()).onPhotoReady(mContainer.getFieldValue(ProfileField.PHOTO));
             }
