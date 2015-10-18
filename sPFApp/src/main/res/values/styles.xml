@@ -16,6 +16,11 @@
         <item name="android:textColor">@color/white_main</item>
         <item name="popupTheme">@style/Theme.AppCompat.Light</item>
         <item name="theme">@style/Theme.AppCompat</item>
+        <!-- navigation icon color -->
+        <item name="colorControlNormal">@color/white_main</item>
+
+        <!-- color of the menu overflow icon -->
+        <item name="android:textColorSecondary">@color/white_main</item>
     </style>
 
 

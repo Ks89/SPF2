@@ -195,6 +195,7 @@ public class MainActivity extends AppCompatActivity implements
                     }
                 })
                 .withSelectionListEnabledForSingleProfile(false)
+                .withSavedInstance(savedInstanceState)
                 .build();
 
         drawerBuilder = new DrawerBuilder()
@@ -225,6 +226,8 @@ public class MainActivity extends AppCompatActivity implements
         } else {
             //on smartphones
             drawer = drawerBuilder.build();
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+//            drawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
         }
 
         //default
@@ -252,13 +255,6 @@ public class MainActivity extends AppCompatActivity implements
         if (toolbar != null) {
             toolbar.setTitle(getResources().getString(R.string.app_name));
             toolbar.setTitleTextColor(getResources().getColor(R.color.toolbar_text_color));
-            if (!tabletSize) {
-                toolbar.setNavigationIcon(
-                        new IconicsDrawable(this)
-                                .icon(FontAwesome.Icon.faw_bars)
-                                .color(getResources().getColor(R.color.white_main))
-                                .sizeDp(16));
-            }
             setSupportActionBar(toolbar);
         }
     }
@@ -389,6 +385,10 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        //add the values which need to be saved from the drawer to the bundle
+        outState = drawer.saveInstanceState(outState);
+        //add the values which need to be saved from the accountHeader to the bundle
+        outState = headerResult.saveInstanceState(outState);
         super.onSaveInstanceState(outState);
         outState.putInt(STATE_SELECTED_POSITION, mCurrentSelectedPosition);
     }

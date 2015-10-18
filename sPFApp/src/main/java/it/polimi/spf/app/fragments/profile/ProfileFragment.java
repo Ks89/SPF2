@@ -217,7 +217,33 @@ public class ProfileFragment extends Fragment implements
 
             onProfileDataAvailable();
         }
+
+        //workaround used to center tabs or scroll tabs based on screen width
+        //http://stackoverflow.com/questions/30616474/
+        // android-support-design-tablayout-gravity-center-and-mode-scrollable/31861336#31861336
+        tabLayout.post(new Runnable() {
+            @Override
+            public void run() {
+
+                final int tabLayoutWidth = tabLayout.getWidth();
+
+                DisplayMetrics metrics = new DisplayMetrics();
+                getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+                final int deviceWidth = metrics.widthPixels;
+
+                if (tabLayoutWidth < deviceWidth) {
+                    Log.d(TAG, (tabLayoutWidth < deviceWidth) + "");
+                    tabLayout.setTabMode(TabLayout.MODE_FIXED);
+                    tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+                } else {
+                    Log.d(TAG, (tabLayoutWidth < deviceWidth) + "");
+                    tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+                }
+            }
+        });
     }
+
+
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -325,31 +351,17 @@ public class ProfileFragment extends Fragment implements
             }
         });
 
-        //workaround used to center tabs or scroll tabs based on screen width
-        //http://stackoverflow.com/questions/30616474/
-        // android-support-design-tablayout-gravity-center-and-mode-scrollable/31861336#31861336
-        tabLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                int tabLayoutWidth = tabLayout.getWidth();
 
-                DisplayMetrics metrics = new DisplayMetrics();
-                getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
-                int deviceWidth = metrics.widthPixels;
-
-                if (tabLayoutWidth < deviceWidth) {
-                    tabLayout.setTabMode(TabLayout.MODE_FIXED);
-                    tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-                } else {
-                    tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
-                }
-            }
-        });
 
         if (mMode != Mode.SELF) {
             showPicture(mContainer.getFieldValue(ProfileField.PHOTO));
         } else {
-            ((MainActivity) getActivity()).onPhotoReady(mContainer.getFieldValue(ProfileField.PHOTO));
+            if(getActivity() instanceof MainActivity) {
+                ((MainActivity) getActivity()).onPhotoReady(mContainer.getFieldValue(ProfileField.PHOTO));
+            } else if(getActivity() instanceof ProfileViewActivity) {
+                //TODO implement this
+//                ((ProfileViewActivity) getActivity()).onPhotoReady(mContainer.getFieldValue(ProfileField.PHOTO));
+            }
         }
 
         // Refresh field fragments
