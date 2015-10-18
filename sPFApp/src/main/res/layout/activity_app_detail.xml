@@ -10,6 +10,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/toolbar_background"
         android:orientation="horizontal"
         android:padding="@dimen/activity_margin">
 
@@ -30,6 +31,7 @@
                 android:id="@+id/app_name_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="@color/white_main"
                 android:textSize="24sp"
                 android:textStyle="bold" />
 
@@ -38,6 +40,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
+                android:textColor="@color/white_main"
                 android:textSize="18sp" />
         </LinearLayout>
     </LinearLayout>

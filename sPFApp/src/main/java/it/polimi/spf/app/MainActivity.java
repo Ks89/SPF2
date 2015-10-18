@@ -46,6 +46,7 @@ import android.widget.Toast;
 
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -199,10 +200,7 @@ public class MainActivity extends AppCompatActivity implements
         drawerBuilder = new DrawerBuilder()
                 .withActivity(this)
                 .withAccountHeader(headerResult)
-                .withToolbar(toolbar)
                 .withHasStableIds(true)
-                .withActionBarDrawerToggle(true)
-                .withActionBarDrawerToggleAnimated(true)
                 .addDrawerItems(
                         new PrimaryDrawerItem().withName(mSectionNames[0]).withIdentifier(0).withIcon(FontAwesome.Icon.faw_user),
                         new PrimaryDrawerItem().withName(mSectionNames[1]).withIdentifier(1).withIcon(FontAwesome.Icon.faw_users),
@@ -217,7 +215,6 @@ public class MainActivity extends AppCompatActivity implements
                         proximitySwitch
                 )
                 .withOnDrawerItemClickListener(drawerItemClickListener)
-                .withCloseOnClick(true)
                 .withSavedInstance(savedInstanceState);
 
         if (tabletSize) {
@@ -253,8 +250,15 @@ public class MainActivity extends AppCompatActivity implements
 
     public void setupToolBar() {
         if (toolbar != null) {
-            toolbar.setTitle("SPF");
+            toolbar.setTitle(getResources().getString(R.string.app_name));
             toolbar.setTitleTextColor(getResources().getColor(R.color.toolbar_text_color));
+            if (!tabletSize) {
+                toolbar.setNavigationIcon(
+                        new IconicsDrawable(this)
+                                .icon(FontAwesome.Icon.faw_bars)
+                                .color(getResources().getColor(R.color.white_main))
+                                .sizeDp(16));
+            }
             setSupportActionBar(toolbar);
         }
     }
@@ -450,6 +454,7 @@ public class MainActivity extends AppCompatActivity implements
                     break;
             }
 
+            drawer.closeDrawer();
             return true;
         }
     };
