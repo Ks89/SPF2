@@ -124,7 +124,7 @@ public class AppDetailActivity extends AppCompatActivity {
 
     public void setupToolBar() {
         if (toolbar != null) {
-            toolbar.setTitle("Edit Profile");
+            toolbar.setTitle(getResources().getString(R.string.title_activity_app_detail));
             toolbar.setTitleTextColor(getResources().getColor(R.color.toolbar_text_color));
             toolbar.inflateMenu(R.menu.menu_edit_profile);
             this.setSupportActionBar(toolbar);

@@ -27,6 +27,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import com.mikepenz.fontawesome_typeface_library.FontAwesome;
+import com.mikepenz.iconics.IconicsDrawable;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import it.polimi.spf.app.R;
@@ -53,7 +56,7 @@ public class PersonasCirclesActivity extends AppCompatActivity {
 
     public void setupToolBar() {
         if (toolbar != null) {
-            toolbar.setTitle("Personas Circles");
+            toolbar.setTitle(getResources().getString(R.string.title_activity_persona_circle));
             toolbar.setTitleTextColor(getResources().getColor(R.color.toolbar_text_color));
             this.setSupportActionBar(toolbar);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);

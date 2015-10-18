@@ -56,6 +56,7 @@
     <string name="circle_private">Private</string>
 
     <!-- Personas -->
+    <string name="title_activity_persona_circle">Privacy</string>
     <string name="personas_delete_description">Delete persona</string>
     <string name="personas_avaliable_title">Available personas</string>
     <string name="personas_add_new">Add new persona</string>

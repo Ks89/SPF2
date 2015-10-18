@@ -58,7 +58,7 @@
         </activity>
         <activity
             android:name=".fragments.personas.PersonasCirclesActivity"
-            android:label="Privacy" >
+            android:label="@string/title_activity_persona_circle" >
         </activity>
 
         <service
