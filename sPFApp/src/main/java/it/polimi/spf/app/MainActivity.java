@@ -168,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements
                 .withSelectable(false)
                 .withIdentifier(8);
         autonomousSwitch = new SwitchDrawerItem().withName("Autonomous GO")/*.withIcon(Octicons.Icon.oct_tools)*/
-                .withChecked(true).withEnabled(false).withOnCheckedChangeListener(autonomousSwitchListener)
+                .withChecked(true).withEnabled(true).withOnCheckedChangeListener(autonomousSwitchListener)
                 .withSelectable(false)
                 .withIdentifier(9);
         proximitySwitch = new SwitchDrawerItem().withName("Proximity")/*.withIcon(Octicons.Icon.oct_tools)*/
@@ -483,13 +483,17 @@ public class MainActivity extends AppCompatActivity implements
         public void onCheckedChanged(IDrawerItem drawerItem, CompoundButton buttonView, boolean isChecked) {
             if (isChecked) {
                 Log.d(TAG, "connectSwitch checked -> gointent=15");
-                autonomousSwitch.withSwitchEnabled(true);
-                drawer.addStickyFooterItemAtPosition(autonomousSwitch, 1);
+                drawer.removeAllStickyFooterItems();
+                drawer.addStickyFooterItem(goSwitch);
+                drawer.addStickyFooterItem(autonomousSwitch);
+                drawer.addStickyFooterItem(proximitySwitch);
+                autonomousSwitch.withChecked(true);
                 ((SPFApp) getApplication()).updateIdentifier(15);
             } else {
                 Log.d(TAG, "connectSwitch unchecked -> gointent=0");
-                autonomousSwitch.withSwitchEnabled(false);
-                drawer.removeStickyFooterItemAtPosition(1);
+                drawer.removeAllStickyFooterItems();
+                drawer.addStickyFooterItem(goSwitch);
+                drawer.addStickyFooterItem(proximitySwitch);
                 ((SPFApp) getApplication()).updateIdentifier(0);
             }
             drawer.updateItem(autonomousSwitch);
@@ -515,15 +519,20 @@ public class MainActivity extends AppCompatActivity implements
 
                 }
                 SPFService.startForeground(getBaseContext());
-                autonomousSwitch.withSwitchEnabled(false);
-                goSwitch.withSwitchEnabled(false);
+                drawer.removeAllStickyFooterItems();
+                drawer.addStickyFooterItem(proximitySwitch);
             } else {
                 SPFService.stopForeground(getBaseContext());
-                autonomousSwitch.withSwitchEnabled(true);
-                goSwitch.withSwitchEnabled(true);
+                drawer.removeAllStickyFooterItems();
+                drawer.addStickyFooterItem(goSwitch);
+                if(goSwitch.isChecked()) {
+                    drawer.addStickyFooterItem(autonomousSwitch);
+                }
+                drawer.addStickyFooterItem(proximitySwitch);
             }
-            drawer.updateItem(autonomousSwitch);
             drawer.updateItem(goSwitch);
+            drawer.updateItem(autonomousSwitch);
+            drawer.updateItem(proximitySwitch);
         }
     };
 
