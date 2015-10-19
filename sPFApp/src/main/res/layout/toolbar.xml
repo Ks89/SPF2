@@ -6,9 +6,6 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/toolbar_background"
         android:minHeight="?attr/actionBarSize"
-        android:titleTextColor="@color/toolbar_text_color"
-        app:popupTheme="@style/Theme.AppCompat"
-        app:theme="@style/Theme.AppCompat.Light" />
+        app:theme="@style/MyToolbarTheme" />
 </merge>

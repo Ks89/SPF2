@@ -23,9 +23,7 @@ package it.polimi.spf.app.fragments.profile;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -36,9 +34,10 @@ import com.soundcloud.android.crop.Crop;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import it.polimi.spf.app.R;
+import it.polimi.spf.app.ToolbarActivity;
 import it.polimi.spf.framework.profile.SPFPersona;
 
-public class ProfileEditActivity extends AppCompatActivity {
+public class ProfileEditActivity extends ToolbarActivity {
     public static final String EXTRA_PERSONA = "persona";
     private ProfileFragment mFragment;
 
@@ -52,7 +51,7 @@ public class ProfileEditActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        this.setupToolBar();
+        this.setupToolbarWithHomeIcon(toolbar, R.string.title_activity_edit_profile, R.color.toolbar_text_color);
 
         if (savedInstanceState == null) {
             //received from ProfileFragment - onOptionsItemSelected - case R.id.profileview_edit
@@ -64,14 +63,9 @@ public class ProfileEditActivity extends AppCompatActivity {
         }
     }
 
-    public void setupToolBar() {
-        if (toolbar != null) {
-            toolbar.setTitle(getResources().getString(R.string.title_activity_edit_profile));
-            toolbar.setTitleTextColor(Color.BLACK);
-            toolbar.inflateMenu(R.menu.menu_edit_profile);
-            this.setSupportActionBar(toolbar);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
+    @Override
+    protected void setupToolbarWithHomeIcon(Toolbar toolbar, int titleStringId, int colorId) {
+        super.setupToolbarWithHomeIcon(toolbar, titleStringId, colorId);
     }
 
     @Override

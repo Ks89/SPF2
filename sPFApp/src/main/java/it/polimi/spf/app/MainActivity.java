@@ -31,7 +31,6 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -79,7 +78,7 @@ import it.polimi.spf.framework.SPFContext;
 import it.polimi.spf.framework.local.SPFService;
 import it.polimi.spf.framework.profile.SPFPersona;
 
-public class MainActivity extends AppCompatActivity implements
+public class MainActivity extends ToolbarActivity implements
         PermissionDisclaimerDialogFragment.PermissionDisclaimerListener,
         SPFContext.OnEventListener,
         ProfileFragment.ProfilePhotoListener {
@@ -152,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements
         //this var says if we are on a tablet (true) or a smartphone (false)
         this.tabletSize = getResources().getBoolean(R.bool.isTablet);
 
-        this.setupToolBar();
+        this.setupToolbar(toolbar, R.string.app_name, R.color.toolbar_text_color);
 
         mUserLearnedDrawer = Boolean.valueOf(readSharedSetting(this, PREF_USER_LEARNED_DRAWER, "false"));
 
@@ -250,7 +249,7 @@ public class MainActivity extends AppCompatActivity implements
         SPFContext.get().registerEventListener(this);
 
         //check if called after a click on a notification into the notification drawer
-        if(SPFService.isStarted()) {
+        if (SPFService.isStarted()) {
             //update the drawer
             drawer.removeAllStickyFooterItems();
             //TODO add a method in SPF to get is a device is a go or not directly calling directly
@@ -261,12 +260,9 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    public void setupToolBar() {
-        if (toolbar != null) {
-            toolbar.setTitle(getResources().getString(R.string.app_name));
-            toolbar.setTitleTextColor(getResources().getColor(R.color.toolbar_text_color));
-            setSupportActionBar(toolbar);
-        }
+    @Override
+    protected void setupToolbar(Toolbar toolbar, int titleStringId, int colorId) {
+        super.setupToolbar(toolbar, titleStringId, colorId);
     }
 
     /**

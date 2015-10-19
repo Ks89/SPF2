@@ -23,19 +23,16 @@ package it.polimi.spf.app.fragments.personas;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-
-import com.mikepenz.fontawesome_typeface_library.FontAwesome;
-import com.mikepenz.iconics.IconicsDrawable;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import it.polimi.spf.app.R;
+import it.polimi.spf.app.ToolbarActivity;
 import it.polimi.spf.framework.profile.SPFPersona;
 
-public class PersonasCirclesActivity extends AppCompatActivity {
+public class PersonasCirclesActivity extends ToolbarActivity {
 
     @Bind(R.id.toolbar)
     Toolbar toolbar;
@@ -47,20 +44,16 @@ public class PersonasCirclesActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        this.setupToolBar();
+        this.setupToolbarWithHomeIcon(toolbar, R.string.title_activity_persona_circle, R.color.toolbar_text_color);
 
         SPFPersona persona = getIntent().getParcelableExtra("persona");
         PersonasCirclesFragment fragment = PersonasCirclesFragment.newInstance(persona);
         getFragmentManager().beginTransaction().replace(R.id.activity_persona_circles_container, fragment).commit();
     }
 
-    public void setupToolBar() {
-        if (toolbar != null) {
-            toolbar.setTitle(getResources().getString(R.string.title_activity_persona_circle));
-            toolbar.setTitleTextColor(getResources().getColor(R.color.toolbar_text_color));
-            this.setSupportActionBar(toolbar);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
+    @Override
+    protected void setupToolbarWithHomeIcon(Toolbar toolbar, int titleStringId, int colorId) {
+        super.setupToolbarWithHomeIcon(toolbar, titleStringId, colorId);
     }
 
     public static void start(Activity callingActivity, SPFPersona persona) {

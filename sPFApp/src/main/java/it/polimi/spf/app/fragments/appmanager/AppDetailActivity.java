@@ -30,7 +30,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -43,10 +42,11 @@ import java.util.Locale;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import it.polimi.spf.app.R;
+import it.polimi.spf.app.ToolbarActivity;
 import it.polimi.spf.framework.SPF;
 import it.polimi.spf.framework.security.AppAuth;
 
-public class AppDetailActivity extends AppCompatActivity {
+public class AppDetailActivity extends ToolbarActivity {
     private static final String TAG = null;
     public static final String APP_AUTH_KEY = "app_auth";
 
@@ -72,7 +72,7 @@ public class AppDetailActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        this.setupToolBar();
+        this.setupToolbarWithHomeIcon(toolbar, R.string.title_activity_app_detail, R.color.toolbar_text_color);
 
         if (savedInstanceState == null) {
             mAppAuth = getIntent().getParcelableExtra(APP_AUTH_KEY);
@@ -122,14 +122,9 @@ public class AppDetailActivity extends AppCompatActivity {
         });
     }
 
-    public void setupToolBar() {
-        if (toolbar != null) {
-            toolbar.setTitle(getResources().getString(R.string.title_activity_app_detail));
-            toolbar.setTitleTextColor(getResources().getColor(R.color.toolbar_text_color));
-            toolbar.inflateMenu(R.menu.menu_edit_profile);
-            this.setSupportActionBar(toolbar);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
+    @Override
+    protected void setupToolbarWithHomeIcon(Toolbar toolbar, int titleStringId, int colorId) {
+        super.setupToolbarWithHomeIcon(toolbar, titleStringId, colorId);
     }
 
     @Override
