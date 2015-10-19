@@ -200,6 +200,7 @@ public class MainActivity extends ToolbarActivity implements
                 .withActivity(this)
                 .withAccountHeader(headerResult)
                 .withHasStableIds(true)
+                .withToolbar(toolbar)
                 .addDrawerItems(
                         new PrimaryDrawerItem().withName(mSectionNames[0]).withIdentifier(0).withIcon(FontAwesome.Icon.faw_user),
                         new PrimaryDrawerItem().withName(mSectionNames[1]).withIdentifier(1).withIcon(FontAwesome.Icon.faw_users),
@@ -223,9 +224,18 @@ public class MainActivity extends ToolbarActivity implements
             ((ViewGroup) findViewById(R.id.nav_tablet)).addView(drawer.getSlider());
         } else {
             //on smartphones
+            //i want to show the hamburger icon into the toolbar
+            //with the onlick listner enabled and the material-animations
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            }
+            drawerBuilder.withActionBarDrawerToggle(true);
+            drawerBuilder.withActionBarDrawerToggleAnimated(true);
             drawer = drawerBuilder.build();
-            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-//            drawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
+
+            //call this only after the getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            //7to prevent exceptions, like specified by the developer of MaterialDrawer
+            drawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
         }
 
         //default
