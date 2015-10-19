@@ -180,6 +180,9 @@ public class CircleFragment extends Fragment implements
             case R.id.personas_entry_delete:
                 args.putString(EXTRA_CIRCLE, (String) v.getTag());
                 startLoader(DELETE_CIRCLE_LOADER, args, true);
+                return;
+            default:
+                Log.d("Circletag", "error loader id not found");
         }
     }
 
@@ -236,6 +239,7 @@ public class CircleFragment extends Fragment implements
     public void onLoadFinished(Loader<Collection<String>> loader, Collection<String> data) {
         mAdapter.clear();
         mAdapter.addAll(data);
+        Log.d("CircleFragment", "loader finished with data size: " + data.size());
     }
 
     @Override
