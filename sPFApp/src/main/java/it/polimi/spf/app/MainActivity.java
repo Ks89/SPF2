@@ -248,6 +248,17 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         SPFContext.get().registerEventListener(this);
+
+        //check if called after a click on a notification into the notification drawer
+        if(SPFService.isStarted()) {
+            //update the drawer
+            drawer.removeAllStickyFooterItems();
+            //TODO add a mthod in SPF to get is a device is a go or not directly calling directly
+            //TODO SPF.get or SPFService. Do the same thing with an isAutonomous method.
+            //TODO Because i must update the switch on the drawer if i reopened the app.
+            proximitySwitch.withChecked(true);
+            drawer.updateStickyFooterItem(proximitySwitch);
+        }
     }
 
     public void setupToolBar() {
@@ -525,7 +536,7 @@ public class MainActivity extends AppCompatActivity implements
                 SPFService.stopForeground(getBaseContext());
                 drawer.removeAllStickyFooterItems();
                 drawer.addStickyFooterItem(goSwitch);
-                if(goSwitch.isChecked()) {
+                if (goSwitch.isChecked()) {
                     drawer.addStickyFooterItem(autonomousSwitch);
                 }
                 drawer.addStickyFooterItem(proximitySwitch);
