@@ -28,6 +28,11 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="it.polimi.spf.app.ShowProfile" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".fragments.appmanager.AppDetailActivity"
@@ -40,11 +45,6 @@
             android:name=".fragments.profile.ProfileViewActivity"
             android:exported="true"
             android:label="@string/title_activity_profile_view">
-            <intent-filter>
-                <action android:name="it.polimi.spf.app.ShowProfile" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".fragments.profile.ProfileEditActivity"

@@ -253,7 +253,7 @@ public class MainActivity extends AppCompatActivity implements
         if(SPFService.isStarted()) {
             //update the drawer
             drawer.removeAllStickyFooterItems();
-            //TODO add a mthod in SPF to get is a device is a go or not directly calling directly
+            //TODO add a method in SPF to get is a device is a go or not directly calling directly
             //TODO SPF.get or SPFService. Do the same thing with an isAutonomous method.
             //TODO Because i must update the switch on the drawer if i reopened the app.
             proximitySwitch.withChecked(true);
