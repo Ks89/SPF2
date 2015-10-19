@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">SPFApp</string>
+    <string name="app_name">SPF</string>
     <string name="title_activity_app_detail">Application Details</string>
     <string name="title_activity_profile_view">View Profile</string>
     <string name="title_activity_edit_profile">Edit Profile</string>
