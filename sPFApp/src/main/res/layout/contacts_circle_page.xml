@@ -54,7 +54,8 @@
             android:text="{gmd-add-box}"
             android:textAllCaps="false"
             android:textColor="@color/white_main"
-            android:textSize="26sp" />
+            android:textSize="26sp"
+            android:theme="@style/AppTheme.Button" />
     </LinearLayout>
 
 </LinearLayout>
