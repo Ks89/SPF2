@@ -23,14 +23,11 @@ package it.polimi.spf.app.fragments;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,15 +43,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import it.polimi.spf.app.LoadersConfig;
 import it.polimi.spf.app.R;
 import it.polimi.spf.framework.SPF;
 import it.polimi.spf.framework.services.ActivityVerb;
 import it.polimi.spf.framework.services.ServiceIdentifier;
 
 public class ActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Collection<ActivityVerb>> {
-    private static final int LOAD_LIST_LOADER_ID = 0;
 
     private ActivityVerbAdapter mAdapter;
 
@@ -80,7 +75,7 @@ public class ActivityFragment extends Fragment implements LoaderManager.LoaderCa
         mAdapter = new ActivityVerbAdapter(getActivity());
         activities.setAdapter(mAdapter);
 
-        getLoaderManager().initLoader(LOAD_LIST_LOADER_ID, null, this).forceLoad();
+        getLoaderManager().initLoader(LoadersConfig.LOAD_LIST_LOADER_ID, null, this).forceLoad();
     }
 
     @SuppressWarnings("unchecked")
@@ -91,7 +86,7 @@ public class ActivityFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public Loader<Collection<ActivityVerb>> onCreateLoader(int id, Bundle args) {
         switch (id) {
-            case LOAD_LIST_LOADER_ID:
+            case LoadersConfig.LOAD_LIST_LOADER_ID:
                 return new AsyncTaskLoader<Collection<ActivityVerb>>(getActivity()) {
 
                     @Override
@@ -109,7 +104,7 @@ public class ActivityFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onLoadFinished(Loader<Collection<ActivityVerb>> loader, Collection<ActivityVerb> data) {
         switch (loader.getId()) {
-            case LOAD_LIST_LOADER_ID:
+            case LoadersConfig.LOAD_LIST_LOADER_ID:
                 mAdapter.clear();
                 mAdapter.addAll(data);
                 break;

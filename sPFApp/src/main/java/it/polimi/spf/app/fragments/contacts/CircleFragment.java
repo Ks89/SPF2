@@ -43,6 +43,7 @@ import java.util.Collection;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import it.polimi.spf.app.LoadersConfig;
 import it.polimi.spf.app.R;
 import it.polimi.spf.app.R.id;
 import it.polimi.spf.framework.SPF;
@@ -52,11 +53,6 @@ import it.polimi.spf.framework.security.PersonRegistry;
 public class CircleFragment extends Fragment implements
         OnClickListener,
         LoaderManager.LoaderCallbacks<Collection<String>> {
-
-    private static final int LOAD_CIRCLE_LOADER = 0;
-    private static final int ADD_CIRCLE_LOADER = 1;
-    private static final int DELETE_CIRCLE_LOADER = 2;
-    protected static final String EXTRA_CIRCLE = "circle";
 
     private CircleArrayAdapter mAdapter;
 
@@ -94,7 +90,7 @@ public class CircleFragment extends Fragment implements
 
         addButton.setOnClickListener(this);
 
-        startLoader(LOAD_CIRCLE_LOADER, null, false);
+        startLoader(LoadersConfig.LOAD_CIRCLE_LOADER, null, false);
     }
 
     @Override
@@ -174,12 +170,12 @@ public class CircleFragment extends Fragment implements
 
                 mNewCircleName.setText("");
 
-                args.putString(EXTRA_CIRCLE, newCircleName);
-                startLoader(ADD_CIRCLE_LOADER, args, true);
+                args.putString(LoadersConfig.EXTRA_CIRCLE, newCircleName);
+                startLoader(LoadersConfig.ADD_CIRCLE_LOADER, args, true);
                 return;
             case R.id.personas_entry_delete:
-                args.putString(EXTRA_CIRCLE, (String) v.getTag());
-                startLoader(DELETE_CIRCLE_LOADER, args, true);
+                args.putString(LoadersConfig.EXTRA_CIRCLE, (String) v.getTag());
+                startLoader(LoadersConfig.DELETE_CIRCLE_LOADER, args, true);
                 return;
             default:
                 Log.d("Circletag", "error loader id not found");
@@ -194,7 +190,7 @@ public class CircleFragment extends Fragment implements
     public Loader<Collection<String>> onCreateLoader(int id, final Bundle args) {
         final PersonRegistry registry = SPF.get().getSecurityMonitor().getPersonRegistry();
         switch (id) {
-            case LOAD_CIRCLE_LOADER:
+            case LoadersConfig.LOAD_CIRCLE_LOADER:
                 return new AsyncTaskLoader<Collection<String>>(getActivity()) {
 
                     @Override
@@ -202,22 +198,22 @@ public class CircleFragment extends Fragment implements
                         return registry.getGroups();
                     }
                 };
-            case ADD_CIRCLE_LOADER:
+            case LoadersConfig.ADD_CIRCLE_LOADER:
                 return new AsyncTaskLoader<Collection<String>>(getActivity()) {
 
                     @Override
                     public Collection<String> loadInBackground() {
-                        String group = args.getString(EXTRA_CIRCLE);
+                        String group = args.getString(LoadersConfig.EXTRA_CIRCLE);
                         registry.addGroup(group);
                         return registry.getGroups();
                     }
                 };
-            case DELETE_CIRCLE_LOADER:
+            case LoadersConfig.DELETE_CIRCLE_LOADER:
                 return new AsyncTaskLoader<Collection<String>>(getActivity()) {
 
                     @Override
                     public Collection<String> loadInBackground() {
-                        String group = args.getString(EXTRA_CIRCLE);
+                        String group = args.getString(LoadersConfig.EXTRA_CIRCLE);
                         registry.removeGroup(group);
                         return registry.getGroups();
                     }
@@ -239,7 +235,6 @@ public class CircleFragment extends Fragment implements
     public void onLoadFinished(Loader<Collection<String>> loader, Collection<String> data) {
         mAdapter.clear();
         mAdapter.addAll(data);
-        Log.d("CircleFragment", "loader finished with data size: " + data.size());
     }
 
     @Override

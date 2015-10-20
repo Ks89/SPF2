@@ -26,7 +26,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -42,6 +41,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import it.polimi.spf.app.LoadersConfig;
 import it.polimi.spf.app.R;
 import it.polimi.spf.app.fragments.profile.ProfileViewActivity;
 import it.polimi.spf.framework.SPF;
@@ -53,11 +53,6 @@ public class NotificationFragment extends Fragment
         implements OnItemClickListener, SPFContext.OnEventListener, LoaderManager.LoaderCallbacks<List<NotificationMessage>> {
 
     private NotificationMessageAdapter mAdapter;
-
-    public final static int MESSAGE_LOADER_ID = 0;
-    public final static int MESSAGE_DELETER_ID = 1;
-
-    private static final String EXTRA_MESSAGE_ID = "messageId";
 
     @Bind(R.id.notifications_list)
     ListView listview;
@@ -94,7 +89,7 @@ public class NotificationFragment extends Fragment
         listview.setEmptyView(notifications_emptyview);
         listview.setOnItemClickListener(this);
 
-        getLoaderManager().initLoader(MESSAGE_LOADER_ID, null, this).forceLoad();
+        getLoaderManager().initLoader(LoadersConfig.MESSAGE_LOADER_ID, null, this).forceLoad();
     }
 
     @Override
@@ -110,14 +105,14 @@ public class NotificationFragment extends Fragment
     }
 
     public void clickedOptionItemDeleteAll() {
-        getLoaderManager().destroyLoader(MESSAGE_DELETER_ID);
-        getLoaderManager().initLoader(MESSAGE_DELETER_ID, null, this);
+        getLoaderManager().destroyLoader(LoadersConfig.MESSAGE_DELETER_ID);
+        getLoaderManager().initLoader(LoadersConfig.MESSAGE_DELETER_ID, null, this);
     }
 
     @Override
     public void onEvent(int eventCode, Bundle payload) {
         if (eventCode == SPFContext.EVENT_NOTIFICATION_MESSAGE_RECEIVED) {
-            getLoaderManager().initLoader(MESSAGE_LOADER_ID, null, this).forceLoad();
+            getLoaderManager().initLoader(LoadersConfig.MESSAGE_LOADER_ID, null, this).forceLoad();
         }
     }
 
@@ -152,9 +147,9 @@ public class NotificationFragment extends Fragment
         public void onClick(View v) {
             Long id = (Long) v.getTag();
             Bundle args = new Bundle();
-            args.putLong(EXTRA_MESSAGE_ID, id);
-            getLoaderManager().destroyLoader(MESSAGE_DELETER_ID);
-            getLoaderManager().initLoader(MESSAGE_DELETER_ID, args, NotificationFragment.this).forceLoad();
+            args.putLong(LoadersConfig.EXTRA_MESSAGE_ID, id);
+            getLoaderManager().destroyLoader(LoadersConfig.MESSAGE_DELETER_ID);
+            getLoaderManager().initLoader(LoadersConfig.MESSAGE_DELETER_ID, args, NotificationFragment.this).forceLoad();
         }
     }
 
@@ -182,7 +177,7 @@ public class NotificationFragment extends Fragment
     @Override
     public Loader<List<NotificationMessage>> onCreateLoader(int id, final Bundle args) {
         switch (id) {
-            case MESSAGE_LOADER_ID:
+            case LoadersConfig.MESSAGE_LOADER_ID:
                 return new AsyncTaskLoader<List<NotificationMessage>>(getActivity()) {
 
                     @Override
@@ -190,7 +185,7 @@ public class NotificationFragment extends Fragment
                         return SPF.get().getNotificationManager().getAvailableNotifications();
                     }
                 };
-            case MESSAGE_DELETER_ID:
+            case LoadersConfig.MESSAGE_DELETER_ID:
                 return new AsyncTaskLoader<List<NotificationMessage>>(getActivity()) {
 
                     @Override
@@ -198,7 +193,7 @@ public class NotificationFragment extends Fragment
                         if (args == null) {
                             SPF.get().getNotificationManager().deleteAllNotifications();
                         } else {
-                            long msgId = args.getLong(EXTRA_MESSAGE_ID);
+                            long msgId = args.getLong(LoadersConfig.EXTRA_MESSAGE_ID);
                             SPF.get().getNotificationManager().deleteNotification(msgId);
                         }
                         return SPF.get().getNotificationManager().getAvailableNotifications();
@@ -214,8 +209,6 @@ public class NotificationFragment extends Fragment
     public void onLoadFinished(Loader<List<NotificationMessage>> loader, List<NotificationMessage> data) {
         mAdapter.clear();
         mAdapter.addAll(data);
-
-        Log.d("NotificationFargment" , "loader finishe with data size: " + data.size());
     }
 
     @Override

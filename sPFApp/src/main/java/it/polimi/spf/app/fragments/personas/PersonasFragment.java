@@ -41,6 +41,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import it.polimi.spf.app.LoadersConfig;
 import it.polimi.spf.app.R;
 import it.polimi.spf.framework.SPF;
 import it.polimi.spf.framework.profile.SPFPersona;
@@ -50,11 +51,6 @@ public class PersonasFragment extends Fragment implements
         PersonasArrayAdapter.OnPersonaDeletedListener,
         OnClickListener,
         LoaderManager.LoaderCallbacks<List<SPFPersona>> {
-
-    private static final int CREATE_PERSONA_LOADER = 0;
-    private static final int LOAD_PERSONAS_LOADER = 1;
-    private static final int DELETE_PERSONA_LOADER = 2;
-    protected static final String EXTRA_PERSONA = "persona";
 
     private PersonasArrayAdapter mAdapter;
 
@@ -94,8 +90,8 @@ public class PersonasFragment extends Fragment implements
         list.setOnItemClickListener(itemClickListener);
 
         addButton.setOnClickListener(this);
-        getLoaderManager().destroyLoader(LOAD_PERSONAS_LOADER);
-        getLoaderManager().initLoader(LOAD_PERSONAS_LOADER, null, this).forceLoad();
+        getLoaderManager().destroyLoader(LoadersConfig.LOAD_PERSONAS_LOADER);
+        getLoaderManager().initLoader(LoadersConfig.LOAD_PERSONAS_LOADER, null, this).forceLoad();
     }
 
     private OnItemClickListener itemClickListener = new OnItemClickListener() {
@@ -110,9 +106,9 @@ public class PersonasFragment extends Fragment implements
     @Override
     public void onPersonaDeleted(SPFPersona persona) {
         Bundle args = new Bundle();
-        args.putParcelable(EXTRA_PERSONA, persona);
-        getLoaderManager().destroyLoader(DELETE_PERSONA_LOADER);
-        getLoaderManager().initLoader(DELETE_PERSONA_LOADER, args, this).forceLoad();
+        args.putParcelable(LoadersConfig.EXTRA_PERSONA, persona);
+        getLoaderManager().destroyLoader(LoadersConfig.DELETE_PERSONA_LOADER);
+        getLoaderManager().initLoader(LoadersConfig.DELETE_PERSONA_LOADER, args, this).forceLoad();
     }
 
     @Override
@@ -127,9 +123,9 @@ public class PersonasFragment extends Fragment implements
         mNewPersonaName.setText("");
 
         Bundle args = new Bundle();
-        args.putParcelable(EXTRA_PERSONA, persona);
-        getLoaderManager().destroyLoader(CREATE_PERSONA_LOADER);
-        getLoaderManager().initLoader(CREATE_PERSONA_LOADER, args, this).forceLoad();
+        args.putParcelable(LoadersConfig.EXTRA_PERSONA, persona);
+        getLoaderManager().destroyLoader(LoadersConfig.CREATE_PERSONA_LOADER);
+        getLoaderManager().initLoader(LoadersConfig.CREATE_PERSONA_LOADER, args, this).forceLoad();
     }
 
     @Override
@@ -137,28 +133,28 @@ public class PersonasFragment extends Fragment implements
         final SPFProfileManager profile = SPF.get().getProfileManager();
 
         switch (id) {
-            case CREATE_PERSONA_LOADER:
+            case LoadersConfig.CREATE_PERSONA_LOADER:
                 return new AsyncTaskLoader<List<SPFPersona>>(getActivity()) {
 
                     @Override
                     public List<SPFPersona> loadInBackground() {
-                        SPFPersona persona = args.getParcelable(EXTRA_PERSONA);
+                        SPFPersona persona = args.getParcelable(LoadersConfig.EXTRA_PERSONA);
                         profile.addPersona(persona);
                         return profile.getAvailablePersonas();
                     }
                 };
 
-            case DELETE_PERSONA_LOADER:
+            case LoadersConfig.DELETE_PERSONA_LOADER:
                 return new AsyncTaskLoader<List<SPFPersona>>(getActivity()) {
 
                     @Override
                     public List<SPFPersona> loadInBackground() {
-                        SPFPersona persona = args.getParcelable(EXTRA_PERSONA);
+                        SPFPersona persona = args.getParcelable(LoadersConfig.EXTRA_PERSONA);
                         profile.removePersona(persona);
                         return profile.getAvailablePersonas();
                     }
                 };
-            case LOAD_PERSONAS_LOADER:
+            case LoadersConfig.LOAD_PERSONAS_LOADER:
                 return new AsyncTaskLoader<List<SPFPersona>>(getActivity()) {
 
                     @Override

@@ -56,6 +56,7 @@ import java.util.Locale;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
+import it.polimi.spf.app.LoadersConfig;
 import it.polimi.spf.app.MainActivity;
 import it.polimi.spf.app.R;
 import it.polimi.spf.app.fragments.contacts.ContactConfirmDialogView;
@@ -150,9 +151,6 @@ public class ProfileFragment extends Fragment implements
     private static final String EXTRA_CURRENT_PERSONA = "persona";
     private static final String EXTRA_VIEW_MODE = "viewMode";
 
-    private static final int LOAD_PROFILE_LOADER_ID = 0;
-    private static final int SAVE_PROFILE_LOADER_ID = 1;
-
     private static final int ACTIVITY_EDIT_PROFILE_CODE = 0;
     private static final String TAG = "ProfileFragment";
 
@@ -210,7 +208,7 @@ public class ProfileFragment extends Fragment implements
             }
 
             // Initialize the loader of profile information
-            startLoader(LOAD_PROFILE_LOADER_ID);
+            startLoader(LoadersConfig.LOAD_PROFILE_LOADER_ID);
         } else {
             mPersonIdentifier = savedInstanceState.getString(EXTRA_PERSON_IDENTIFIER);
             mCurrentPersona = savedInstanceState.getParcelable(EXTRA_CURRENT_PERSONA);
@@ -264,7 +262,7 @@ public class ProfileFragment extends Fragment implements
     @Override
     public Loader<ProfileFieldContainer> onCreateLoader(int id, Bundle args) {
         switch (id) {
-            case LOAD_PROFILE_LOADER_ID:
+            case LoadersConfig.LOAD_PROFILE_LOADER_ID:
                 return new AsyncTaskLoader<ProfileFieldContainer>(getActivity()) {
 
                     @Override
@@ -284,7 +282,7 @@ public class ProfileFragment extends Fragment implements
                     }
                 };
 
-            case SAVE_PROFILE_LOADER_ID:
+            case LoadersConfig.SAVE_PROFILE_LOADER_ID:
                 if (mMode != Mode.EDIT) {
                     Log.e(TAG, "SAVE_PROFILE_LOADER initialized in mode " + mMode);
                 }
@@ -306,11 +304,11 @@ public class ProfileFragment extends Fragment implements
     @Override
     public void onLoadFinished(Loader<ProfileFieldContainer> loader, ProfileFieldContainer data) {
         switch (loader.getId()) {
-            case LOAD_PROFILE_LOADER_ID:
+            case LoadersConfig.LOAD_PROFILE_LOADER_ID:
                 mContainer = data;
                 onProfileDataAvailable();
                 break;
-            case SAVE_PROFILE_LOADER_ID:
+            case LoadersConfig.SAVE_PROFILE_LOADER_ID:
                 mContainer.clearModified();
                 mModifiedAtLeastOnce = true;
                 getActivity().finish();
@@ -450,7 +448,7 @@ public class ProfileFragment extends Fragment implements
                 } else {
                     onProfileDataSaved();
                 }
-                startLoader(LOAD_PROFILE_LOADER_ID);
+                startLoader(LoadersConfig.LOAD_PROFILE_LOADER_ID);
                 break;
         }
     }
@@ -530,7 +528,7 @@ public class ProfileFragment extends Fragment implements
 
     public void clickedOptionItemSave() {
         if (mContainer.isModified()) {
-            startLoader(SAVE_PROFILE_LOADER_ID);
+            startLoader(LoadersConfig.SAVE_PROFILE_LOADER_ID);
         } else {
             onSaveNotNecessary();
         }
@@ -558,7 +556,7 @@ public class ProfileFragment extends Fragment implements
         }
 
         mCurrentPersona = persona;
-        startLoader(LOAD_PROFILE_LOADER_ID);
+        startLoader(LoadersConfig.LOAD_PROFILE_LOADER_ID);
     }
 
     @Override

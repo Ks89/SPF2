@@ -39,6 +39,7 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import it.polimi.spf.app.LoadersConfig;
 import it.polimi.spf.app.R;
 import it.polimi.spf.framework.SPF;
 import it.polimi.spf.framework.SPFContext;
@@ -48,8 +49,6 @@ import it.polimi.spf.framework.security.TokenCipher.WrongPassphraseException;
 
 public class PeopleFragment extends Fragment implements OnItemClickListener, SPFContext.OnEventListener, LoaderManager.LoaderCallbacks<List<PersonInfo>> {
 
-    private static final int LOAD_CONTACTS_LOADER = 0;
-    private static final int LOAD_REQUEST_LOADER = 1;
 
     private PersonRegistry mPersonRegistry = SPF.get().getSecurityMonitor().getPersonRegistry();
     private FriendListArrayAdapter mFriendsAdapter, mRequestAdapter;
@@ -92,8 +91,8 @@ public class PeopleFragment extends Fragment implements OnItemClickListener, SPF
     }
 
     private void onRefresh() {
-        getLoaderManager().initLoader(LOAD_CONTACTS_LOADER, null, PeopleFragment.this).forceLoad();
-        getLoaderManager().initLoader(LOAD_REQUEST_LOADER, null, PeopleFragment.this).forceLoad();
+        getLoaderManager().initLoader(LoadersConfig.LOAD_CONTACTS_LOADER, null, PeopleFragment.this).forceLoad();
+        getLoaderManager().initLoader(LoadersConfig.LOAD_REQUEST_LOADER, null, PeopleFragment.this).forceLoad();
     }
 
     @Override
@@ -118,7 +117,7 @@ public class PeopleFragment extends Fragment implements OnItemClickListener, SPF
     @Override
     public void onEvent(int eventCode, Bundle payload) {
         if (eventCode == SPFContext.EVENT_CONTACT_REQUEST_RECEIVED) {
-            getLoaderManager().initLoader(LOAD_REQUEST_LOADER, null, PeopleFragment.this).forceLoad();
+            getLoaderManager().initLoader(LoadersConfig.LOAD_REQUEST_LOADER, null, PeopleFragment.this).forceLoad();
         }
     }
 
@@ -172,7 +171,7 @@ public class PeopleFragment extends Fragment implements OnItemClickListener, SPF
     @Override
     public Loader<List<PersonInfo>> onCreateLoader(int id, Bundle args) {
         switch (id) {
-            case LOAD_CONTACTS_LOADER:
+            case LoadersConfig.LOAD_CONTACTS_LOADER:
                 return new AsyncTaskLoader<List<PersonInfo>>(getActivity()) {
 
                     @Override
@@ -180,7 +179,7 @@ public class PeopleFragment extends Fragment implements OnItemClickListener, SPF
                         return SPF.get().getSecurityMonitor().getPersonRegistry().getAvailableContacts();
                     }
                 };
-            case LOAD_REQUEST_LOADER:
+            case LoadersConfig.LOAD_REQUEST_LOADER:
                 return new AsyncTaskLoader<List<PersonInfo>>(getActivity()) {
 
                     @Override
@@ -196,18 +195,15 @@ public class PeopleFragment extends Fragment implements OnItemClickListener, SPF
     @Override
     public void onLoadFinished(Loader<List<PersonInfo>> loader, List<PersonInfo> data) {
         switch (loader.getId()) {
-            case LOAD_CONTACTS_LOADER:
+            case LoadersConfig.LOAD_CONTACTS_LOADER:
                 mFriendsAdapter.clear();
                 mFriendsAdapter.addAll(data);
                 break;
-            case LOAD_REQUEST_LOADER:
+            case LoadersConfig.LOAD_REQUEST_LOADER:
                 mRequestAdapter.clear();
                 mRequestAdapter.addAll(data);
                 break;
         }
-
-        Log.d("PeopleFragment", "loader finished with data size: " + data.size());
-
     }
 
     @Override

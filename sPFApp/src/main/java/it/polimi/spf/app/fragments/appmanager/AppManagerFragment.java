@@ -36,12 +36,14 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import it.polimi.spf.app.LoadersConfig;
 import it.polimi.spf.app.R;
 import it.polimi.spf.framework.SPF;
 import it.polimi.spf.framework.security.AppAuth;
 
-public class AppManagerFragment extends Fragment implements ListView.OnItemClickListener, LoaderManager.LoaderCallbacks<List<AppAuth>> {
-    private static final int APP_LOADER = 0;
+public class AppManagerFragment extends Fragment implements
+        ListView.OnItemClickListener,
+        LoaderManager.LoaderCallbacks<List<AppAuth>> {
 
     private AppManagerListAdapter mAdapter;
 
@@ -80,7 +82,7 @@ public class AppManagerFragment extends Fragment implements ListView.OnItemClick
     @Override
     public void onResume() {
         super.onResume();
-        getLoaderManager().initLoader(APP_LOADER, null, this).forceLoad();
+        getLoaderManager().initLoader(LoadersConfig.APP_LOADER, null, this).forceLoad();
     }
 
     @Override
@@ -94,7 +96,7 @@ public class AppManagerFragment extends Fragment implements ListView.OnItemClick
     @Override
     public Loader<List<AppAuth>> onCreateLoader(int id, Bundle args) {
         switch (id) {
-            case APP_LOADER:
+            case LoadersConfig.APP_LOADER:
                 return new AsyncTaskLoader<List<AppAuth>>(getActivity()) {
 
                     @Override
