@@ -22,6 +22,7 @@ package it.polimi.spf.app.fragments.advertising;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,7 +35,6 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.Switch;
 
 import java.util.List;
 
@@ -53,7 +53,13 @@ public class AdvertisingFragment extends Fragment {
     private boolean mSpinnerEnabled = false;
 
     @Bind(R.id.advertising_switch)
-    Switch advSwitch;
+    SwitchCompat advSwitch;
+    @Bind(R.id.advertising_persona)
+    Spinner spinner;
+    @Bind(R.id.advertising_application)
+    CheckBox checkbox;
+    @Bind(R.id.advertising_field_list)
+    ListView list;
 
     public static AdvertisingFragment newInstance() {
         return new AdvertisingFragment();
@@ -85,8 +91,7 @@ public class AdvertisingFragment extends Fragment {
 
         // Set up persona spinner
         List<SPFPersona> personas = SPF.get().getProfileManager().getAvailablePersonas();
-        ArrayAdapter<SPFPersona> adapter = new ArrayAdapter<SPFPersona>(getActivity(), android.R.layout.simple_list_item_1, personas);
-        Spinner spinner = (Spinner) getView().findViewById(R.id.advertising_persona);
+        ArrayAdapter<SPFPersona> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, personas);
         spinner.setAdapter(adapter);
         SPFPersona persona = mAdvertiseManager.getPersonaToAdvertise();
         if (persona != null) {
@@ -97,12 +102,10 @@ public class AdvertisingFragment extends Fragment {
         mSpinnerEnabled = true;
 
         // Set up applications advertisement checkbox
-        CheckBox checkbox = (CheckBox) getView().findViewById(R.id.advertising_application);
         checkbox.setChecked(mAdvertiseManager.isAdvertisingApplications());
         checkbox.setOnCheckedChangeListener(mApplicationToggleListener);
 
         // Set up field list
-        ListView list = (ListView) getView().findViewById(R.id.advertising_field_list);
         ProfileField<?>[] choiches = {
                 ProfileField.DISPLAY_NAME,
                 ProfileField.INTERESTS,
