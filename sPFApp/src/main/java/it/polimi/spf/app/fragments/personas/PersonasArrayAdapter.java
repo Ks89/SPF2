@@ -28,7 +28,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.mikepenz.iconics.view.IconicsButton;
+import com.mikepenz.iconics.view.IconicsCompatButton;
 
 import it.polimi.spf.app.R;
 import it.polimi.spf.framework.profile.SPFPersona;
@@ -82,7 +82,7 @@ public class PersonasArrayAdapter extends ArrayAdapter<SPFPersona> implements On
 
     private static class ViewHolder {
 
-        public IconicsButton deleteButton;
+        public IconicsCompatButton deleteButton;
         public TextView name;
 
         public static ViewHolder from(View view) {
@@ -94,7 +94,7 @@ public class PersonasArrayAdapter extends ArrayAdapter<SPFPersona> implements On
             ViewHolder holder = new ViewHolder();
             view.setTag(holder);
             holder.name = (TextView) view.findViewById(R.id.personas_entry_name);
-            holder.deleteButton = (IconicsButton) view.findViewById(R.id.personas_entry_delete);
+            holder.deleteButton = (IconicsCompatButton) view.findViewById(R.id.personas_entry_delete);
             return holder;
         }
 

@@ -26,11 +26,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 
-import com.mikepenz.iconics.view.IconicsButton;
+import com.mikepenz.iconics.view.IconicsCompatButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +47,7 @@ public class CirclePicker extends LinearLayout {
 
     private TagsViewer mTagsViewer;
     private Spinner mSpinner;
-    private IconicsButton mAddButton;
+    private IconicsCompatButton mAddButton;
 
     private List<String> mSelectedCircles, mSelectableCircles;
 
@@ -79,7 +78,7 @@ public class CirclePicker extends LinearLayout {
         mSpinner = (Spinner) findViewById(R.id.tag_select);
         mSpinner.setOnItemSelectedListener(mListener);
 
-        mAddButton = (IconicsButton) findViewById(R.id.circle_add_button);
+        mAddButton = (IconicsCompatButton) findViewById(R.id.circle_add_button);
         mAddButton.setOnClickListener(mListener);
     }
 

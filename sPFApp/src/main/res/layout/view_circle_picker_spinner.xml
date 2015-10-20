@@ -21,14 +21,15 @@
             android:layout_height="match_parent"
             android:layout_weight="1" />
 
-        <com.mikepenz.iconics.view.IconicsButton
+        <com.mikepenz.iconics.view.IconicsCompatButton
             android:id="@+id/circle_add_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="{gmd-add-box}"
+            android:textAllCaps="false"
             android:textColor="@color/white_main"
             android:textSize="26sp"
-            android:textAllCaps="false"/>
+            android:theme="@style/AppTheme.Button" />
     </LinearLayout>
 
 </LinearLayout>

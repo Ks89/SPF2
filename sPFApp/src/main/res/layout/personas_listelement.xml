@@ -15,14 +15,15 @@
         android:layout_weight="1"
         android:textSize="@dimen/content_text_size" />
 
-    <com.mikepenz.iconics.view.IconicsButton
+    <com.mikepenz.iconics.view.IconicsCompatButton
         android:id="@+id/personas_entry_delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/personas_delete_description"
         android:text="{gmd-delete}"
+        android:textAllCaps="false"
         android:textColor="@color/white_main"
         android:textSize="26sp"
-        android:textAllCaps="false" />
+        android:theme="@style/AppTheme.Button" />
 
 </LinearLayout>

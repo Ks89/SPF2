@@ -37,7 +37,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.mikepenz.iconics.view.IconicsButton;
+import com.mikepenz.iconics.view.IconicsCompatButton;
 
 import java.util.Collection;
 
@@ -65,7 +65,7 @@ public class CircleFragment extends Fragment implements
     @Bind(id.contacts_circle_list)
     ListView circleList;
     @Bind(R.id.contacts_circle_add_button)
-    IconicsButton addButton;
+    IconicsCompatButton addButton;
 
 
     public static CircleFragment newInstance() {
@@ -146,13 +146,13 @@ public class CircleFragment extends Fragment implements
             view.setTag(holder);
 
             holder.name = (TextView) view.findViewById(R.id.personas_entry_name);
-            holder.deletebutton = (IconicsButton) view.findViewById(R.id.personas_entry_delete);
+            holder.deletebutton = (IconicsCompatButton) view.findViewById(R.id.personas_entry_delete);
 
             return holder;
         }
 
         public TextView name;
-        public IconicsButton deletebutton;
+        public IconicsCompatButton deletebutton;
 
     }
 

@@ -40,11 +40,11 @@
             android:hint="@string/personas_name_hint"
             android:inputType="text" />
 
-        <com.mikepenz.iconics.view.IconicsButton
+        <com.mikepenz.iconics.view.IconicsCompatButton
             android:id="@+id/personas_new_add"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/red"
+            android:theme="@style/AppTheme.Button"
             android:contentDescription="@string/personas_add_new"
             android:text="{faw-user-plus}"
             android:textAllCaps="false"

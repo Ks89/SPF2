@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- Base application theme. -->
@@ -8,7 +9,10 @@
         <item name="colorAccent">@color/red</item>
         <item name="android:textColorPrimary">@color/black</item>
         <item name="android:textColorSecondary">@color/red</item>
-        <!--<item name="colorButtonNormal">@color/black</item>-->
+    </style>
+
+    <style name="AppTheme.Button" parent="Base.Widget.AppCompat.Button">
+        <item name="colorButtonNormal">@color/red</item>
     </style>
 
     <style name="MyToolbarTheme" parent="@style/ThemeOverlay.AppCompat">

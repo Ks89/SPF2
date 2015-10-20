@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Pick default theme for all versions except this components where i want to add
+    different features-->
+
+    <style name="AppTheme.Button" parent="Base.Widget.AppCompat.Button">
+        <item name="android:colorButtonNormal">@color/red</item>
+        <item name="android:colorControlHighlight">@color/black</item>
+    </style>
+
+</resources>

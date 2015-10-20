@@ -35,7 +35,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.mikepenz.iconics.view.IconicsButton;
+import com.mikepenz.iconics.view.IconicsCompatButton;
 
 import java.util.List;
 
@@ -59,7 +59,7 @@ public class PersonasFragment extends Fragment implements
     private PersonasArrayAdapter mAdapter;
 
     @Bind(R.id.personas_new_add)
-    IconicsButton addButton;
+    IconicsCompatButton addButton;
     @Bind(R.id.personas_new_name)
     EditText mNewPersonaName;
     @Bind(R.id.personas_container)

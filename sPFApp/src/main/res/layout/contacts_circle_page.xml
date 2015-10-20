@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="@dimen/activity_margin" >
+    android:padding="@dimen/activity_margin">
 
     <TextView
         style="@style/title"
@@ -16,8 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginBottom="@dimen/activity_margin"
-        android:layout_weight="1" >
-    </ListView>
+        android:layout_weight="1"></ListView>
 
     <TextView
         android:id="@+id/contacts_circle_emptyview"
@@ -37,7 +36,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
         <EditText
             android:id="@+id/contacts_circle_add_name"
@@ -47,15 +46,15 @@
             android:hint="@string/contacts_circle_add_hint"
             android:inputType="text" />
 
-        <com.mikepenz.iconics.view.IconicsButton
+        <com.mikepenz.iconics.view.IconicsCompatButton
             android:id="@+id/contacts_circle_add_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/contacts_circle_add_button_desc"
             android:text="{gmd-add-box}"
+            android:textAllCaps="false"
             android:textColor="@color/white_main"
-            android:textSize="26sp"
-            android:textAllCaps="false" />
+            android:textSize="26sp" />
     </LinearLayout>
 
 </LinearLayout>
