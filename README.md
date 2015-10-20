@@ -15,7 +15,8 @@ Attention to build you must start Sonatype Nexus with all libs published. I'll p
 
 # Releases
 
-- 10-??-2015 - Beta 3 - [Download](https://github.com/Ks89/SPF2/releases/tag/v.beta3)
+- 10-??-2015 - Beta 4- [Download](https://github.com/Ks89/SPF2/releases/tag/v.beta4)
+- 10-20-2015 - Beta 3 - [Download](https://github.com/Ks89/SPF2/releases/tag/v.beta3)
 - 10-19-2015 - Beta 2 - [Download](https://github.com/Ks89/SPF2/releases/tag/v.beta2)
 - 10-14-2015 - Beta 1 - [Download](https://github.com/Ks89/SPF2/releases/tag/v.beta1)
 - 10-13-2015 - Alpha 4 - [Download](https://github.com/Ks89/SPF2/releases/tag/v.alpha4)
