@@ -66,6 +66,7 @@ import java.util.Map;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import it.polimi.spf.app.fragments.ActivityFragment;
+import it.polimi.spf.app.fragments.groupinfo.GroupInfoFragment;
 import it.polimi.spf.app.fragments.NotificationFragment;
 import it.polimi.spf.app.fragments.advertising.AdvertisingFragment;
 import it.polimi.spf.app.fragments.appmanager.AppManagerFragment;
@@ -208,7 +209,8 @@ public class MainActivity extends ToolbarActivity implements
                         notificationsDrawerItem.withIdentifier(3).withIcon(FontAwesome.Icon.faw_exclamation_circle),
                         advertisingDrawerItem.withIdentifier(4).withIcon(FontAwesome.Icon.faw_eye),
                         new PrimaryDrawerItem().withName(mSectionNames[5]).withIdentifier(5).withIcon(GoogleMaterial.Icon.gmd_apps),
-                        new PrimaryDrawerItem().withName(mSectionNames[6]).withIdentifier(6).withIcon(FontAwesome.Icon.faw_check_circle)
+                        new PrimaryDrawerItem().withName(mSectionNames[6]).withIdentifier(6).withIcon(FontAwesome.Icon.faw_check_circle),
+                        new PrimaryDrawerItem().withName(mSectionNames[7]).withIdentifier(7).withIcon(FontAwesome.Icon.faw_globe)
                 )
                 .addStickyDrawerItems(
                         goSwitch,
@@ -361,6 +363,9 @@ public class MainActivity extends ToolbarActivity implements
                 break;
             case 6:
                 currentFragment = ActivityFragment.newInstance();
+                break;
+            case 7:
+                currentFragment = GroupInfoFragment.newInstance();
                 break;
         }
         return currentFragment;

@@ -9,6 +9,7 @@
         <item>Advertising</item>
         <item>Apps</item>
         <item>Activities</item>
+        <item>Group Info</item>
     </string-array>
     <string-array name="appmanager_fragments_titles">
         <item>Permissions</item>

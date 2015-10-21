@@ -28,8 +28,8 @@ import java.util.Map;
 
 import it.polimi.spf.wfd.Configuration;
 import it.polimi.spf.wfd.ServiceList;
-import it.polimi.spf.wfd.util.WfdLog;
 import it.polimi.spf.wfd.WiFiP2pService;
+import it.polimi.spf.wfd.util.WfdLog;
 
 /**
  * A custom CustomDnsSdTxtRecordListener.

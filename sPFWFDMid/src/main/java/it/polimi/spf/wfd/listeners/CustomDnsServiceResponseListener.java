@@ -33,7 +33,7 @@ import it.polimi.spf.wfd.util.WfdLog;
 /**
  * A custom Bonjour's DnsSdServiceResponseListener used to update the UI when a service is available.
  * <p></p>
- * This class use Bonjour Prot
+ * This class uses Bonjour Protocol
  * <p></p>
  * Created by Stefano Cappa on 16/07/15.
  */
@@ -55,7 +55,7 @@ public class CustomDnsServiceResponseListener implements WifiP2pManager.DnsSdSer
         // A service has been discovered. Is this our app?
         Log.d(TAG, "onDnsSdServiceAvailable, instanceName:" + instanceName + ", registrationType:" + registrationType + ",srcDevice:" + srcDevice);
         if (instanceName.startsWith(Configuration.SERVICE_INSTANCE)) {
-            //services are added in CustomDnsServiceResponseListener
+            //services are added in CustomDnsSdTxtRecordListener
             //and here are updated with device name and other informations.
             WiFiP2pService service = ServiceList.getInstance().getServiceByDeviceAddress(srcDevice.deviceAddress);
             //Indeed, Here i'm updating the device with the human-friendly version from the DnsTxtRecord, assuming one arrived.
@@ -64,11 +64,13 @@ public class CustomDnsServiceResponseListener implements WifiP2pManager.DnsSdSer
                 //And i also update this additional informations
                 service.setInstanceName(instanceName);
                 service.setServiceRegistrationType(registrationType);
+
+                wifiDirectMiddleware.notifyServiceToGui(WifiDirectMiddleware.SERVICES_ADD, service);
             }
             Log.d(TAG, "onDnsSdServiceAvailable " + instanceName);
 
             if (!wifiDirectMiddleware.isGroupCreated() && !wifiDirectMiddleware.isAutonomous()) {
-                WfdLog.d(TAG, "createGroup: onDnsSdTxtRecordAvailable");
+                WfdLog.d(TAG, "createGroup: onDnsSdServiceAvailable");
                 wifiDirectMiddleware.createGroup();
             }
         }

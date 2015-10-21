@@ -68,12 +68,31 @@
             </intent-filter>
         </service>
 
+
         <receiver android:name="it.polimi.spf.framework.services.PackageChangeReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_ADDED" />
                 <action android:name="android.intent.action.PACKAGE_REMOVED" />
 
                 <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
+
+
+        <!-- This receivers are inner classes of GroupInfoFragment. For this reason are defined with "$"-->
+        <!-- Never change actions and receiver name without update the java classes and the static final attributes-->
+        <receiver android:name="it.polimi.spf.app.fragments.groupinfo.GroupInfoFragment$ServicesBroadcastReceiver">
+            <intent-filter>
+                <action android:name="it.polimi.spf.groupinfo.services_add" />
+                <action android:name="it.polimi.spf.groupinfo.services_remove" />
+                <action android:name="it.polimi.spf.groupinfo.services_remove_all" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="it.polimi.spf.app.fragments.groupinfo.GroupInfoFragment$ClientsBroadcastReceiver">
+            <intent-filter>
+                <action android:name="it.polimi.spf.groupinfo.clients_add" />
+                <action android:name="it.polimi.spf.groupinfo.clients_remove" />
+                <action android:name="it.polimi.spf.groupinfo.clients_remove_all" />
             </intent-filter>
         </receiver>
 

@@ -22,6 +22,7 @@
 package it.polimi.spf.wfd;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
@@ -34,6 +35,8 @@ import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -76,6 +79,23 @@ import lombok.Setter;
 public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListener {
     private final static String TAG = WifiDirectMiddleware.class.getSimpleName();
     private static final int THIS_DEVICE_IS_GO = 15;
+
+    //this constants are also into GroupInfoFragment...why?
+    //because, in theory this SPFApp should be moved in an external application and
+    //for this reason some costants and informations must be replicated
+    private static final String SERVICE_NAME = "service_name";
+    private static final String SERVICE_ADDRESS = "service_address";
+    private static final String SERVICES_ACTION = "it.polimi.spf.groupinfo.services";
+    public static final String SERVICES_ADD = SERVICES_ACTION + "_add";
+    public static final String SERVICES_REMOVE = SERVICES_ACTION + "_remove";
+    public static final String SERVICES_REMOVE_ALL = SERVICES_ACTION + "_remove_all";
+
+    private static final String CLIENT_NAME = "client_name";
+    private static final String CLIENT_ADDRESS = "client_address";
+    private static final String CLIENTS_ACTION = "it.polimi.spf.groupinfo.clients";
+    public static final String CLIENTS_ADD = CLIENTS_ACTION + "_add";
+    public static final String CLIENTS_REMOVE = CLIENTS_ACTION + "_removed";
+    public static final String CLIENTS_REMOVE_ALL = CLIENTS_ACTION + "_remove_all";
 
     private final Context mContext;
     private final String myIdentifier;
@@ -299,6 +319,9 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
             mGroupActor = null;
         }
 
+        notifyServiceToGui(SERVICES_REMOVE_ALL, null);
+        notifyConnectedDeviceToGui(CLIENTS_REMOVE_ALL, null);
+
         ServiceList.getInstance().getServiceList().clear();
     }
 
@@ -453,6 +476,9 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
             mManager.removeGroup(mChannel, null);
         }
 
+        notifyServiceToGui(SERVICES_REMOVE_ALL, null);
+        notifyConnectedDeviceToGui(CLIENTS_REMOVE_ALL, null);
+
         EternalConnect.get().onNetworkDisconnected(proximityKilledByUser, isAutonomous);
     }
 
@@ -492,7 +518,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
     }
 
     public void showConnectedMessage() {
-        //handler, becuse i must execute this code on the ui thread
+        //handler, because i must execute this code on the ui thread
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
@@ -501,7 +527,6 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
                 }
             }
         });
-
     }
 
     private int requestAvailablePortFromOs() throws IOException {
@@ -520,6 +545,32 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
 
     private void postEvent(Event event) {
         NineBus.get().post(event);
+    }
+
+    /**
+     * Method to send in broadcast a new discovered service to the UI.
+     */
+    public void notifyServiceToGui(@NonNull String notificationType, @Nullable WiFiP2pService service) {
+        Intent intent = new Intent();
+        if (service != null) {
+            intent.putExtra(SERVICE_NAME, service.getDevice().deviceName);
+            intent.putExtra(SERVICE_ADDRESS, service.getDevice().deviceAddress);
+        }
+        intent.setAction(notificationType);
+        mContext.sendBroadcast(intent);
+    }
+
+    /**
+     * Method to send in broadcast a new connected device to the UI
+     */
+    public void notifyConnectedDeviceToGui(@NonNull String notificationType, @Nullable String id) {
+        Intent intent = new Intent();
+        if (id != null) {
+            intent.putExtra(CLIENT_NAME, id);
+            intent.putExtra(CLIENT_ADDRESS, id);
+        }
+        intent.setAction(notificationType);
+        mContext.sendBroadcast(intent);
     }
 
     @Subscribe
@@ -552,11 +603,14 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
                 if (mContext != null) {
                     Toast.makeText(mContext, "Client connected", Toast.LENGTH_SHORT).show();
                 }
+                //not necessary to call notifyConnectedDeviceToGui, because also called from
+                //the WFDMiddlewareAdapter when the connection is fully established.
                 break;
             case GOConnectionEvent.DISCONNECTED:
                 if (mContext != null) {
                     Toast.makeText(mContext, "Client disconnected", Toast.LENGTH_SHORT).show();
                 }
+                notifyConnectedDeviceToGui(CLIENTS_REMOVE, e.getId());
                 break;
             default:
                 WfdLog.d(TAG, "Error, unknown GOConnectionEvent's state");

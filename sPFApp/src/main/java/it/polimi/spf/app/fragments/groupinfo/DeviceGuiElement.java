@@ -18,31 +18,24 @@
  *
  */
 
-package it.polimi.spf.wfd.events.goEvent;
+package it.polimi.spf.app.fragments.groupinfo;
 
 import lombok.Getter;
 
 /**
- * Created by Stefano Cappa on 22/07/15.
+ * Created by Stefano Cappa on 21/10/15.
  */
-public class GOConnectionEvent extends GOEvent {
-
-    public final static String CONNECTED = "CONNECTED";
-    public final static String DISCONNECTED = "DISCONNECTED";
-
+public class DeviceGuiElement {
     @Getter
-    private String id;
+    private String name;
+    @Getter
+    private String address;
 
-    public GOConnectionEvent(String type) {
-        super(type);
+    public DeviceGuiElement() {
     }
 
-    public GOConnectionEvent(String type, String id) {
-        super(type);
-        this.id = id;
-    }
-
-    public String getStatus() {
-        return super.getType();
+    public DeviceGuiElement(String name, String address) {
+        this.name = name;
+        this.address = address;
     }
 }

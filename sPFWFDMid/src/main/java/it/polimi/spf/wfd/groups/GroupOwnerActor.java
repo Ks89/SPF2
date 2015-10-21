@@ -77,7 +77,7 @@ public class GroupOwnerActor extends GroupActor {
     //called from GoInternalClient
     void onClientConnected(String identifier, GOInternalClient gOInternalClient) throws InterruptedException {
         WfdLog.d(TAG, "New client connected id : " + identifier);
-        NineBus.get().post(new GOConnectionEvent(GOConnectionEvent.CONNECTED));
+        NineBus.get().post(new GOConnectionEvent(GOConnectionEvent.CONNECTED, identifier));
         connectionSemaphore.acquire();
         Set<String> clients = new HashSet<>(goInternalClients.keySet());
         clients.add(super.myIdentifier);
@@ -93,7 +93,7 @@ public class GroupOwnerActor extends GroupActor {
     //called from GoInternalClient
     void onClientDisconnected(String identifier) throws InterruptedException {
         connectionSemaphore.acquire();
-        NineBus.get().post(new GOConnectionEvent(GOConnectionEvent.DISCONNECTED));
+        NineBus.get().post(new GOConnectionEvent(GOConnectionEvent.DISCONNECTED, identifier));
         WfdLog.d(TAG, "Client lost id : " + identifier);
         GOInternalClient c = null;
         if (identifier != null) {
