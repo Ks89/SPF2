@@ -94,7 +94,11 @@
     <string name="notification_text">Proximity enabled</string>
     <string name="notification_ticker">SPF is active.</string>
 
-    <!-- old fields, delete -->
+    <!-- Group Info fragment-->
+    <string name="services_title">Available services</string>
+    <string name="connected_devices">Connected devices</string>
+
+    <!-- OTHERS -->
     <string name="app_card_icon">App icon</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_main">MainActivity</string>
@@ -118,6 +122,4 @@
     <string name="drawer_apps">Apps</string>
     <string name="drawer_activities">Activities</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

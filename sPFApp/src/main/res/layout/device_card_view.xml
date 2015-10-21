@@ -49,7 +49,7 @@
             android:layout_alignTop="@+id/nameTextView"
             android:layout_marginLeft="20dp"
             app:iiv_color="@color/mid_black"
-            app:iiv_icon="faw-android" />
+            app:iiv_icon="{faw-android}" />
 
     </RelativeLayout>
 

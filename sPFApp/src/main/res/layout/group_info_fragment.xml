@@ -4,31 +4,41 @@
     android:layout_height="match_parent"
     tools:context=".fragments.groupinfo.GroupInfoFragment">
 
+    <TextView
+        android:id="@+id/textView2"
+        style="@style/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="14dp"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="12dp"
+        android:text="@string/services_title" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/servicesRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:layout_marginBottom="15dp"
-        android:layout_marginLeft="80dp"
-        android:layout_marginRight="80dp"
-        android:layout_marginTop="6dp" />
+        android:layout_alignStart="@+id/textView2"
+        android:layout_below="@+id/textView2"
+        android:layout_marginEnd="14dp"
+        android:layout_marginTop="12dp" />
+
+    <TextView
+        android:id="@+id/textView3"
+        style="@style/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/clientsRecyclerView"
+        android:layout_alignParentEnd="true"
+        android:layout_alignStart="@+id/servicesRecyclerView"
+        android:text="@string/connected_devices" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/clientsRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_below="@+id/servicesRecyclerView"
-        android:layout_marginBottom="15dp"
-        android:layout_marginLeft="80dp"
-        android:layout_marginRight="80dp"
-        android:layout_marginTop="6dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New Text"
-        android:id="@+id/textView"
-        android:layout_below="@+id/clientsRecyclerView"
-        android:layout_alignParentStart="true" />
+        android:layout_height="200dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/textView3"
+        android:layout_marginTop="12dp" />
 
 </RelativeLayout>
