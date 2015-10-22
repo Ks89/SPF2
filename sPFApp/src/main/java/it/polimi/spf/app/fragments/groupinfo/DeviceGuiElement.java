@@ -30,12 +30,15 @@ public class DeviceGuiElement {
     private String name;
     @Getter
     private String address;
+    @Getter
+    private String identifier;
 
     public DeviceGuiElement() {
     }
 
-    public DeviceGuiElement(String name, String address) {
+    public DeviceGuiElement(String name, String address, String identifier) {
         this.name = name;
         this.address = address;
+        this.identifier = identifier;
     }
 }

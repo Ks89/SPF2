@@ -22,23 +22,43 @@
             android:id="@+id/identifierTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
+            android:layout_alignParentTop="true"
             android:layout_marginLeft="12dp"
-            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
             android:layout_toEndOf="@+id/logoImageView"
             android:text="New Text"
             android:textColor="@color/very_dark_gray"
             android:textStyle="bold" />
 
+        <TextView
+            android:id="@+id/nameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/identifierTextView"
+            android:layout_below="@+id/identifierTextView"
+            android:layout_marginTop="4dp"
+            android:text="New Text"
+            android:textColor="@color/very_dark_gray" />
+
+        <TextView
+            android:id="@+id/addressTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/identifierTextView"
+            android:layout_below="@+id/nameTextView"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="4dp"
+            android:text="New Text"
+            android:textColor="@color/gray_main" />
 
         <com.mikepenz.iconics.view.IconicsImageView
             android:id="@+id/logoImageView"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_alignParentStart="true"
-            android:layout_marginBottom="12dp"
             android:layout_marginLeft="20dp"
-            android:layout_marginTop="14dp" />
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="20dp" />
 
     </RelativeLayout>
 

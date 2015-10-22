@@ -85,13 +85,13 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
     //for this reason some costants and informations must be replicated
     private static final String SERVICE_NAME = "service_name";
     private static final String SERVICE_ADDRESS = "service_address";
+    private static final String SERVICE_IDENTIFIER = "service_identifier";
     private static final String SERVICES_ACTION = "it.polimi.spf.groupinfo.services";
     public static final String SERVICES_ADD = SERVICES_ACTION + "_add";
     public static final String SERVICES_REMOVE = SERVICES_ACTION + "_remove";
     public static final String SERVICES_REMOVE_ALL = SERVICES_ACTION + "_remove_all";
 
-    private static final String CLIENT_NAME = "client_name";
-    private static final String CLIENT_ADDRESS = "client_address";
+    private static final String CLIENT_IDENTIFIER = "client_identifier";
     private static final String CLIENTS_ACTION = "it.polimi.spf.groupinfo.clients";
     public static final String CLIENTS_ADD = CLIENTS_ACTION + "_add";
     public static final String CLIENTS_REMOVE = CLIENTS_ACTION + "_removed";
@@ -555,6 +555,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
         if (service != null) {
             intent.putExtra(SERVICE_NAME, service.getDevice().deviceName);
             intent.putExtra(SERVICE_ADDRESS, service.getDevice().deviceAddress);
+            intent.putExtra(SERVICE_IDENTIFIER, service.getIdentifier());
         }
         intent.setAction(notificationType);
         mContext.sendBroadcast(intent);
@@ -566,8 +567,7 @@ public class WifiDirectMiddleware implements WifiP2pManager.ConnectionInfoListen
     public void notifyConnectedDeviceToGui(@NonNull String notificationType, @Nullable String id) {
         Intent intent = new Intent();
         if (id != null) {
-            intent.putExtra(CLIENT_NAME, id);
-            intent.putExtra(CLIENT_ADDRESS, id);
+            intent.putExtra(CLIENT_IDENTIFIER, id);
         }
         intent.setAction(notificationType);
         mContext.sendBroadcast(intent);

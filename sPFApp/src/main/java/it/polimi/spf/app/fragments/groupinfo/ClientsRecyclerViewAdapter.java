@@ -20,6 +20,7 @@
 
 package it.polimi.spf.app.fragments.groupinfo;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -29,19 +30,21 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.mikepenz.fontawesome_typeface_library.FontAwesome;
+import com.mikepenz.iconics.IconicsDrawable;
+import com.mikepenz.iconics.view.IconicsImageView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import it.polimi.spf.app.R;
-import lombok.Getter;
 
 public class ClientsRecyclerViewAdapter extends RecyclerView.Adapter<ClientsRecyclerViewAdapter.ViewHolder> {
     private ItemClickListener itemClickListener;
+    private final Context context;
 
-    public ClientsRecyclerViewAdapter(@NonNull ItemClickListener itemClickListener) {
+    public ClientsRecyclerViewAdapter(@NonNull ItemClickListener itemClickListener, @NonNull Context context) {
         this.itemClickListener = itemClickListener;
+        this.context = context;
         setHasStableIds(true);
     }
 
@@ -49,11 +52,9 @@ public class ClientsRecyclerViewAdapter extends RecyclerView.Adapter<ClientsRecy
         private final View parent;
 
         @Bind(R.id.logoImageView)
-        ImageView logo;
-        @Bind(R.id.nameTextView)
-        TextView nameTextView;
-        @Bind(R.id.addressTextView)
-        TextView addressTextView;
+        IconicsImageView logo;
+        @Bind(R.id.identifierTextView)
+        TextView identifierTextView;
 
         public ViewHolder(View view) {
             super(view);
@@ -80,8 +81,11 @@ public class ClientsRecyclerViewAdapter extends RecyclerView.Adapter<ClientsRecy
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         final DeviceGuiElement device = ClientsGuiList.get().getClients().get(position);
 
-        viewHolder.nameTextView.setText(device.getName());
-        viewHolder.addressTextView.setText(device.getAddress());
+        viewHolder.identifierTextView.setText(device.getIdentifier());
+        viewHolder.logo.setImageDrawable(new IconicsDrawable(context)
+                .icon(FontAwesome.Icon.faw_android)
+                .color(context.getResources().getColor(R.color.red))
+                .sizeDp(30));
 
         viewHolder.setOnClickListener(new OnClickListener() {
             @Override

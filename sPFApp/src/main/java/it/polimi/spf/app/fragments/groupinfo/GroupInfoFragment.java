@@ -49,13 +49,13 @@ public class GroupInfoFragment extends Fragment implements
     //for this reason some costants and informations must be replicated
     private static final String SERVICE_NAME = "service_name";
     private static final String SERVICE_ADDRESS = "service_address";
+    private static final String SERVICE_IDENTIFIER = "service_identifier";
     private static final String SERVICES_ACTION = "it.polimi.spf.groupinfo.services";
     public static final String SERVICES_ADD = SERVICES_ACTION + "_add";
     public static final String SERVICES_REMOVE = SERVICES_ACTION + "_remove";
     public static final String SERVICES_REMOVE_ALL = SERVICES_ACTION + "_remove_all";
 
-    private static final String CLIENT_NAME = "client_name";
-    private static final String CLIENT_ADDRESS = "client_address";
+    private static final String CLIENT_IDENTIFIER = "client_identifier";
     private static final String CLIENTS_ACTION = "it.polimi.spf.groupinfo.clients";
     private static final String CLIENTS_ADD = CLIENTS_ACTION + "_add";
     private static final String CLIENTS_REMOVE = CLIENTS_ACTION + "_remove";
@@ -96,13 +96,13 @@ public class GroupInfoFragment extends Fragment implements
 
         servicesRecyclerView.setLayoutManager(new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false));
         servicesRecyclerView.setHasFixedSize(true);
-        servicesAdapter = new ServicesRecyclerViewAdapter(this);
+        servicesAdapter = new ServicesRecyclerViewAdapter(this, getContext());
         servicesRecyclerView.setAdapter(servicesAdapter);
         servicesRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
         clientsRecyclerView.setLayoutManager(new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false));
         clientsRecyclerView.setHasFixedSize(true);
-        clientsAdapter = new ClientsRecyclerViewAdapter(this);
+        clientsAdapter = new ClientsRecyclerViewAdapter(this, getContext());
         clientsRecyclerView.setAdapter(clientsAdapter);
         clientsRecyclerView.setItemAnimator(new DefaultItemAnimator());
     }
@@ -132,19 +132,18 @@ public class GroupInfoFragment extends Fragment implements
             Log.d(TAG, "ServicesBroadcastReceiver onReceive called");
             if (intent.getAction().startsWith(SERVICES_ACTION)) {
                 Log.d(TAG, "ServicesBroadcastReceiver onReceive called with SERVICES_ACTION");
-                String name, address;
+                String name, address, identifier;
+                name = intent.getStringExtra(SERVICE_NAME);
+                address = intent.getStringExtra(SERVICE_ADDRESS);
+                identifier = intent.getStringExtra(SERVICE_IDENTIFIER);
                 switch (intent.getAction()) {
                     case SERVICES_ADD:
-                        name = intent.getStringExtra(SERVICE_NAME);
-                        address = intent.getStringExtra(SERVICE_ADDRESS);
-                        Log.d(TAG, "SERVICES_ADD: " + name + " , " + address);
-                        ServicesGuiList.get().getServices().add(new DeviceGuiElement(name, address));
+                        Log.d(TAG, "SERVICES_ADD: " + name + " , " + address + " , " + identifier);
+                        ServicesGuiList.get().getServices().add(new DeviceGuiElement(name, address, identifier));
                         break;
                     case SERVICES_REMOVE:
-                        name = intent.getStringExtra(SERVICE_NAME);
-                        address = intent.getStringExtra(SERVICE_ADDRESS);
-                        Log.d(TAG, "SERVICES_REMOVE: " + name + " , " + address);
-                        ServicesGuiList.get().getServices().remove(new DeviceGuiElement(name, address));
+                        Log.d(TAG, "SERVICES_REMOVE: " + name + " , " + address + " , " + identifier);
+                        ServicesGuiList.get().getServices().remove(new DeviceGuiElement(name, address, identifier));
                         break;
                     case SERVICES_REMOVE_ALL:
                         ServicesGuiList.get().getServices().clear();
@@ -170,19 +169,15 @@ public class GroupInfoFragment extends Fragment implements
             Log.d(TAG, "ClientsBroadcastReceiver onReceive called");
             if (intent.getAction().startsWith(CLIENTS_ACTION)) {
                 Log.d(TAG, "ClientsBroadcastReceiver onReceive called with on the CLIENTS_ACTIONs");
-                String name, address;
+                String identifier = intent.getStringExtra(CLIENT_IDENTIFIER);
                 switch (intent.getAction()) {
                     case CLIENTS_ADD:
-                        name = intent.getStringExtra(CLIENT_NAME);
-                        address = intent.getStringExtra(CLIENT_ADDRESS);
-                        Log.d(TAG, "ClientsBroadcastReceiver - CLIENTS_ADD: " + name + " , " + address);
-                        ClientsGuiList.get().addClientIfNotPresent(new DeviceGuiElement(name, address));
+                        Log.d(TAG, "ClientsBroadcastReceiver - CLIENTS_ADD: " + identifier);
+                        ClientsGuiList.get().addClientIfNotPresent(new DeviceGuiElement(null, null, identifier));
                         break;
                     case CLIENTS_REMOVE:
-                        name = intent.getStringExtra(CLIENT_NAME);
-                        address = intent.getStringExtra(CLIENT_ADDRESS);
-                        Log.d(TAG, "ClientsBroadcastReceiver - CLIENTS_REMOVE: " + name + " , " + address);
-                        ClientsGuiList.get().getClients().remove(new DeviceGuiElement(name, address));
+                        Log.d(TAG, "ClientsBroadcastReceiver - CLIENTS_REMOVE: " + identifier);
+                        ClientsGuiList.get().getClients().remove(new DeviceGuiElement(null, null, identifier));
                         break;
                     case CLIENTS_REMOVE_ALL:
                         ClientsGuiList.get().getClients().clear();

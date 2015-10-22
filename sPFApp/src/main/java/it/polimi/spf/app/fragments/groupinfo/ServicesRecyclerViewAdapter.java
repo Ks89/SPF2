@@ -20,14 +20,18 @@
 
 package it.polimi.spf.app.fragments.groupinfo;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.mikepenz.fontawesome_typeface_library.FontAwesome;
+import com.mikepenz.iconics.IconicsDrawable;
+import com.mikepenz.iconics.view.IconicsImageView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -35,9 +39,11 @@ import it.polimi.spf.app.R;
 
 public class ServicesRecyclerViewAdapter extends RecyclerView.Adapter<ServicesRecyclerViewAdapter.ViewHolder> {
     private ItemClickListener itemClickListener;
+    private final Context context;
 
-    public ServicesRecyclerViewAdapter(@NonNull ItemClickListener itemClickListener) {
+    public ServicesRecyclerViewAdapter(@NonNull ItemClickListener itemClickListener, @NonNull Context context) {
         this.itemClickListener = itemClickListener;
+        this.context = context;
         setHasStableIds(true);
     }
 
@@ -45,11 +51,13 @@ public class ServicesRecyclerViewAdapter extends RecyclerView.Adapter<ServicesRe
         private final View parent;
 
         @Bind(R.id.logoImageView)
-        ImageView logo;
+        IconicsImageView logo;
         @Bind(R.id.nameTextView)
         TextView nameTextView;
         @Bind(R.id.addressTextView)
         TextView addressTextView;
+        @Bind(R.id.identifierTextView)
+        TextView identifierTextView;
 
         public ViewHolder(View view) {
             super(view);
@@ -67,7 +75,7 @@ public class ServicesRecyclerViewAdapter extends RecyclerView.Adapter<ServicesRe
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         // Create a new view.
         View v = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.device_card_view, viewGroup, false);
+                .inflate(R.layout.service_card_view, viewGroup, false);
         return new ViewHolder(v);
     }
 
@@ -76,8 +84,18 @@ public class ServicesRecyclerViewAdapter extends RecyclerView.Adapter<ServicesRe
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         final DeviceGuiElement device = ServicesGuiList.get().getServices().get(position);
 
-        viewHolder.nameTextView.setText(device.getName());
+        if (device.getName() == null || device.getName().equals("")) {
+            viewHolder.nameTextView.setText("Name not found, please wait...");
+        } else {
+            viewHolder.nameTextView.setText(device.getName());
+        }
+
         viewHolder.addressTextView.setText(device.getAddress());
+        viewHolder.identifierTextView.setText(device.getIdentifier());
+        viewHolder.logo.setImageDrawable(new IconicsDrawable(context)
+                .icon(FontAwesome.Icon.faw_android)
+                .color(context.getResources().getColor(R.color.red))
+                .sizeDp(30));
 
         viewHolder.setOnClickListener(new OnClickListener() {
             @Override
