@@ -19,7 +19,6 @@
  */
 
 apply plugin: 'com.android.library'
-apply plugin: 'maven'
 
 android {
     compileSdkVersion 23
@@ -49,7 +48,7 @@ android {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = "2.7"
+    gradleVersion = "2.8"
 }
 
 dependencies {
