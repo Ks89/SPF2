@@ -115,8 +115,8 @@ public class WFDMiddlewareAdapter implements ProximityMiddleware, WFDRemoteInsta
     @Override
     public SPFRemoteInstance createRemoteInstance(String identifier) {
         WfdLog.d(TAG, "createRemoteInstance called");
+        //TODO THIS TWO CODELINES SHOULD BE MOVED OUTSIDE
         mMiddleware.showConnectedMessage();
-
         //the client is finally connected to his GO and i notify this to the remote gui
         mMiddleware.notifyConnectedDeviceToGui(WifiDirectMiddleware.CLIENTS_ADD, identifier);
         return new WFDRemoteInstance(mMiddleware, identifier);

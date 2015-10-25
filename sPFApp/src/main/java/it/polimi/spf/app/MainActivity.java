@@ -43,6 +43,7 @@ import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.mikepenz.aboutlibraries.LibsBuilder;
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.materialdrawer.AccountHeader;
@@ -166,15 +167,15 @@ public class MainActivity extends ToolbarActivity implements
         goSwitch = new SwitchDrawerItem().withName("Group Owner")/*.withIcon(Octicons.Icon.oct_tools)*/
                 .withChecked(false).withEnabled(true).withOnCheckedChangeListener(goSwitchListener)
                 .withSelectable(false)
-                .withIdentifier(8);
+                .withIdentifier(10);
         autonomousSwitch = new SwitchDrawerItem().withName("Autonomous GO")/*.withIcon(Octicons.Icon.oct_tools)*/
                 .withChecked(true).withEnabled(true).withOnCheckedChangeListener(autonomousSwitchListener)
                 .withSelectable(false)
-                .withIdentifier(9);
+                .withIdentifier(11);
         proximitySwitch = new SwitchDrawerItem().withName("Proximity")/*.withIcon(Octicons.Icon.oct_tools)*/
                 .withChecked(false).withEnabled(true).withOnCheckedChangeListener(proximitySwitchListener)
                 .withSelectable(false)
-                .withIdentifier(10);
+                .withIdentifier(12);
 
         contactsDrawerItem = new PrimaryDrawerItem().withName(mSectionNames[2]);
         notificationsDrawerItem = new PrimaryDrawerItem().withName(mSectionNames[3]);
@@ -210,7 +211,8 @@ public class MainActivity extends ToolbarActivity implements
                         advertisingDrawerItem.withIdentifier(4).withIcon(FontAwesome.Icon.faw_eye),
                         new PrimaryDrawerItem().withName(mSectionNames[5]).withIdentifier(5).withIcon(GoogleMaterial.Icon.gmd_apps),
                         new PrimaryDrawerItem().withName(mSectionNames[6]).withIdentifier(6).withIcon(FontAwesome.Icon.faw_check_circle),
-                        new PrimaryDrawerItem().withName(mSectionNames[7]).withIdentifier(7).withIcon(FontAwesome.Icon.faw_globe)
+                        new PrimaryDrawerItem().withName(mSectionNames[7]).withIdentifier(7).withIcon(FontAwesome.Icon.faw_globe),
+                        new PrimaryDrawerItem().withName(mSectionNames[8]).withIdentifier(8).withIcon(FontAwesome.Icon.faw_info_circle)
                 )
                 .addStickyDrawerItems(
                         goSwitch,
@@ -367,6 +369,11 @@ public class MainActivity extends ToolbarActivity implements
             case 7:
                 currentFragment = GroupInfoFragment.newInstance();
                 break;
+            case 8:
+                //string and other settings are defined into values/strings.xml like
+                //recommended by the developer of AboutLibraries.
+                currentFragment = new LibsBuilder().fragment();
+                break;
         }
         return currentFragment;
     }
@@ -461,15 +468,15 @@ public class MainActivity extends ToolbarActivity implements
                 case 3:
                     toolbar.inflateMenu(R.menu.menu_notifications);
                     break;
-                case 8:
+                case 10:
                     goSwitch.withChecked(true);
                     drawer.updateItem(goSwitch);
                     break;
-                case 9:
+                case 11:
                     autonomousSwitch.withChecked(true);
                     drawer.updateItem(autonomousSwitch);
                     break;
-                case 10:
+                case 12:
                     proximitySwitch.withChecked(true);
                     drawer.updateItem(proximitySwitch);
                     break;

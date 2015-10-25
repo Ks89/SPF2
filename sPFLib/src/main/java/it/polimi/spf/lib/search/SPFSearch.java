@@ -118,15 +118,6 @@ public final class SPFSearch {
 		}
 	}
 
-//	/**
-//	 * Method to set the GO Intent
-//	 * @param goIntent
-//	 */
-//	public void setGoIntent(int goIntent) {
-//		Log.d(TAG, "setGoIntent: " + goIntent);
-//		mSearchInterface.setGoIntentValue(goIntent);
-//	}
-
 	/**
 	 * Allows to retrieve a reference to a remote person given its identifier.
 	 * This reference is valid until the given person is reachable from the

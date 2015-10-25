@@ -148,7 +148,7 @@ public class EternalConnect {
 
     /**
      * Call this method if you want to stop the Eternal Connect procedure.
-     * Call this only if you have created a connection.
+     * Call this only if you created a connection.
      */
     public void eternalCompletedSuccessfully() {
         this.killScheduler();

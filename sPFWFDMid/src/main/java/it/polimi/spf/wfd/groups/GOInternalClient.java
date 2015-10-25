@@ -82,9 +82,14 @@ class GOInternalClient extends Thread {
             return;
         }
 
-        if (attachToGroupOwner(connmsg)) {
+        //very important method's call: attachToGroupOwner(connmsg)
+        boolean attached = attachToGroupOwner(connmsg);
+
+        if (attached) {
+            //if it's ok...
             enterReadLoop(inStream);
         }
+
         if (!closed) {
             try {
                 groupOwnerActor.onClientDisconnected(identifier);

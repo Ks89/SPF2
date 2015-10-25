@@ -10,6 +10,7 @@
         <item>Apps</item>
         <item>Activities</item>
         <item>Group Info</item>
+        <item>About</item>
     </string-array>
     <string-array name="appmanager_fragments_titles">
         <item>Permissions</item>

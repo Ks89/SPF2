@@ -51,7 +51,21 @@ public class SPFApp extends Application {
     public void onCreate() {
         super.onCreate();
 
+        this.initNotification();
 
+        // Initialize SPF
+        // Use this line to initialize SPF on Wi-Fi Direct
+        SPFContext.initialize(this, 0, true, WFDMiddlewareAdapter.FACTORY);
+
+        SPFContext.get().setAppRegistrationHandler(new PopupAppRegistrationHandler());
+
+        SPFContext.get().setServiceNotification(notification);
+
+        // Set exception logger to log uncaught exceptions
+        ExceptionLogger.installAsDefault(this);
+    }
+
+    private void initNotification() {
         //Intent for the stop button in the notification layout
         Intent stopSpf = new Intent(STOPSPF);
         PendingIntent pendingIntentStop = PendingIntent.getBroadcast(this, 0, stopSpf, 0);
@@ -89,19 +103,7 @@ public class SPFApp extends Application {
          * See https://code.google.com/p/android/issues/detail?id=30495
          */
         notification.contentView = contentView;
-
-        // Initialize SPF
-        //SPFContext.initialize(this, AlljoynProximityMiddleware.FACTORY);
-        // Use this line to initialize SPF on Wi-Fi Direct
-        SPFContext.initialize(this, 0, true, WFDMiddlewareAdapter.FACTORY);
-        SPFContext.get().setAppRegistrationHandler(new PopupAppRegistrationHandler());
-
-        SPFContext.get().setServiceNotification(notification);
-
-        // Set exception logger to log uncaught exceptions
-        ExceptionLogger.installAsDefault(this);
     }
-
 
     public void initSPF(int goIntent, boolean isAutonomous) {
         // Initialize SPF

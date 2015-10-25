@@ -6,6 +6,12 @@
     <string name="title_activity_profile_view">View Profile</string>
     <string name="title_activity_edit_profile">Edit Profile</string>
 
+    <!-- Abount fragment -->
+    <string name="aboutLibraries_description_showIcon">true</string>
+    <string name="aboutLibraries_description_showVersion">true</string>
+    <string name="aboutLibraries_description_text">SPF2 &#169; 2015 - Stefano Cappa. <br /> Based on SPF1 by Jacopo Aliprandi, Dario Archetti. <br />Licensed under LGPLv3</string>
+
+
     <!-- Security -->
     <string name="app_permission_intro">The following app wants to interact with SPF</string>
     <string name="app_permission_required_premission">Required permissions</string>

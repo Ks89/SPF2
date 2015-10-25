@@ -34,19 +34,6 @@ public class Configuration {
     public static final String SERVICE_INSTANCE = "spf_";
     public static final String IDENTIFIER = "identifier";
     public static final String PORT = "port";
-
-
-    public static final int GROUPOWNER_PORT = 4545;
-    public static final int CLIENT_PORT = 5000;
-    public static final int THREAD_COUNT = 20; //maximum number of clients that this GO can manage
-    public static final int THREAD_POOL_EXECUTOR_KEEP_ALIVE_TIME = 10; //don't touch this!!!
-
     public static final String TXTRECORD_PROP_AVAILABLE = "available";
-
-    public static final int MESSAGE_READ = 0x400 + 1;
-    public static final int FIRSTMESSAGEXCHANGE = 0x400 + 2;
-
-    public static final String MESSAGE_READ_MSG = "MESSAGE_READ";
-    public static final String FIRSTMESSAGEXCHANGE_MSG = "FIRSTMESSAGEXCHANGE";
 
 }
