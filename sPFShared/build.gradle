@@ -33,7 +33,7 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -63,7 +63,7 @@ uploadArchives {
                 authentication(userName: nexusUsername, password: nexusPassword)
             }
 
-            pom.version = "2.0.0.0"
+            pom.version = "2.0.0.1"
             pom.artifactId = "spfshared"
             pom.groupId = "it.polimi.spf"
         }
