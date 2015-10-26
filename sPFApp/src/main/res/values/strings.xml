@@ -6,10 +6,29 @@
     <string name="title_activity_profile_view">View Profile</string>
     <string name="title_activity_edit_profile">Edit Profile</string>
 
-    <!-- Abount fragment -->
-    <string name="aboutLibraries_description_showIcon">true</string>
-    <string name="aboutLibraries_description_showVersion">true</string>
-    <string name="aboutLibraries_description_text">SPF2 &#169; 2015 - Stefano Cappa. <br /> Based on SPF1 by Jacopo Aliprandi, Dario Archetti. <br />Licensed under LGPLv3</string>
+
+    <!-- About fragment -->
+    <string name="aboutLibraries_description_special1_name">LICENSE</string>
+    <string name="aboutLibraries_description_special1_text">
+        <![CDATA[
+        License <b>LGPLv3</b><br /><br />
+        &#169; 2015 - <b>Stefano Cappa</b><br />
+        &#169; 2014 - <b>Jacopo Aliprandi, Dario Archetti</b><br /><br />
+        Official repository<br />
+        https://github.com/deib-polimi/SPF2
+        ]]>
+    </string>
+    <string name="aboutLibraries_description_special3_name">Changelog</string>
+    <string name="aboutLibraries_description_special3_text">
+        <![CDATA[
+        <i>Version 2.0.0</i><br />
+        - New major release (2015)<br />
+        <br />
+        <i>Version 1.0.0</i><br />
+        - Initial release (2014)
+        ]]>
+    </string>
+
 
 
     <!-- Security -->
@@ -94,8 +113,11 @@
     <string name="advertising_advertise_applications">Advertise installed applications</string>
     <string name="advertising_persona">Persona to advertise:</string>
 
-    <!-- Notifications -->
+    <!-- Notifications fragment-->
     <string name="notifications_emptyview">No notifications available</string>
+    <string name="notifications_title">Notifications</string>
+
+    <!-- Notification service -->
     <string name="notification_title">SPF</string>
     <string name="notification_text">Proximity enabled</string>
     <string name="notification_ticker">SPF is active.</string>

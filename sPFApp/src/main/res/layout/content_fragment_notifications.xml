@@ -4,7 +4,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <!--<include layout="@layout/toolbar" />-->
+    <TextView
+        style="@style/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/content_outer_padding"
+        android:text="@string/notifications_title" />
 
     <ListView
         android:id="@+id/notifications_list"

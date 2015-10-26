@@ -67,11 +67,11 @@ import java.util.Map;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import it.polimi.spf.app.fragments.ActivityFragment;
-import it.polimi.spf.app.fragments.groupinfo.GroupInfoFragment;
 import it.polimi.spf.app.fragments.NotificationFragment;
 import it.polimi.spf.app.fragments.advertising.AdvertisingFragment;
 import it.polimi.spf.app.fragments.appmanager.AppManagerFragment;
 import it.polimi.spf.app.fragments.contacts.ContactsFragment;
+import it.polimi.spf.app.fragments.groupinfo.GroupInfoFragment;
 import it.polimi.spf.app.fragments.personas.PersonasFragment;
 import it.polimi.spf.app.fragments.profile.ProfileFragment;
 import it.polimi.spf.app.permissiondisclaimer.PermissionDisclaimerDialogFragment;
@@ -370,9 +370,22 @@ public class MainActivity extends ToolbarActivity implements
                 currentFragment = GroupInfoFragment.newInstance();
                 break;
             case 8:
-                //string and other settings are defined into values/strings.xml like
-                //recommended by the developer of AboutLibraries.
-                currentFragment = new LibsBuilder().fragment();
+                //string and other settings are defined into values/strings.xml
+                currentFragment = new LibsBuilder()
+                        .withAboutDescription("Social Proximity Framework 2")
+                        .withAboutAppName(getString(R.string.app_name) + " 2")
+                        .withLibraries("android-crop", "butterknife", "circleimageview",
+                                "appcompat-v7", "support-v4", "recyclerview-v7", "cardview-v7",
+                                "design", "materialdrawer", "aboutlibraries", "iconics-core")
+                        .withAutoDetect(false)
+                        .withLicenseShown(true)
+                        .withAboutIconShown(true)
+                        .withAboutVersionShown(true)
+                        .withAboutVersionShownCode(true)
+                        .withAboutVersionShownName(true)
+                        .withAnimations(false)
+                        .withSortEnabled(true)
+                        .fragment();
                 break;
         }
         return currentFragment;

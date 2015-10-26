@@ -33,9 +33,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.mikepenz.iconics.view.IconicsCompatButton;
 
 import java.util.List;
 
@@ -165,13 +166,13 @@ public class NotificationFragment extends Fragment
 
             holder.titleView = (TextView) v.findViewById(R.id.notifications_title_view);
             holder.messageView = (TextView) v.findViewById(R.id.notifications_message_view);
-            holder.deleteButton = (ImageButton) v.findViewById(R.id.notifications_delete_button);
+            holder.deleteButton = (IconicsCompatButton) v.findViewById(R.id.notifications_delete_button);
 
             return holder;
         }
 
         public TextView titleView, messageView;
-        public ImageButton deleteButton;
+        public IconicsCompatButton deleteButton;
     }
 
     @Override

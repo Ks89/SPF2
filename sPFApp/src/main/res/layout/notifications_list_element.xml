@@ -5,19 +5,20 @@
     android:baselineAligned="false"
     android:orientation="horizontal"
     android:paddingBottom="@dimen/activity_margin"
-    android:paddingTop="@dimen/activity_margin" >
+    android:paddingTop="@dimen/activity_margin">
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/notifications_title_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
+            android:layout_marginStart="16dp"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -25,14 +26,19 @@
             android:id="@+id/notifications_message_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:textSize="18sp" />
     </LinearLayout>
 
-    <ImageButton
+    <com.mikepenz.iconics.view.IconicsCompatButton
         android:id="@+id/notifications_delete_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
         android:contentDescription="@string/notifications_delete_contentdesc"
-        android:src="@android:drawable/ic_menu_delete" />
-
+        android:text="{gmd-delete}"
+        android:textAllCaps="false"
+        android:textColor="@color/white_main"
+        android:textSize="26sp"
+        android:theme="@style/AppTheme.Button" />
 </LinearLayout>
