@@ -21,6 +21,27 @@
 apply plugin: 'com.android.library'
 apply plugin: 'maven'
 
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'maven-publish'
+
+group = 'it.polimi.spf'
+version = '2.0.0.1'
+
+//variables
+def siteUrl = 'https://github.com/deib-polimi/SPF2'
+def gitUrl = 'https://github.com/deib-polimi/SPF2.git'
+def libName = 'spflib'
+def libVersion = '2.0.0.1'
+def gitHubTag = 'v.2.0.0'
+
+//Create a local.properties with these keys:
+//bintrayUser="your bintray account name"
+//bintrayApiKey="your bintray account password"
+//bintrayGpgPassword="your gpg password"
+Properties props = new Properties()
+props.load(new FileInputStream("./local.properties"))
+
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.1"
@@ -29,7 +50,7 @@ android {
         minSdkVersion 17
         targetSdkVersion 23
         versionCode 2
-        versionName "2.0"
+        versionName "2.0.0"
     }
 
     buildTypes {
@@ -48,6 +69,7 @@ android {
     lintOptions {
         abortOnError false
     }
+
 }
 
 task wrapper(type: Wrapper) {
@@ -60,6 +82,7 @@ dependencies {
 }
 
 
+//task for Sonatype Nexus OSS
 uploadArchives {
     repositories {
         mavenDeployer {
@@ -75,6 +98,93 @@ uploadArchives {
             pom.version = "2.0.0.1"
             pom.artifactId = "spflib"
             pom.groupId = "it.polimi.spf"
+        }
+    }
+}
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+//if you want to upload also javadoc.
+//task javadoc(type: Javadoc) {
+//    source = android.sourceSets.main.java.srcDirs
+//    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+//}
+//
+//task javadocJar(type: Jar, dependsOn: javadoc) {
+//    classifier = 'javadoc'
+//    from javadoc.destinationDir
+//}
+
+artifacts {
+//  archives javadocJar
+    archives sourcesJar
+}
+
+
+install {
+    repositories.mavenInstaller {
+        pom.project {
+            name 'SPFLib'
+            description 'SPFLib to creates SPF2 applications'
+            inceptionYear '2015'
+            url siteUrl
+
+            packaging 'aar'
+            groupId group
+            artifactId libName
+            version libVersion
+
+            licenses {
+                license {
+                    name 'GNU Lesser General Public License, Version 3.0'
+                    url 'http://www.gnu.org/licenses/lgpl-3.0.txt'
+                    distribution 'repo'
+                }
+            }
+            developers {
+                developer {
+                    name 'Stefano Cappa'
+                    email 'stefano.cappa.ks89@gmail.com'
+                }
+            }
+            scm {
+                connection gitUrl
+                url siteUrl
+
+            }
+        }
+    }
+}
+
+bintray {
+    user = project.getProperties().hasProperty('bintrayUser') ? props.getProperty('bintrayUser') : System.getenv('BINTRAY_USER')
+    key = project.getProperties().hasProperty('bintrayApiKey') ? props.getProperty('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
+    configurations = ['archives'] //i chose the config method
+
+    pkg {
+        repo = 'maven'
+        name = libName
+        desc = 'SPFLib to creates SPF2 applications'
+        websiteUrl = siteUrl
+        issueTrackerUrl = 'https://github.com/deib-polimi/SPF2/issues'
+        //userOrg = 'it.polimi'
+        licenses = ['LGPL-3.0']
+        vcsUrl = gitUrl
+        labels = ['spf', 'android', 'iot', 'wi-fi direct', 'wifi direct', 'p2p']
+        publicDownloadNumbers = true
+        //attributes= ['a': ['ay1', 'ay2'], 'b': ['bee'], c: 'cee'] //Optional package-level attributes
+        version {
+            name = libVersion
+            desc = 'SPFLib to creates SPF2 applications'
+            vcsTag = gitHubTag //github tag for the released version
+            gpg {
+                sign = true
+                //The passphrase for GPG signing
+                passphrase = props.getProperty('bintrayGpgPassword')
+            }
         }
     }
 }
