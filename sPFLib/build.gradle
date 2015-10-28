@@ -40,7 +40,7 @@ def gitHubTag = 'v.2.0.0'
 //bintrayApiKey="your bintray account password"
 //bintrayGpgPassword="your gpg password"
 Properties props = new Properties()
-props.load(new FileInputStream("./local.properties"))
+props.load(new FileInputStream("./private_bintray.properties"))
 
 android {
     compileSdkVersion 23
