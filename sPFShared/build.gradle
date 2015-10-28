@@ -34,12 +34,12 @@ def libName = 'spfshared'
 def libVersion = '2.0.0.1'
 def gitHubTag = 'v.2.0.0'
 
-//Create a local.properties with these keys:
-//bintrayUser="your bintray account name"
-//bintrayApiKey="your bintray account password"
-//bintrayGpgPassword="your gpg password"
+//Updated the private_bintray.properties with your real data to be able to connect with bintray:
+//bintrayUser=your_username
+//bintrayApiKey=your_apikey
+//bintrayGpgPassword=your_chosen_gpg_password
 Properties props = new Properties()
-props.load(new FileInputStream("././private_bintray.properties"))
+props.load(new FileInputStream("./private_bintray.properties"))
 
 android {
     compileSdkVersion 23
