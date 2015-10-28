@@ -24,7 +24,7 @@ SPF2 requires Android 4.2 JellyBean MR1 (API 17) or higher. But I tested this ne
 This choice is related to to the fact that in previous versions, Wi-Fi Direct was unstable and unreliable.
 
 This repository contains SPFApp, SPFFramework and SPFWFDMiddleware as local projects.
-Also, there are the two local modules SPFLib and SPFShared. To be able to create apps based on SPF2, 
+Also, there are the two local modules called SPFLib and SPFShared. To be able to create apps based on SPF2, 
 you should add these two latest modules as remote dependencies into your build.gradle.
 
 SPFShared and SPFLib are available on JCenter and Maven Central. If you need examples of how to create SPF's applications
@@ -35,29 +35,29 @@ look these 3 repositories:
 
 If you want to modify SPFLib and SPFShared, I suggest to run Sonatype Nexus OSS on your local machine 
 and upload the compiled AAR's into this Maven server. Also, remember to update the version of these libraries, 
-because Gradle caches dependencies automatically into .gradle/caches/modules-2/files-2.1 directory.
+because Gradle caches dependencies automatically into ~/.gradle/caches/modules-2/files-2.1 directory.
 
 
 # Releases
 
-- *10/27/2015* - **SPF2** 2.0.0 - [Download](https://github.com/Ks89/SPF2/releases/tag/v.2.0.0)
-- *10/26/2015* - **SPF2** RC 1 - [Download](https://github.com/Ks89/SPF2/releases/tag/v.rc1)
-- *10/22/2015* - **SPF2** Beta 4- [Download](https://github.com/Ks89/SPF2/releases/tag/v.beta4)
-- *10/20/2015* - **SPF2** Beta 3 - [Download](https://github.com/Ks89/SPF2/releases/tag/v.beta3)
-- *10/19/2015* - **SPF2** Beta 2 - [Download](https://github.com/Ks89/SPF2/releases/tag/v.beta2)
-- *10/14/2015* - **SPF2** Beta 1 - [Download](https://github.com/Ks89/SPF2/releases/tag/v.beta1)
-- *10/13/2015* - **SPF2** Alpha 4 - [Download](https://github.com/Ks89/SPF2/releases/tag/v.alpha4)
-- *10/08/2015* - **SPF2** Alpha 3 - [Download](https://github.com/Ks89/SPF2/releases/tag/v.alpha3)
-- *10/06/2015* - **SPF2** Alpha 2 - [Download](https://github.com/Ks89/SPF2/releases/tag/v.alpha2)
-- *10/06/2015* - **SPF2** Alpha 1 - [Download](https://github.com/Ks89/SPF2/releases/tag/v.alpha1)
+- *10/27/2015* - **SPF2** 2.0.0 - [Download](https://github.com/deib-polimi/SPF2/releases/tag/v.2.0.0)
+- *10/26/2015* - **SPF2** RC 1 - [Download](https://github.com/deib-polimi/SPF2/releases/tag/v.rc1)
+- *10/22/2015* - **SPF2** Beta 4- [Download](https://github.com/deib-polimi/SPF2/releases/tag/v.beta4)
+- *10/20/2015* - **SPF2** Beta 3 - [Download](https://github.com/deib-polimi/SPF2/releases/tag/v.beta3)
+- *10/19/2015* - **SPF2** Beta 2 - [Download](https://github.com/deib-polimi/SPF2/releases/tag/v.beta2)
+- *10/14/2015* - **SPF2** Beta 1 - [Download](https://github.com/deib-polimi/SPF2/releases/tag/v.beta1)
+- *10/13/2015* - **SPF2** Alpha 4 - [Download](https://github.com/deib-polimi/SPF2/releases/tag/v.alpha4)
+- *10/08/2015* - **SPF2** Alpha 3 - [Download](https://github.com/deib-polimi/SPF2/releases/tag/v.alpha3)
+- *10/06/2015* - **SPF2** Alpha 2 - [Download](https://github.com/deib-polimi/SPF2/releases/tag/v.alpha2)
+- *10/06/2015* - **SPF2** Alpha 1 - [Download](https://github.com/deib-polimi/SPF2/releases/tag/v.alpha1)
 
 
 # Changelog
 
-Changelog is available [HERE](https://github.com/Ks89/SPF2/CHANGELOG.md)
+Changelog is available [HERE](https://raw.githubusercontent.com/deib-polimi/SPF2/master/CHANGELOG.md)
 
 
-## Known issues
+## Known issues to fix
 
 - [ ] If discovery phase fails, create a temporized system to restart it automatically.
 - [ ] When SPF enters in onConnectionInfoAvailable(), start a timer on the client. At the end of the countdown, if this device isn’t connected to the GO it should restart the discovery phase.
@@ -72,15 +72,13 @@ If you want to do something, create a Pull Request! XD
 
 ## Images
 
-![alt tag](https://raw.githubusercontent.com/deib-polimi/SPF2/master/repo_images/button_iconics.png)
-![alt tag](https://raw.githubusercontent.com/deib-polimi/SPF2/master/repo_images/drawer.png)
-![alt tag](https://raw.githubusercontent.com/deib-polimi/SPF2/master/repo_images/drawer_proximity.png)
-![alt tag](https://raw.githubusercontent.com/deib-polimi/SPF2/master/repo_images/notifications.png) <br />
-![alt tag](https://raw.githubusercontent.com/deib-polimi/SPF2/master/repo_images/tablet1.png) <br />
-![alt tag](https://raw.githubusercontent.com/deib-polimi/SPF2/master/repo_images/tablet2.png) <br />
-![alt tag](https://raw.githubusercontent.com/deib-polimi/SPF2/master/repo_images/tablet3.png) <br />
-![alt tag](https://raw.githubusercontent.com/deib-polimi/SPF2/master/repo_images/about_fragment.png) 
-
+<img align="center" src="https://raw.githubusercontent.com/deib-polimi/SPF2/master/repo_images/button_iconics.png" width="250">   
+<img align="center" src="https://raw.githubusercontent.com/deib-polimi/SPF2/master/repo_images/drawer.png" width="250"> <br /> <br />
+<img align="center" src="https://raw.githubusercontent.com/deib-polimi/SPF2/master/repo_images/notifications.png" width="250"> <br /> <br />
+<img align="center" src="https://raw.githubusercontent.com/deib-polimi/SPF2/master/repo_images/tablet1.png" width="700"> <br /> <br />
+<img align="center" src="https://raw.githubusercontent.com/deib-polimi/SPF2/master/repo_images/tablet2.png" width="700"> <br /> <br />
+<img align="center" src="https://raw.githubusercontent.com/deib-polimi/SPF2/master/repo_images/tablet3.png" width="700"> <br /> <br />
+<img align="center" src="https://raw.githubusercontent.com/deib-polimi/SPF2/master/repo_images/about_fragment.png" width="700">
 
 ## Official documentations
 
