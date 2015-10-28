@@ -86,6 +86,18 @@ The official doc is composed by these files:
 - (2015) SPF2 Doc [GitHub repository](https://github.com/deib-polimi/SPF2_Documentation) and [PDF](https://github.com/deib-polimi/SPF2_Documentation/releases/download/v1.0/SPF_documentation.pdf)
 - (2014) Master Thesis of Jacopo Aliprandi and Dario Archetti available [HERE](http://hdl.handle.net/10589/106727)
 
+
+## How to publish dependencies
+
+Change the information inside "private_bintray.properties" to be able to push dependencies on JFrog Bintray.
+
+```
+bintrayUser=your_username 
+bintrayApiKey=your_apikey
+bintrayGpgPassword=your_chosen_gpg_password
+```
+
+
 # License
 Copyright 2014 Jacopo Aliprandi, Dario Archetti<br>
 Copyright 2015 Stefano Cappa
