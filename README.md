@@ -7,7 +7,7 @@
 
 # SPF2
 
-![alt tag](https://raw.githubusercontent.com/deib-polimi/SPF2CouponingClientDemo/master/repo_images/SPF2_header.png)
+![alt tag](https://raw.githubusercontent.com/deib-polimi/SPF2/master/repo_images/SPF2_header.png)
 
 <br>
 
