@@ -16,6 +16,9 @@ buildscript {
     }
 }
 
+group = 'it.polimi.spf'
+version = '2'
+
 allprojects {
     repositories {
         jcenter()
