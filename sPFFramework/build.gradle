@@ -52,7 +52,7 @@ task wrapper(type: Wrapper) {
 }
 
 dependencies {
-    compile project(':sPFShared')
+    compile project(':spfshared')
     compile 'com.google.code.gson:gson:2.4'
     compile 'com.android.support:support-v4:23.1.0'
     provided 'org.projectlombok:lombok:1.16.6'

@@ -1,5 +1,5 @@
-include ':sPFShared'
+include ':spfshared'
 include ':sPFFramework'
 include ':sPFWFDMid'
-include ':sPFLib'
+include ':spflib'
 include ':sPFApp'

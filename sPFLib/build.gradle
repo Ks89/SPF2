@@ -25,15 +25,17 @@ apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'maven-publish'
 
-group = 'it.polimi.spf'
-version = '2.0.0.1'
-
 //variables
 def siteUrl = 'https://github.com/deib-polimi/SPF2'
 def gitUrl = 'https://github.com/deib-polimi/SPF2.git'
+def groupPath = 'it.polimi.spf'
 def libName = 'spflib'
 def libVersion = '2.0.0.1'
 def gitHubTag = 'v.2.0.0'
+
+group = groupPath
+version = libVersion
+
 
 //Updated the private_bintray.properties with your real data to be able to connect with bintray:
 //bintrayUser=your_username
@@ -77,7 +79,7 @@ task wrapper(type: Wrapper) {
 }
 
 dependencies {
-    compile project(':sPFShared')
+    compile project(':spfshared')
     compile 'com.google.code.gson:gson:2.4'
 }
 
@@ -127,13 +129,13 @@ artifacts {
 install {
     repositories.mavenInstaller {
         pom.project {
-            name 'SPFLib'
+            name 'spflib'
             description 'SPFLib to creates SPF2 applications'
             inceptionYear '2015'
             url siteUrl
 
             packaging 'aar'
-            groupId group
+            groupId groupPath
             artifactId libName
             version libVersion
 
@@ -160,8 +162,8 @@ install {
 }
 
 bintray {
-    user = project.getProperties().hasProperty('bintrayUser') ? props.getProperty('bintrayUser') : System.getenv('BINTRAY_USER')
-    key = project.getProperties().hasProperty('bintrayApiKey') ? props.getProperty('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
+    user = props.get('bintrayUser')
+    key = props.get('bintrayApiKey')
     configurations = ['archives'] //i chose the config method
 
     pkg {
@@ -183,7 +185,7 @@ bintray {
             gpg {
                 sign = true
                 //The passphrase for GPG signing
-                passphrase = props.getProperty('bintrayGpgPassword')
+                passphrase = props.get('bintrayGpgPassword')
             }
         }
     }

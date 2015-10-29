@@ -24,15 +24,16 @@ apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'maven-publish'
 
-group = 'it.polimi.spf'
-version = '2.0.0.1'
-
 //variables
 def siteUrl = 'https://github.com/deib-polimi/SPF2'
 def gitUrl = 'https://github.com/deib-polimi/SPF2.git'
+def groupPath = 'it.polimi.spf'
 def libName = 'spfshared'
 def libVersion = '2.0.0.1'
 def gitHubTag = 'v.2.0.0'
+
+group = groupPath
+version = libVersion
 
 //Updated the private_bintray.properties with your real data to be able to connect with bintray:
 //bintrayUser=your_username
@@ -119,13 +120,13 @@ artifacts {
 install {
     repositories.mavenInstaller {
         pom.project {
-            name 'SPFShared'
+            name 'spfshared'
             description 'SPFShared to creates SPF2 applications'
             inceptionYear '2015'
             url siteUrl
 
             packaging 'aar'
-            groupId group
+            groupId groupPath
             artifactId libName
             version libVersion
 
@@ -152,8 +153,8 @@ install {
 }
 
 bintray {
-    user = project.getProperties().hasProperty('bintrayUser') ? props.getProperty('bintrayUser') : System.getenv('BINTRAY_USER')
-    key = project.getProperties().hasProperty('bintrayApiKey') ? props.getProperty('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
+    user = props.get('bintrayUser')
+    key = props.get('bintrayApiKey')
     configurations = ['archives'] //i chose the config method
 
     pkg {
@@ -162,7 +163,7 @@ bintray {
         desc = 'SPFShared to creates SPF2 applications'
         websiteUrl = siteUrl
         issueTrackerUrl = 'https://github.com/deib-polimi/SPF2/issues'
-        //userOrg = 'it.polimi'
+        //userOrg = 'it.polimi' //optional
         licenses = ['LGPL-3.0']
         vcsUrl = gitUrl
         labels = ['spf', 'android', 'iot', 'wi-fi direct', 'wifi direct', 'p2p']
@@ -175,7 +176,7 @@ bintray {
             gpg {
                 sign = true
                 //The passphrase for GPG signing
-                passphrase = props.getProperty('bintrayGpgPassword')
+                passphrase = props.get('bintrayGpgPassword')
             }
         }
     }

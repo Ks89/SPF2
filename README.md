@@ -38,7 +38,7 @@ and upload the compiled AAR's into this Maven server. Also, remember to update t
 because Gradle caches dependencies automatically into ~/.gradle/caches/modules-2/files-2.1 directory.
 
 
-# Releases
+## Releases
 
 - *10/27/2015* - **SPF2** 2.0.0 - [Download](https://github.com/deib-polimi/SPF2/releases/tag/v.2.0.0)
 - *10/26/2015* - **SPF2** RC 1 - [Download](https://github.com/deib-polimi/SPF2/releases/tag/v.rc1)
@@ -52,7 +52,7 @@ because Gradle caches dependencies automatically into ~/.gradle/caches/modules-2
 - *10/06/2015* - **SPF2** Alpha 1 - [Download](https://github.com/deib-polimi/SPF2/releases/tag/v.alpha1)
 
 
-# Changelog
+## Changelog
 
 Changelog is available [HERE](https://raw.githubusercontent.com/deib-polimi/SPF2/master/CHANGELOG.md)
 
@@ -98,7 +98,7 @@ bintrayGpgPassword=your_chosen_gpg_password
 ```
 
 
-# License
+## License
 Copyright 2014 Jacopo Aliprandi, Dario Archetti<br>
 Copyright 2015 Stefano Cappa
 
