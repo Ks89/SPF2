@@ -1,5 +1,4 @@
 [![License LGPL 3](https://img.shields.io/badge/license-LGPLv3-blue.svg)](http://www.gnu.org/licenses/lgpl-3.0.txt)
-![](https://reposs.herokuapp.com/?path=Ks89/SPF2)
 [![Build Status](https://travis-ci.org/Ks89/SPF2.svg?branch=master)](https://travis-ci.org/Ks89/SPF2)
 
 [![Issue Stats](http://issuestats.com/github/Ks89/SPF2/badge/pr?style=flat)](http://issuestats.com/github/Ks89/SPF2)
@@ -97,6 +96,15 @@ bintrayApiKey=your_apikey
 bintrayGpgPassword=your_chosen_gpg_password
 ```
 
+After that, follow this procedure.
+1. Remember to update the versions inside "build.gradle" of spflib and spfshared.
+2. Sync and build the project
+3. In Android Studio Terminal type these commands into the SPF's root folder:
+   ```
+    gradlew install
+    gradlew bintrayUpload
+   ```
+4. Done!!!
 
 ## License
 Copyright 2014 Jacopo Aliprandi, Dario Archetti<br>
