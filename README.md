@@ -80,14 +80,14 @@ If you want to do something, create a Pull Request! XD
 <img align="center" src="https://raw.githubusercontent.com/deib-polimi/SPF2/master/repo_images/tablet3.png" width="700"> <br /> <br />
 <img align="center" src="https://raw.githubusercontent.com/deib-polimi/SPF2/master/repo_images/about_fragment.png" width="700"> <br /> <br />
 
-<img align="center" src="https://raw.githubusercontent.com/deib-polimi/SPF2/master/repo_images/1.png" width="250">   
+<img align="center" src="https://raw.githubusercontent.com/deib-polimi/SPF2/master/repo_images/1.png" width="250"> <br /> <br />
 <img align="center" src="https://raw.githubusercontent.com/deib-polimi/SPF2/master/repo_images/2.png" width="250"> <br /> <br />
-<img align="center" src="https://raw.githubusercontent.com/deib-polimi/SPF2/master/repo_images/3.png" width="250">   
+<img align="center" src="https://raw.githubusercontent.com/deib-polimi/SPF2/master/repo_images/3.png" width="250"> <br /> <br />
 <img align="center" src="https://raw.githubusercontent.com/deib-polimi/SPF2/master/repo_images/4.png" width="250"> <br /> <br />
-<img align="center" src="https://raw.githubusercontent.com/deib-polimi/SPF2/master/repo_images/5.png" width="250">   
+<img align="center" src="https://raw.githubusercontent.com/deib-polimi/SPF2/master/repo_images/5.png" width="250"> <br /> <br />
 <img align="center" src="https://raw.githubusercontent.com/deib-polimi/SPF2/master/repo_images/6.png" width="250"> <br /> <br />
-<img align="center" src="https://raw.githubusercontent.com/deib-polimi/SPF2/master/repo_images/7.png" width="250">   
-<img align="center" src="https://raw.githubusercontent.com/deib-polimi/SPF2/master/repo_images/8.png" width="250"> <br /> <br />
+<img align="center" src="https://raw.githubusercontent.com/deib-polimi/SPF2/master/repo_images/7.png" width="250"> <br /> <br /> 
+<img align="center" src="https://raw.githubusercontent.com/deib-polimi/SPF2/master/repo_images/8.png" width="250">
 
 
 
