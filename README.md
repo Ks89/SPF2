@@ -101,10 +101,11 @@ After that, follow this procedure:
 - Remember to update the versions inside "build.gradle" of spflib and spfshared <br />
 - Sync and build the project <br />
 - In Android Studio Terminal type these commands into the SPF's root folder:
-   ```
-    gradlew install
-    gradlew bintrayUpload
-   ```
+  
+```
+gradlew install
+gradlew bintrayUpload
+```
 - Done!!! <br />
 
 
