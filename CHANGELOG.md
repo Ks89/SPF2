@@ -1,3 +1,10 @@
+**2.0.1**
+
+1. Fixed gradle scripts to manage dependencies in the correct way.
+2. Improve app icon
+
+
+
 **2.0.0**
 
 1. project moved from Eclipse to Android Studio.

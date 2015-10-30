@@ -1,8 +1,8 @@
 [![License LGPL 3](https://img.shields.io/badge/license-LGPLv3-blue.svg)](http://www.gnu.org/licenses/lgpl-3.0.txt)
-[![Build Status](https://travis-ci.org/Ks89/SPF2.svg?branch=master)](https://travis-ci.org/Ks89/SPF2)
+[![Build Status](https://travis-ci.org/deib-polimi/SPF2.svg?branch=master)](https://travis-ci.org/deib-polimi/SPF2)
 
-[![Issue Stats](http://issuestats.com/github/Ks89/SPF2/badge/pr?style=flat)](http://issuestats.com/github/Ks89/SPF2)
-[![Issue Stats](http://issuestats.com/github/Ks89/SPF2/badge/issue?style=flat)](http://issuestats.com/github/Ks89/SPF2)
+[![Issue Stats](http://issuestats.com/github/deib-polimi/SPF2/badge/pr?style=flat)](http://issuestats.com/github/deib-polimi/SPF2)
+[![Issue Stats](http://issuestats.com/github/deib-polimi/SPF2/badge/issue?style=flat)](http://issuestats.com/github/deib-polimi/SPF2)
 
 # SPF2
 
@@ -39,6 +39,7 @@ because Gradle caches dependencies automatically into ~/.gradle/caches/modules-2
 
 ## Releases
 
+- *10/30/2015* - **SPF2** 2.0.1 - [Download](https://github.com/deib-polimi/SPF2/releases/tag/v.2.0.1)
 - *10/27/2015* - **SPF2** 2.0.0 - [Download](https://github.com/deib-polimi/SPF2/releases/tag/v.2.0.0)
 - *10/26/2015* - **SPF2** RC 1 - [Download](https://github.com/deib-polimi/SPF2/releases/tag/v.rc1)
 - *10/22/2015* - **SPF2** Beta 4- [Download](https://github.com/deib-polimi/SPF2/releases/tag/v.beta4)
@@ -86,7 +87,7 @@ The official doc is composed by these files:
 - (2014) Master Thesis of Jacopo Aliprandi and Dario Archetti available [HERE](http://hdl.handle.net/10589/106727)
 
 
-## How to publish dependencies
+## How to publish dependencies?
 
 Change the information inside "private_bintray.properties" to be able to push dependencies on JFrog Bintray.
 
@@ -96,15 +97,33 @@ bintrayApiKey=your_apikey
 bintrayGpgPassword=your_chosen_gpg_password
 ```
 
-After that, follow this procedure.
-1. Remember to update the versions inside "build.gradle" of spflib and spfshared.
-2. Sync and build the project
-3. In Android Studio Terminal type these commands into the SPF's root folder:
+After that, follow this procedure:
+- Remember to update the versions inside "build.gradle" of spflib and spfshared <br />
+- Sync and build the project <br />
+- In Android Studio Terminal type these commands into the SPF's root folder:
    ```
     gradlew install
     gradlew bintrayUpload
    ```
-4. Done!!!
+- Done!!! <br />
+
+
+## How to create SPF's applications?
+
+Add these dependencies into your local module's build.gradle:
+
+```
+dependencies {
+compile 'it.polimi.spf:spflib:2.0.0.1@aar'
+compile 'it.polimi.spf:spfshared:2.0.0.1@aar'
+}
+```
+
+Examples:
+- [SPFCouponingProvider demo](https://github.com/deib-polimi/SPF2CouponingProviderDemo) <br />
+- [SPFCouponingClient demo](https://github.com/deib-polimi/SPF2CouponingClientDemo) <br />
+- [SPFChat demo](https://github.com/deib-polimi/SPF2ChatDemo) <br />
+
 
 ## License
 Copyright 2014 Jacopo Aliprandi, Dario Archetti<br>

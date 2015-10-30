@@ -126,7 +126,7 @@ install {
     repositories.mavenInstaller {
         pom.project {
             name 'spflib'
-            description 'SPFLib to creates SPF2 applications'
+            description 'SPFLib to create SPF2 applications'
             inceptionYear '2015'
             url siteUrl
 
@@ -165,7 +165,7 @@ bintray {
     pkg {
         repo = 'maven'
         name = libName
-        desc = 'SPFLib to creates SPF2 applications'
+        desc = 'SPFLib to create SPF2 applications'
         websiteUrl = siteUrl
         issueTrackerUrl = 'https://github.com/deib-polimi/SPF2/issues'
         //userOrg = 'it.polimi'
@@ -176,7 +176,7 @@ bintray {
         //attributes= ['a': ['ay1', 'ay2'], 'b': ['bee'], c: 'cee'] //Optional package-level attributes
         version {
             name = libVersion
-            desc = 'SPFLib to creates SPF2 applications'
+            desc = 'SPFLib to create SPF2 applications'
             vcsTag = gitHubTag //github tag for the released version
             gpg {
                 sign = true
